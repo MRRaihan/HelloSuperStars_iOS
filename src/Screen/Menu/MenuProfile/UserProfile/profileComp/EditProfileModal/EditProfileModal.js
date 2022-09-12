@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Toast from 'react-native-root-toast';
 import * as Animatable from 'react-native-animatable';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DatePicker from 'react-native-date-picker';
@@ -57,7 +58,7 @@ const EditProfileModal = ({ editProfile, setEditProfile }) => {
           Navigation.navigate('category');
         } else {
           setBuffer(false);
-          ToastAndroid.show(res.data.message, ToastAndroid.SHORT);
+          Toast.show(res.data.message, Toast.SHORT);
         }
       })
       .catch(err => {

@@ -5,11 +5,10 @@ import {
   RefreshControl,
   ScrollView,
   Text,
-  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
-
+import Toast from 'react-native-root-toast';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import LinearGradient from 'react-native-linear-gradient';
@@ -206,12 +205,12 @@ const Menu = () => {
               }
             });
 
-          ToastAndroid.show('Category updated', ToastAndroid.SHORT);
+          Toast.show('Category updated', Toast.SHORT);
         }
       })
       .catch(err => {
         console.log(err);
-        ToastAndroid.show('problem', ToastAndroid.SHORT);
+        Toast.show('problem', Toast.SHORT);
       });
 
     // setPosts([])
@@ -322,9 +321,9 @@ const Menu = () => {
               activityLength > 0
                 ? handleChange
                 : () => {
-                  ToastAndroid.show(
+                  Toast.show(
                     "Pleace wait or you don't have any activity",
-                    ToastAndroid.SHORT,
+                    Toast.SHORT,
                   );
                 }
             }>

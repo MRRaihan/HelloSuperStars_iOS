@@ -1,12 +1,12 @@
 class AppUrl {
-  // static BaseUrl = 'http://backend.hellosuperstars.com/api/';
-  // static MediaBaseUrl = 'http://backend.hellosuperstars.com/';
+// static BaseUrl = 'http://backend.hellosuperstars.com/api/';
+// static MediaBaseUrl = 'http://backend.hellosuperstars.com/';
 
-  static SoketUrl = "http://192.168.0.106:3001/";
-  // static SoketUrl = 'https://socket.hellosuperstars.com/';
+  // static SoketUrl = "http://192.163.0.106:3001/";
+  static SoketUrl = 'https://socket.hellosuperstars.com/';
 
-  static BaseUrl = 'http://192.168.0.106/HelloSuperStarsBackend-2/public/api/';
-  static MediaBaseUrl = 'http://192.168.0.106/HelloSuperStarsBackend-2/public/';
+  static BaseUrl = 'http://192.168.0.103/HelloSuperStarsBackend-2/public/api/';
+  static MediaBaseUrl = 'http://192.168.0.103/HelloSuperStarsBackend-2/public/';
 
   // static demo instruction = 'http://your pc ip/project name on www-htdocs folder/public/';
 

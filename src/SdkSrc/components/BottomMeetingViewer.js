@@ -10,8 +10,8 @@ import {
   TouchableOpacity,
   AlertIOS,
   Platform,
-  ToastAndroid,
 } from "react-native";
+import Toast from 'react-native-root-toast';
 import { Button } from "react-native-ui-lib";
 import { Colors } from "../styles";
 import {
@@ -269,7 +269,7 @@ const BottomMeetingViewer = forwardRef(
               if (!!presenterId) {
                 const message = "Screen share is already running...";
                 if (Platform.OS === "android") {
-                  ToastAndroid.show(message, ToastAndroid.LONG);
+                  Toast.show(message, Toast.LONG);
                 } else {
                   AlertIOS.alert(message);
                 }

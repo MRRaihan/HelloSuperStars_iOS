@@ -8,10 +8,12 @@ import {
   Dimensions,
   Image,
   Share,
-  Text, ToastAndroid, TouchableOpacity,
+  Text, TouchableOpacity,
   useWindowDimensions,
   View
 } from 'react-native';
+import Toast from 'react-native-root-toast';
+
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import RenderHtml from 'react-native-render-html';
@@ -79,7 +81,7 @@ const PostCard = ({ post, callform = null }) => {
     axios.post(AppUrl.SubmitLike + post.id, data, axiosConfig).then((res) => {
       console.log(res.data)
       if (res.data.status === 200) {
-        ToastAndroid.show(mesg, ToastAndroid.SHORT);
+        Toast.show(mesg, Toast.SHORT);
       }
     }).catch((err) => {
 

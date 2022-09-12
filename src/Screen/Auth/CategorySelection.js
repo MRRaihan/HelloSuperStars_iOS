@@ -7,10 +7,10 @@ import {
   ImageBackground,
   StyleSheet,
   Text,
-  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
+import Toast from 'react-native-root-toast';
 import * as Animatable from 'react-native-animatable';
 import LoaderComp from '../../Components/LoaderComp';
 import {AuthContext} from '../../Constants/context';
@@ -98,7 +98,7 @@ const CategorySelection = () => {
     });
 
     if (selected.length <= 0) {
-      ToastAndroid.show('Place Select Some Category', ToastAndroid.SHORT);
+      Toast.show('Place Select Some Category', Toast.SHORT);
     } else {
       let formData = {
         category: JSON.stringify(selectedCategory),
@@ -110,12 +110,12 @@ const CategorySelection = () => {
           setBuffer(false);
           if (res.data.status === 200) {
             authContext.category();
-            ToastAndroid.show('Successfully Added', ToastAndroid.SHORT);
+            Toast.show('Successfully Added', Toast.SHORT);
           }
         })
         .catch(err => {
           console.log(err);
-          ToastAndroid.show('problem', ToastAndroid.SHORT);
+          Toast.show('problem', Toast.SHORT);
           // alert('network problem')
         });
     }

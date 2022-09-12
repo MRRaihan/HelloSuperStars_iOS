@@ -1,4 +1,4 @@
-import { Text, View, ToastAndroid, Image, Dimensions, TouchableOpacity, TextInput, Share } from 'react-native'
+import { Text, View, Image, Dimensions, TouchableOpacity, TextInput, Share } from 'react-native'
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import Video from 'react-native-video';
 import * as Animatable from 'react-native-animatable';
@@ -9,7 +9,6 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import styles from './Styles2';
 import AppUrl from '../../../RestApi/AppUrl';
 import { useNavigation } from '@react-navigation/native';
-
 
 const PromoVideoSlide = ({ currentIndex, index, item }) => {
     const vedioRef = useRef(null)

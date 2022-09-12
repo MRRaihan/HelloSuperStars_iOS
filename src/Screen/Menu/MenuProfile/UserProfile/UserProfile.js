@@ -5,9 +5,10 @@ import {
   Dimensions,
   Image,
   ScrollView,
-  Text, ToastAndroid, TouchableOpacity,
+  Text, TouchableOpacity,
   View
 } from 'react-native';
+import Toast from 'react-native-root-toast';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -210,7 +211,7 @@ const UserProfile = () => {
 
         if (res.data.status == 200) {
           authContext.userInfoUpate(res.data.userInfo)
-          ToastAndroid.show(res.data.message, ToastAndroid.SHORT);
+          Toast.show(res.data.message, Toast.SHORT);
           console.log('uplad status', res.data)
           if (type === "profile") {
             clearPhoto()

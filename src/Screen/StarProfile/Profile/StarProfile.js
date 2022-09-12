@@ -2,7 +2,8 @@
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
-import { Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-root-toast';
 import LinearGradient from 'react-native-linear-gradient';
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -63,7 +64,7 @@ const StarProfile = ({ route }) => {
         if (res.data.status === 200) {
           setAllPost(res.data.posts)
           console.log('post', res.data.posts)
-          ToastAndroid.show('done', ToastAndroid.SHORT);
+          Toast.show('done', Toast.SHORT);
         }
       })
       .catch(err => {

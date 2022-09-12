@@ -5,10 +5,12 @@ import {
   Image,
   ImageBackground,
   StyleSheet,
-  Text, ToastAndroid, TouchableOpacity,
+  Text, TouchableOpacity,
   View
 } from 'react-native';
 import RNFS from 'react-native-fs';
+import Toast from 'react-native-root-toast';
+
 import { launchImageLibrary } from 'react-native-image-picker';
 import { AuthContext } from '../../../Constants/context';
 import imagePath from '../../../Constants/imagePath';
@@ -119,7 +121,7 @@ const VideoUploadLearningSession = ({ route }) => {
           setAssinmentNumebr(res.data.assinmentNumber)
         } else if (res.data.status === 300) {
           setAssinmentNumebr(res.data.assinmentNumber)
-          ToastAndroid.show(res.data.message, ToastAndroid.SHORT);
+          Toast.show(res.data.message, Toast.SHORT);
         }
         setProgress(false)
         // console.log('done', res)
@@ -136,7 +138,7 @@ const VideoUploadLearningSession = ({ route }) => {
             data: ""
           }
         })
-        ToastAndroid.show(err.message, ToastAndroid.SHORT);
+        Toast.show(err.message, Toast.SHORT);
       })
   }
 

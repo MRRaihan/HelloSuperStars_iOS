@@ -8,10 +8,10 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
+import Toast from 'react-native-root-toast';
 import * as Animatable from 'react-native-animatable';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LinearGradient from 'react-native-linear-gradient';
@@ -66,9 +66,9 @@ const Login = () => {
           }
         })
         .catch(err => {
-          ToastAndroid.show(
+          Toast.show(
             'Network Problem, Check you Internet',
-            ToastAndroid.SHORT,
+            Toast.SHORT,
           );
           setBuffer(false);
           console.log(err);

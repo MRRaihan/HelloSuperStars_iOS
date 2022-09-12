@@ -7,9 +7,9 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  useWindowDimensions,
-  ToastAndroid
+  useWindowDimensions
 } from 'react-native';
+import Toast from 'react-native-root-toast';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MatarialIcon from 'react-native-vector-icons/MaterialIcons';
 import HeaderComp from '../../Components/HeaderComp';
@@ -104,7 +104,7 @@ const Fangroup = ({ route }) => {
                 if (res.data.status == 200) {
                   console.log(res.data)
                   HandelGetData()
-                  ToastAndroid.show('Posted', ToastAndroid.SHORT);
+                  Toast.show('Posted', Toast.SHORT);
                 }
               })
               .catch(err => {
@@ -115,12 +115,12 @@ const Fangroup = ({ route }) => {
           }
         })
         .catch(err => {
-          ToastAndroid.show(err.message, ToastAndroid.SHORT);
+          Toast.show(err.message, Toast.SHORT);
           console.log(err);
         });
     } else {
 
-      ToastAndroid.show("please Select Media", ToastAndroid.SHORT);
+      Toast.show("please Select Media", Toast.SHORT);
     }
 
 
@@ -158,7 +158,7 @@ const Fangroup = ({ route }) => {
                 if (res.data.status == 200) {
                   console.log(res.data)
                   HandelGetData()
-                  ToastAndroid.show('Posted', ToastAndroid.SHORT);
+                  Toast.show('Posted', Toast.SHORT);
                 }
               })
               .catch(err => {
@@ -169,12 +169,12 @@ const Fangroup = ({ route }) => {
           }
         })
         .catch(err => {
-          ToastAndroid.show(err.message, ToastAndroid.SHORT);
+          Toast.show(err.message, Toast.SHORT);
           console.log(err);
         });
     } else {
 
-      ToastAndroid.show("please Select Media", ToastAndroid.SHORT);
+      Toast.show("please Select Media", Toast.SHORT);
     }
 
 
@@ -211,7 +211,7 @@ const Fangroup = ({ route }) => {
 
         })
           .catch(err => {
-            ToastAndroid.show(err.message, ToastAndroid.SHORT);
+            Toast.show(err.message, Toast.SHORT);
           });
 
 

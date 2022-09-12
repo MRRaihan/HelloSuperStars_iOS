@@ -3,11 +3,11 @@ import {
   View,
   TouchableOpacity,
   Text,
-  ToastAndroid,
   AlertIOS,
   Platform,
   Animated,
 } from "react-native";
+import Toast from 'react-native-root-toast';
 import { Button } from "react-native-ui-lib";
 import { Colors } from "../styles";
 import { KeyboardArrowLeft, CameraSwitch, People } from "../assets/icons";
@@ -79,7 +79,7 @@ const HeaderMeetingViewer = ({ setCurrentTabModes, animeVal, exitMeeting }) => {
               } else {
                 const message = "First, you should have to on video cam";
                 if (Platform.OS === "android") {
-                  ToastAndroid.show(message, ToastAndroid.SHORT);
+                  Toast.show(message, Toast.SHORT);
                 } else {
                   AlertIOS.alert(message);
                 }

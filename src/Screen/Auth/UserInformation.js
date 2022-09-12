@@ -12,10 +12,10 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
+import Toast from 'react-native-root-toast';
 import * as Animatable from 'react-native-animatable';
 import DatePicker from 'react-native-date-picker';
 // import {launchImageLibrary} from 'react-native-image-picker';
@@ -66,7 +66,7 @@ const UserInformation = () => {
           setBuffer(false);
           Navigation.navigate('category');
         } else {
-          ToastAndroid.show(res.data.message, ToastAndroid.SHORT);
+          Toast.show(res.data.message, Toast.SHORT);
           setBuffer(false);
         }
       })
