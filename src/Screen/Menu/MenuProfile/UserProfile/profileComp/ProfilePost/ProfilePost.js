@@ -24,12 +24,9 @@ const ProfilePost = ({ userActivites }) => {
       {/* Dynamic data from user activities table */}
       {userActivites && userActivites?.map((item, index) =>
 
-        <>
-          {item.type != "marketplace" && item.type != "auction" &&
 
-            <PostCard key={index} post={item} callform="user-profile" />
-          }
-        </>
+        <PostCard key={index} post={item} callform="user-profile" />
+
 
 
       )}

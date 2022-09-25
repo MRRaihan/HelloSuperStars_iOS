@@ -9,7 +9,7 @@ import {
   Animated,
   TouchableOpacity,
   AlertIOS,
-  Platform,
+  Platform
 } from "react-native";
 import Toast from 'react-native-root-toast';
 import { Button } from "react-native-ui-lib";

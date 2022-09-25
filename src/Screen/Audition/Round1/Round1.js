@@ -1,12 +1,12 @@
-import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import {useNavigation} from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import HeaderComp from '../../../Components/HeaderComp';
@@ -15,16 +15,56 @@ import navigationStrings from '../../../Constants/navigationStrings';
 
 import RoundTopBanner from './RoundTopBanner';
 
-const Round1 = ({ route }) => {
+const Round1 = ({route}) => {
   const Navigation = useNavigation();
-  const { roundName } = route.params;
+  const [remainTime, setRemainTime] = useState(0);
+  const [isStarted, setIsStarted] = useState(true);
+  const {
+    auditionInfo,
+    auditionTitle,
+    auditionImage,
+    auditionId,
+    roundId,
+    judges,
+    juries,
+  } = route.params;
+  console.log('--------------------round information', auditionInfo);
+  const remainingTime = (start, end) => {
+    const startTime = new Date().getTime();
+    const endTime = new Date(end.concat(' 23:59:59')).getTime();
+    if (endTime > startTime) {
+      setRemainTime((endTime - startTime) / 1000);
+      setIsStarted(false);
+      return;
+    }
+    setRemainTime((endTime - startTime) / 1000);
+  };
+  useEffect(() => {
+    remainingTime(auditionInfo.round_start_date, auditionInfo.round_end_date);
+  }, []);
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'black' }}>
-      <HeaderComp />
+    <View style={{flex: 1, backgroundColor: 'black'}}>
+      <HeaderComp backFunc={() => Navigation.goBack()} />
 
       <ScrollView>
-        <RoundTopBanner title={`AUDITION ${roundName} ROUND ENDING TIME`} RoundName={roundName} />
+        {isStarted ? (
+          <RoundTopBanner
+            title={`AUDITION ${auditionInfo.round_num} ROUND ENDING TIME`}
+            RoundName={auditionInfo.round_num}
+            auditionTitle={auditionTitle}
+            auditionImage={auditionImage}
+            remainingTime={remainTime}
+          />
+        ) : (
+          <RoundTopBanner
+            title={`AUDITION ${auditionInfo.round_num} ROUND STARTING IN`}
+            RoundName={auditionInfo.round_num}
+            auditionTitle={auditionTitle}
+            auditionImage={auditionImage}
+            remainingTime={remainTime}
+          />
+        )}
 
         <View
           style={{
@@ -32,7 +72,19 @@ const Round1 = ({ route }) => {
             marginVertical: 15,
             borderRadius: 5,
           }}>
-          <TouchableOpacity style={styles.listParent} onPress={() => Navigation.navigate(navigationStrings.PARTICIPATION, { roundName: roundName })}>
+          <TouchableOpacity
+            style={styles.listParent}
+            onPress={() =>
+              Navigation.navigate(navigationStrings.PARTICIPATION, {
+                title: `VIDEO UPLOAD REMAINING TIME`,
+                roundName: auditionInfo.round_num,
+                auditionTitle: auditionTitle,
+                auditionImage: auditionImage,
+                roundInformation: auditionInfo,
+                auditionId,
+                roundId,
+              })
+            }>
             <View style={styles.onLeft}>
               <Image
                 style={styles.resizeImage}
@@ -48,7 +100,20 @@ const Round1 = ({ route }) => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.listParent} onPress={() => Navigation.navigate(navigationStrings.INSTRUCTION)}>
+          <TouchableOpacity
+            style={styles.listParent}
+            onPress={() =>
+              Navigation.navigate(navigationStrings.INSTRUCTION, {
+                title: `AUDITION ${auditionInfo.round_num} ROUND ENDING TIME`,
+                roundName: auditionInfo.round_num,
+                auditionTitle: auditionTitle,
+                auditionImage: auditionImage,
+                remainingTime: remainTime,
+                instruction: auditionInfo?.round_instruction,
+                startDate: auditionInfo.round_start_date,
+                endDate: auditionInfo.round_end_date,
+              })
+            }>
             <View style={styles.onLeft}>
               <Image
                 style={styles.resizeImage}
@@ -63,7 +128,20 @@ const Round1 = ({ route }) => {
               <AntDesign name="caretright" color="#ff0" size={20} />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.listParent} onPress={() => Navigation.navigate(navigationStrings.JUDGES)}>
+          <TouchableOpacity
+            style={styles.listParent}
+            onPress={() =>
+              Navigation.navigate(navigationStrings.JUDGES, {
+                title: `AUDITION ${auditionInfo.round_num} ROUND ENDING TIME`,
+                roundName: auditionInfo.round_num,
+                auditionTitle: auditionTitle,
+                auditionImage: auditionImage,
+                remainingTime: remainTime,
+                roundInformation: auditionInfo,
+                judges,
+                juries,
+              })
+            }>
             <View style={styles.onLeft}>
               <Image
                 style={styles.resizeImage}
@@ -78,7 +156,20 @@ const Round1 = ({ route }) => {
               <AntDesign name="caretright" color="#ff0" size={20} />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.listParent} onPress={() => Navigation.navigate(navigationStrings.MARKDISTIBUTION)}>
+          <TouchableOpacity
+            style={styles.listParent}
+            onPress={() =>
+              Navigation.navigate(navigationStrings.MARKDISTIBUTION, {
+                userMarks: auditionInfo.has_user_vote_mark,
+                juryOrJudge: auditionInfo.jury_or_judge_mark,
+                title: `AUDITION ${auditionInfo.round_num} ROUND ENDING TIME`,
+                roundName: auditionInfo.round_num,
+                auditionTitle: auditionTitle,
+                auditionImage: auditionImage,
+                remainingTime: remainTime,
+                roundInformation: auditionInfo,
+              })
+            }>
             <View style={styles.onLeft}>
               <Image
                 style={styles.resizeImage}
@@ -93,9 +184,20 @@ const Round1 = ({ route }) => {
               <AntDesign name="caretright" color="#ff0" size={20} />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.listParent} onPress={() => Navigation.navigate(navigationStrings.RESULT, {
-            roundName: roundName
-          })}>
+          <TouchableOpacity
+            style={styles.listParent}
+            onPress={() =>
+              Navigation.navigate(navigationStrings.RESULT, {
+                title: `AUDITION ${auditionInfo.round_num} ROUND ENDING TIME`,
+                roundName: auditionInfo.round_num,
+                auditionTitle: auditionTitle,
+                auditionImage: auditionImage,
+                remainingTime: remainTime,
+                roundInformation: auditionInfo,
+                auditionId,
+                roundId,
+              })
+            }>
             <View style={styles.onLeft}>
               <Image
                 style={styles.resizeImage}

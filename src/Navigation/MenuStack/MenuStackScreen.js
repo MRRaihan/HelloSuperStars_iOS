@@ -21,6 +21,10 @@ import Wallet from '../../Screen/Menu/Wallet/Wallet';
 
 import ApplyForCertificate from '../../Components/LEARNINGSESSION/ApplyForCertificate';
 import VideoView from '../../Components/GREETINGS/GallaryVideoView/VideoView';
+import SouvenirInvoice from '../../Components/STAR_SHOWCASE/Souviner/SouvenirInvoice';
+import OrderStatus from '../../Components/GLOBAL/Reuseable/OrderStatus';
+import SouvenirOrderStatus from '../../Components/GLOBAL/Reuseable/SouvenirOrderStatus';
+import UpCommingPost from '../../Screen/Menu/UpCommingPost';
 
 const MenuStack = createNativeStackNavigator();
 const MenuStackScreen = () => {
@@ -41,6 +45,14 @@ const MenuStackScreen = () => {
       <MenuStack.Screen
         name={navigationStrings.LEARNINGSESSIONNAV}
         component={LearningSessionNav}
+      />
+      <MenuStack.Screen
+        name={navigationStrings.ORDERSTATUS}
+        component={OrderStatus}
+      />
+      <MenuStack.Screen
+        name={navigationStrings.SOUVENIRSTATUS}
+        component={SouvenirOrderStatus}
       />
       <MenuStack.Screen
         name={navigationStrings.VIDEOUPLOADLEARNINGSESSION}
@@ -80,6 +92,10 @@ const MenuStackScreen = () => {
         component={Participation}
       />
       <MenuStack.Screen name={navigationStrings.RESULT} component={Result} />
+      <MenuStack.Screen
+        name={navigationStrings.POSTSHOWBYTYPE}
+        component={UpCommingPost}
+      />
     </MenuStack.Navigator>
   );
 };

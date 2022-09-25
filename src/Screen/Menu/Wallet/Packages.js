@@ -17,7 +17,8 @@ import PaymentComp from '../../../Components/GLOBAL/PaymentComp/PaymentComp';
 const Packages = () => {
   const { axiosConfig } = useContext(AuthContext);
   const [buffre, setBuffre] = useState(true);
-  const [packagesData, setPackagesData] = useState()
+  const [packagesData, setPackagesData] = useState([])
+  const [reactBundel, setreactBundel] = useState([])
   const [paymentView, setPaymentView] = useState(false)
 
   useEffect(() => {
@@ -29,6 +30,7 @@ const Packages = () => {
       setBuffre(false)
       if (res.data.status === 200) {
         setPackagesData(res.data.allPackages)
+        setreactBundel(res.data.reactBundel)
       }
     }).catch((err) => {
       console.log(err)
@@ -37,9 +39,13 @@ const Packages = () => {
   }
 
   const [PackegeId, setPackegeId] = useState()
-  const handelPaymentView = (id) => {
+  const [PackegeType, setPackegeType] = useState()
+  const [buyFor, setbuyFor] = useState()
+  const handelPaymentView = (id, type, buyFor) => {
     setPaymentView(true)
     setPackegeId(id)
+    setPackegeType(type)
+    setbuyFor(buyFor)
   }
 
 
@@ -64,12 +70,19 @@ const Packages = () => {
           </SkeletonPlaceholder >
           :
           <>
-            {packagesData && !paymentView ? packagesData.map((item, index) =>
-              <PackageItem key={index} data={item} handelPaymentView={handelPaymentView} />
-            )
+            {packagesData && !paymentView ?
+              <>
+                {packagesData.map((item, index) =>
+                  <PackageItem key={index} data={item} handelPaymentView={() => handelPaymentView(item.id, 'packageBuy', 'regular')} type={'packageBuy'} />
+                )}
+                {reactBundel.map((item, index) =>
+                  <PackageItem key={index} data={item} handelPaymentView={() => handelPaymentView(item.id, 'packageBuy', 'lovebundel')} type={'reactBundel'} />
+                )}
+              </>
+
               :
 
-              <PaymentComp setPaymentView={setPaymentView} type={'packageBuy'} PackegeId={PackegeId} />
+              <PaymentComp setPaymentView={setPaymentView} type={PackegeType} PackegeId={PackegeId} buyFor={buyFor} />
             }
 
           </>

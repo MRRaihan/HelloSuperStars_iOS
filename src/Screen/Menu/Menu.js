@@ -55,6 +55,8 @@ const Menu = () => {
     liveChats: '',
     auditions: '',
     meetups: '',
+    qna: ''
+
   });
 
   const handleChange = () => {
@@ -116,10 +118,11 @@ const Menu = () => {
       .then(res => {
         setLoder(false);
         setUpCommingEvents({
-          learningSessions: res.data.learningSessions,
-          liveChats: res.data.liveChats,
-          auditions: res.data.auditions,
-          meetups: res.data.meetups,
+          learningSessions: res.data.learningSession,
+          liveChats: res.data.LiveChat,
+          auditions: res.data.audition,
+          meetups: res.data.meetup,
+          qna: res.data.qna
         });
       })
       .catch(err => {
@@ -205,12 +208,12 @@ const Menu = () => {
               }
             });
 
-          Toast.show('Category updated', Toast.SHORT);
+          Toast.show('Category updated', Toast.durations.SHORT);
         }
       })
       .catch(err => {
         console.log(err);
-        Toast.show('problem', Toast.SHORT);
+        Toast.show('problem', Toast.durations.SHORT);
       });
 
     // setPosts([])
@@ -220,78 +223,114 @@ const Menu = () => {
   /**
    * select category
    */
+
+
+
+
+
+
+
+
+  function MenuBackRoute(parmas) {
+
+    if ((menuChange === 1 && childActivityEventType !== 'auction') || (menuChange === 1 && childActivityEventType === 'auction')) {
+      setMenuNavigator(MenuNavigator.MENUACTIVITIES);
+      setMenuChange(0);
+    }
+
+    else if (menuNavigator === MenuNavigator.MENUACTIVITIES || menuNavigator === MenuNavigator.MENUFOLLOWERS) {
+      setMenuNavigator(MenuNavigator.MENUHOME);
+      setMenuChange(0);
+    }
+
+
+    else {
+      Navigation.goBack();
+    }
+  }
+
+
+
+
+
+
+
+
+
   const selectCategory = () => { };
 
   return (
-    <ScrollView
-      style={styles.container}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          colors={['#FFAD00']}
-          progressBackgroundColor="black"
-        />
-      }>
-      {/* <SafeAreaView> */}
-      <HeaderComp />
-      <View
-        style={{
-          backgroundColor: '#171717',
-          flexDirection: 'row',
-          paddingVertical: 6,
-        }}>
+    <>
+      <HeaderComp backFunc={MenuBackRoute} />
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#FFAD00']}
+            progressBackgroundColor="black"
+          />
+        }>
+        {/* <SafeAreaView> */}
+
         <View
           style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginLeft: 8,
-            borderRadius: 50,
-            marginRight: 10,
-            borderColor: '#FFAD00',
-            borderWidth: 1,
-            overflow: 'hidden',
-            padding: 2,
-          }}>
-          <Image
-            source={
-              useInfo?.image !== null
-                ? {
-                  uri: `${AppUrl.MediaBaseUrl + useInfo?.image}`,
-                }
-                : noImage
-            }
-            // source={{
-
-            //   uri: `${AppUrl.MediaBaseUrl + useInfo?.image}`,
-            // }}
-
-            style={{
-              width: 50,
-              height: 50,
-              borderRadius: 50 / 2,
-              resizeMode: 'stretch',
-              margin: -2,
-            }}
-          />
-        </View>
-        <TouchableOpacity
-          onPress={() => Navigation.navigate(navigationStrings.USERPROFILE)}
-          style={{
+            backgroundColor: '#171717',
             flexDirection: 'row',
-            justifyContent: 'space-between',
-            width: '75%',
+            paddingVertical: 6,
           }}>
-          <View style={{ marginLeft: 7 }}>
-            <Text style={{ color: 'white', fontSize: 18 }}>
-              {useInfo?.first_name} {useInfo?.last_name}
-            </Text>
-            <Text style={{ color: 'gray' }}>See your profile</Text>
-          </View>
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 8,
+              borderRadius: 50,
+              marginRight: 10,
+              borderColor: '#FFAD00',
+              borderWidth: 1,
+              overflow: 'hidden',
+              padding: 2,
+            }}>
+            <Image
+              source={
+                useInfo?.image !== null
+                  ? {
+                    uri: `${AppUrl.MediaBaseUrl + useInfo?.image}`,
+                  }
+                  : noImage
+              }
+              // source={{
 
-          {menuNavigator != MenuNavigator.MENUHOME ? (
+              //   uri: `${AppUrl.MediaBaseUrl + useInfo?.image}`,
+              // }}
+
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: 50 / 2,
+                resizeMode: 'stretch',
+                margin: -2,
+              }}
+            />
+          </View>
+          <TouchableOpacity
+            onPress={() => Navigation.navigate(navigationStrings.USERPROFILE)}
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              width: '75%',
+            }}>
+            <View style={{ marginLeft: 7 }}>
+              <Text style={{ color: 'white', fontSize: 18 }}>
+                {useInfo?.first_name} {useInfo?.last_name}
+              </Text>
+              <Text style={{ color: 'gray' }}>See your profile</Text>
+            </View>
+
+            {/* {menuNavigator != MenuNavigator.MENUHOME ? (
             <TouchableOpacity onPress={handleBack}>
-              <View style={{ marginLeft: 2, marginTop: 10 }}>
+              <View style={{marginLeft: 2, marginTop: 10}}>
                 <Ionicons
                   style={{
                     color: 'white',
@@ -303,70 +342,70 @@ const Menu = () => {
             </TouchableOpacity>
           ) : (
             <></>
-          )}
-        </TouchableOpacity>
-      </View>
-
-      <ImageBackground
-        source={imagePath.MenuCover}
-        style={{ width: '100%', alignItems: 'center', paddingVertical: 20 }}>
-        <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-          <TouchableOpacity
-            style={
-              menuNavigator == MenuNavigator.MENUACTIVITIES
-                ? styles.mainRowActive
-                : styles.mainRow
-            }
-            onPress={
-              activityLength > 0
-                ? handleChange
-                : () => {
-                  Toast.show(
-                    "Pleace wait or you don't have any activity",
-                    Toast.SHORT,
-                  );
-                }
-            }>
-            <View style={{ alignItems: 'center', marginTop: 5 }}>
-              <Image source={imagePath.menuIconActivity} />
-            </View>
-            <View>
-              <Text
-                style={
-                  menuNavigator == MenuNavigator.MENUACTIVITIES
-                    ? styles.fontsActive
-                    : styles.fonts
-                }>
-                Activities
-              </Text>
-              <Text style={styles.fonts2}>{activityLength} activities</Text>
-            </View>
+          )} */}
           </TouchableOpacity>
+        </View>
 
-          <TouchableOpacity
-            style={
-              menuNavigator == MenuNavigator.MENUFOLLOWERS
-                ? styles.mainRowActive
-                : styles.mainRow
-            }
-            onPress={handleFollower}>
-            <View style={{ alignItems: 'center', marginTop: 5 }}>
-              <Image source={imagePath.menuIconStar} />
-            </View>
-            <View>
-              <Text
-                style={
-                  menuNavigator == MenuNavigator.MENUFOLLOWERS
-                    ? styles.fontsActive
-                    : styles.fonts
-                }>
-                Followers
-              </Text>
-              <Text style={styles.fonts2}>20 followers</Text>
-            </View>
-          </TouchableOpacity>
+        <ImageBackground
+          source={imagePath.MenuCover}
+          style={{ width: '100%', alignItems: 'center', paddingVertical: 20 }}>
+          <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+            <TouchableOpacity
+              style={
+                menuNavigator == MenuNavigator.MENUACTIVITIES
+                  ? styles.mainRowActive
+                  : styles.mainRow
+              }
+              onPress={
+                activityLength > 0
+                  ? handleChange
+                  : () => {
+                    Toast.show(
+                      "Pleace wait or you don't have any activity",
+                      Toast.durations.SHORT,
+                    );
+                  }
+              }>
+              <View style={{ alignItems: 'center', marginTop: 5 }}>
+                <Image source={imagePath.menuIconActivity} />
+              </View>
+              <View>
+                <Text
+                  style={
+                    menuNavigator == MenuNavigator.MENUACTIVITIES
+                      ? styles.fontsActive
+                      : styles.fonts
+                  }>
+                  Activities
+                </Text>
+                <Text style={styles.fonts2}>{activityLength} activities</Text>
+              </View>
+            </TouchableOpacity>
 
-          {/* <TouchableOpacity style={menuNavigator == MenuNavigator.MENUFANGROUP ? styles.mainRowActive : styles.mainRow}
+            <TouchableOpacity
+              style={
+                menuNavigator == MenuNavigator.MENUFOLLOWERS
+                  ? styles.mainRowActive
+                  : styles.mainRow
+              }
+              onPress={handleFollower}>
+              <View style={{ alignItems: 'center', marginTop: 5 }}>
+                <Image source={imagePath.menuIconStar} />
+              </View>
+              <View>
+                <Text
+                  style={
+                    menuNavigator == MenuNavigator.MENUFOLLOWERS
+                      ? styles.fontsActive
+                      : styles.fonts
+                  }>
+                  Followers
+                </Text>
+                <Text style={styles.fonts2}>20 followers</Text>
+              </View>
+            </TouchableOpacity>
+
+            {/* <TouchableOpacity style={menuNavigator == MenuNavigator.MENUFANGROUP ? styles.mainRowActive : styles.mainRow}
             onPress={handleFanGroup}>
             <View style={{ alignItems: 'center', marginTop: 5 }}>
               <Image source={imagePath.fangroupMenu} />
@@ -379,257 +418,296 @@ const Menu = () => {
             </View>
           </TouchableOpacity> */}
 
-          {/* wallet added  */}
-          <TouchableOpacity
-            style={styles.mainRow}
-            onPress={() => Navigation.navigate(navigationStrings.WALLET)}>
-            <View style={{ alignItems: 'center', marginTop: 5 }}>
-              <Image source={imagePath.Wallet1} />
-            </View>
-            <View>
-              <Text style={styles.fonts}>Wallet</Text>
-              <Text style={styles.fonts2}>{waletInfo?.club_points} credit</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
+            {/* wallet added  */}
+            <TouchableOpacity
+              style={styles.mainRow}
+              onPress={() => Navigation.navigate(navigationStrings.WALLET)}>
+              <View style={{ alignItems: 'center', marginTop: 5 }}>
+                <Image source={imagePath.Wallet1} />
+              </View>
+              <View>
+                <Text style={styles.fonts}>Wallet</Text>
+                <Text style={styles.fonts2}>
+                  {waletInfo?.club_points} credit
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </ImageBackground>
 
-      {/* wallet added  */}
-      {/*
+        {/* wallet added  */}
+        {/*
   <LoaderComp /> */}
-      {menuNavigator == MenuNavigator.MENUHOME ? (
-        <>
-          <ScrollView style={{ backgroundColor: 'black' }}>
-            {loder === true ? (
-              [0, 1, 2, 3].map(item => {
-                if (item === 0) {
-                  return <MenuCategorySkeleton key={item} />;
-                } else {
-                  return <MenuCardSkeleton key={item} />;
-                }
-              })
-            ) : (
-              <>
-                <View style={styles.menuCrosalItem}>
-                  <MenuFilter
-                    loader={selectCatBuffer}
-                    categoryData={allCategoty}
-                    selectHandaler={selectHandaler}
-                  />
-                </View>
-
-                <View style={{ paddingBottom: 5 }}>
-                  {/* Learning Seassion Carusel Iteam start */}
+        {menuNavigator == MenuNavigator.MENUHOME ? (
+          <>
+            <ScrollView style={{ backgroundColor: 'black' }}>
+              {loder === true ? (
+                [0, 1, 2, 3].map(item => {
+                  if (item === 0) {
+                    return <MenuCategorySkeleton key={item} />;
+                  } else {
+                    return <MenuCardSkeleton key={item} />;
+                  }
+                })
+              ) : (
+                <>
                   <View style={styles.menuCrosalItem}>
-                    <View>
-                      {/* <LinearTextGradient
-                        style={styles.titelText}
-                        locations={[0, 1]}
-                        colors={['#ffaa00', '#fcfab6']}
-                        start={{x: 0, y: 0}}
-                        end={{x: 1, y: 0}}> */}
-                      <Text style={styles.titelText}>Learning Seassion</Text>
-                      {/* </LinearTextGradient> */}
-                    </View>
-                    <View style={styles.carouselContainer_gray}>
-                      <View style={{ width: '85%' }}>
-                        <StarCarousel
-                          eventData={upCommingEvents.learningSessions}
-                        />
-                      </View>
-                      <View style={{ width: '15%' }}>
-                        <LinearGradient
-                          colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}
-                          start={{ x: 0, y: 1 }}
-                          end={{ x: 1, y: 0 }}
-                          style={{ borderRadius: 5 }}>
-                          <TouchableOpacity
-                            style={{
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              height: 100,
-                            }}
-                            onPress={() =>
-                              Navigation.navigate(navigationStrings.HOME)
-                            }>
-                            <Text style={{ color: 'black', fontWeight: 'bold' }}>
-                              View
-                            </Text>
-                            <Text style={{ color: 'black', fontWeight: 'bold' }}>
-                              All
-                            </Text>
-                          </TouchableOpacity>
-                        </LinearGradient>
-                      </View>
-                    </View>
+                    <MenuFilter
+                      loader={selectCatBuffer}
+                      categoryData={allCategoty}
+                      selectHandaler={selectHandaler}
+                    />
                   </View>
-                  {/* Learning Seassion Carusel Iteam end */}
 
-                  {/* Live Now Carusel Iteam start */}
-                  <View style={styles.menuCrosalItem}>
-                    <View>
-                      {/* <LinearTextGradient
-                        style={styles.titelText}
-                        locations={[0, 1]}
-                        colors={['#ffaa00', '#fcfab6']}
-                        start={{x: 0, y: 0}}
-                        end={{x: 1, y: 0}}> */}
-                      <Text style={styles.titelText}>Live Chat</Text>
-                      {/* </LinearTextGradient> */}
-                    </View>
-                    <View style={styles.carouselContainer_gray}>
-                      <View style={{ width: '85%' }}>
-                        <StarCarousel eventData={upCommingEvents.liveChats} />
-                      </View>
-                      <View style={{ width: '15%' }}>
-                        <LinearGradient
-                          colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}
-                          start={{ x: 0, y: 1 }}
-                          end={{ x: 1, y: 0 }}
-                          style={{ borderRadius: 5 }}>
-                          <TouchableOpacity
-                            style={{
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              height: 100,
-                            }}
-                            onPress={() =>
-                              Navigation.navigate(navigationStrings.HOME, {})
-                            }>
-                            <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                              View
-                            </Text>
-                            <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                              All
-                            </Text>
-                          </TouchableOpacity>
-                        </LinearGradient>
-                      </View>
-                    </View>
-                  </View>
-                  {/* Live Now Carusel Iteam end */}
+                  <View style={{ paddingBottom: 5 }}>
+                    {/* Learning Seassion Carusel Iteam start */}
+                    {upCommingEvents.learningSessions.length > 0 &&
+                      <View style={styles.menuCrosalItem}>
+                        <View>
 
-                  {/* Upcoming Auditions Carusel Iteam start */}
+                          <Text style={styles.titelText}>Learning Seassion</Text>
 
-                  <View style={styles.menuCrosalItem}>
-                    <View>
-                      {/* <LinearTextGradient
-                        style={styles.titelText}
-                        locations={[0, 1]}
-                        colors={['#ffaa00', '#fcfab6']}
-                        start={{x: 0, y: 0}}
-                        end={{x: 1, y: 0}}> */}
-                      <Text style={styles.titelText}>Upcoming Events</Text>
-                      {/* </LinearTextGradient> */}
-                    </View>
-                    <View style={styles.carouselContainer_gray}>
-                      <View style={{ width: '85%' }}>
-                        <StarCarousel eventData={upCommingEvents.liveChats} />
+                        </View>
+                        <View style={styles.carouselContainer_gray}>
+                          <View style={{ width: '85%' }}>
+                            <StarCarousel
+                              eventData={upCommingEvents.learningSessions}
+                            />
+                          </View>
+                          <View style={{ width: '15%' }}>
+                            <LinearGradient
+                              colors={[
+                                '#F1A817',
+                                '#F5E67D',
+                                '#FCB706',
+                                '#DFC65C',
+                              ]}
+                              start={{ x: 0, y: 1 }}
+                              end={{ x: 1, y: 0 }}
+                              style={{ borderRadius: 5 }}>
+                              <TouchableOpacity
+                                style={{
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  height: 100,
+                                }}
+                                onPress={() =>
+                                  Navigation.navigate(navigationStrings.POSTSHOWBYTYPE, {
+                                    type: 'learningSession'
+                                  })
+                                }>
+                                <Text
+                                  style={{ color: 'black', fontWeight: 'bold' }}>
+                                  View
+                                </Text>
+                                <Text
+                                  style={{ color: 'black', fontWeight: 'bold' }}>
+                                  All
+                                </Text>
+                              </TouchableOpacity>
+                            </LinearGradient>
+                          </View>
+                        </View>
                       </View>
-                      <View style={{ width: '15%' }}>
-                        <LinearGradient
-                          colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}
-                          start={{ x: 0, y: 1 }}
-                          end={{ x: 1, y: 0 }}
-                          style={{ borderRadius: 5 }}>
-                          <TouchableOpacity
-                            style={{
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              height: 100,
-                            }}
-                            onPress={() =>
-                              Navigation.navigate(navigationStrings.HOME)
-                            }>
-                            <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                              View
-                            </Text>
-                            <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                              All
-                            </Text>
-                          </TouchableOpacity>
-                        </LinearGradient>
-                      </View>
-                    </View>
-                  </View>
-                  {/* <View style={styles.menuCrosalItem}>
-                    <View>
-                      <Text style={styles.titelText}>Upcoming Auditions</Text>
-                    </View>
-                    <View style={styles.carouselContainer_gray}>
-                      <View style={{width: '85%'}}>
-                        <StarCarousel eventData={upCommingEvents.auditions} />
-                      </View>
-                      <View style={{width: '15%'}}>
-                        <LinearGradient
-                          colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}
-                          start={{x: 0, y: 1}}
-                          end={{x: 1, y: 0}}
-                          style={{borderRadius: 5}}>
-                          <TouchableOpacity
-                            style={{
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              height: 100,
-                            }}
-                            onPress={() =>
-                              Navigation.navigate(navigationStrings.HOME)
-                            }>
-                            <Text style={{fontWeight:'bold'}}>View</Text>
-                            <Text style={{fontWeight:'bold'}}>All</Text>
-                          </TouchableOpacity>
-                        </LinearGradient>
-                      </View>
-                    </View>
-                  </View> */}
-                  {/* Upcoming Auditions Carusel Iteam end */}
+                    }
 
-                  {/* Meetup Events Carusel Iteam start */}
-                  <View style={styles.menuCrosalItem}>
-                    <View>
-                      {/* <LinearTextGradient
-                        style={styles.titelText}
-                        locations={[0, 1]}
-                        colors={['#ffaa00', '#fcfab6']}
-                        start={{x: 0, y: 0}}
-                        end={{x: 1, y: 0}}> */}
-                      <Text style={styles.titelText}>Meet up Events</Text>
-                      {/* </LinearTextGradient> */}
-                    </View>
-                    <View style={styles.carouselContainer_gray}>
-                      <View style={{ width: '85%' }}>
-                        <StarCarousel eventData={upCommingEvents.meetups} />
-                      </View>
-                      <View style={{ width: '15%' }}>
-                        <LinearGradient
-                          colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}
-                          start={{ x: 0, y: 1 }}
-                          end={{ x: 1, y: 0 }}
-                          style={{ borderRadius: 5 }}>
-                          <TouchableOpacity
-                            style={{
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              height: 100,
-                            }}
-                            onPress={() =>
-                              Navigation.navigate(navigationStrings.HOME)
-                            }>
-                            <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                              View
-                            </Text>
-                            <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                              All
-                            </Text>
-                          </TouchableOpacity>
-                        </LinearGradient>
-                      </View>
-                    </View>
-                  </View>
-                  {/* Meetup Events Carusel Iteam end */}
+                    {/* Learning Seassion Carusel Iteam end */}
 
-                  {/* Wallet */}
-                  {/* <TouchableOpacity style={styles.Wallet}>
+                    {/* Live chat Carusel Iteam start */}
+                    {upCommingEvents.liveChats.length > 0 &&
+                      <View style={styles.menuCrosalItem}>
+                        <View>
+                          <Text style={styles.titelText}>Live Chat</Text>
+                        </View>
+                        <View style={styles.carouselContainer_gray}>
+                          <View style={{ width: '85%' }}>
+                            <StarCarousel eventData={upCommingEvents.liveChats} />
+                          </View>
+                          <View style={{ width: '15%' }}>
+                            <LinearGradient
+                              colors={[
+                                '#F1A817',
+                                '#F5E67D',
+                                '#FCB706',
+                                '#DFC65C',
+                              ]}
+                              start={{ x: 0, y: 1 }}
+                              end={{ x: 1, y: 0 }}
+                              style={{ borderRadius: 5 }}>
+                              <TouchableOpacity
+                                style={{
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  height: 100,
+                                }}
+                                onPress={() =>
+                                  Navigation.navigate(navigationStrings.POSTSHOWBYTYPE, {
+                                    type: 'livechat'
+                                  })
+                                }>
+                                <Text
+                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  View
+                                </Text>
+                                <Text
+                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  All
+                                </Text>
+                              </TouchableOpacity>
+                            </LinearGradient>
+                          </View>
+                        </View>
+                      </View>
+                    }
+                    {/* Live chat Carusel Iteam end */}
+
+                    {/* Upcoming Auditions Carusel Iteam start */}
+                    {upCommingEvents.auditions.length > 0 &&
+                      <View style={styles.menuCrosalItem}>
+                        <View>
+                          <Text style={styles.titelText}>Auditions</Text>
+                        </View>
+                        <View style={styles.carouselContainer_gray}>
+                          <View style={{ width: '85%' }}>
+                            <StarCarousel eventData={upCommingEvents.auditions} />
+                          </View>
+                          <View style={{ width: '15%' }}>
+                            <LinearGradient
+                              colors={[
+                                '#F1A817',
+                                '#F5E67D',
+                                '#FCB706',
+                                '#DFC65C',
+                              ]}
+                              start={{ x: 0, y: 1 }}
+                              end={{ x: 1, y: 0 }}
+                              style={{ borderRadius: 5 }}>
+                              <TouchableOpacity
+                                style={{
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  height: 100,
+                                }}
+                                onPress={() =>
+                                  Navigation.navigate(navigationStrings.POSTSHOWBYTYPE, {
+                                    type: 'audition'
+                                  })
+                                }>
+                                <Text
+                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  View
+                                </Text>
+                                <Text
+                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  All
+                                </Text>
+                              </TouchableOpacity>
+                            </LinearGradient>
+                          </View>
+                        </View>
+                      </View>
+                    }
+
+                    {/* Upcoming Auditions Carusel Iteam end */}
+
+                    {/* Meetup Events Carusel Iteam start */}
+                    {upCommingEvents.meetups.length > 0 &&
+                      <View style={styles.menuCrosalItem}>
+                        <View>
+                          <Text style={styles.titelText}>Meet up Events</Text>
+                        </View>
+                        <View style={styles.carouselContainer_gray}>
+                          <View style={{ width: '85%' }}>
+                            <StarCarousel eventData={upCommingEvents.meetups} />
+                          </View>
+                          <View style={{ width: '15%' }}>
+                            <LinearGradient
+                              colors={[
+                                '#F1A817',
+                                '#F5E67D',
+                                '#FCB706',
+                                '#DFC65C',
+                              ]}
+                              start={{ x: 0, y: 1 }}
+                              end={{ x: 1, y: 0 }}
+                              style={{ borderRadius: 5 }}>
+                              <TouchableOpacity
+                                style={{
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  height: 100,
+                                }}
+                                onPress={() =>
+                                  Navigation.navigate(navigationStrings.POSTSHOWBYTYPE, {
+                                    type: 'meetup'
+                                  })
+                                }>
+                                <Text
+                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  View
+                                </Text>
+                                <Text
+                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  All
+                                </Text>
+                              </TouchableOpacity>
+                            </LinearGradient>
+                          </View>
+                        </View>
+                      </View>
+                    }
+                    {/* Meetup Events Carusel Iteam end */}
+
+                    {/* Meetup qna Carusel Iteam start */}
+                    {upCommingEvents.qna.length > 0 &&
+                      <View style={styles.menuCrosalItem}>
+                        <View>
+                          <Text style={styles.titelText}>Question & Answer</Text>
+                        </View>
+                        <View style={styles.carouselContainer_gray}>
+                          <View style={{ width: '85%' }}>
+                            <StarCarousel eventData={upCommingEvents.qna} />
+                          </View>
+                          <View style={{ width: '15%' }}>
+                            <LinearGradient
+                              colors={[
+                                '#F1A817',
+                                '#F5E67D',
+                                '#FCB706',
+                                '#DFC65C',
+                              ]}
+                              start={{ x: 0, y: 1 }}
+                              end={{ x: 1, y: 0 }}
+                              style={{ borderRadius: 5 }}>
+                              <TouchableOpacity
+                                style={{
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  height: 100,
+                                }}
+                                onPress={() =>
+                                  Navigation.navigate(navigationStrings.POSTSHOWBYTYPE, {
+                                    type: 'qna'
+                                  })
+                                }>
+                                <Text
+                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  View
+                                </Text>
+                                <Text
+                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  All
+                                </Text>
+                              </TouchableOpacity>
+                            </LinearGradient>
+                          </View>
+                        </View>
+                      </View>
+                    }
+                    {/* Meetup Events Carusel Iteam end */}
+
+                    {/* Wallet */}
+                    {/* <TouchableOpacity style={styles.Wallet}>
 
                   <View style={{ flex: 2 }}>
                     <Image source={imagePath.Wallet1} />
@@ -651,103 +729,123 @@ const Menu = () => {
                   </View>
 
                 </TouchableOpacity> */}
+                  </View>
+                </>
+              )}
+
+              <TouchableOpacity style={styles.Wallet1}>
+                <View style={{ flex: 2 }}>
+                  <Image source={imagePath.Setting1} />
                 </View>
-              </>
-            )}
-
-            <TouchableOpacity style={styles.Wallet1}>
-              <View style={{ flex: 2 }}>
-                <Image source={imagePath.Setting1} />
-              </View>
-              <View style={{ flex: 10 }}>
-                <Text style={styles.TextWTS}>Setting</Text>
-              </View>
-            </TouchableOpacity>
-
-            <LinearGradient
-              colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}
-              start={{ x: 1, y: 0 }}
-              end={{ x: 0, y: 0 }}
-              style={{ marginVertical: 30 }}>
-              <TouchableOpacity
-                style={{
-                  flexDirection: 'row',
-                  paddingVertical: 10,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                onPress={() => authContext.signOut()}>
-                <MaterialCommunityIcons
-                  name="logout"
-                  color={'black'}
-                  size={20}
-                />
-                <Text style={{ color: 'black' }}>LOGOUT</Text>
+                <View style={{ flex: 10 }}>
+                  <Text style={styles.TextWTS}>Setting</Text>
+                </View>
               </TouchableOpacity>
-            </LinearGradient>
-          </ScrollView>
-        </>
-      ) : (
-        <></>
-      )}
-      {menuNavigator == MenuNavigator.MENUACTIVITIES && menuChange === 0 ? (
-        <>
-          {/* {loder ===true && [1, 2, 3, 4,5].map((index) =>
+
+              <LinearGradient
+                colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}
+                start={{ x: 1, y: 0 }}
+                end={{ x: 0, y: 0 }}
+                style={{ marginVertical: 30 }}>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    paddingVertical: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                  onPress={() => authContext.signOut()}>
+                  <MaterialCommunityIcons
+                    name="logout"
+                    color={'black'}
+                    size={20}
+                  />
+                  <Text style={{ color: 'black' }}>LOGOUT</Text>
+                </TouchableOpacity>
+              </LinearGradient>
+            </ScrollView>
+          </>
+        ) : (
+          <></>
+        )}
+        {menuNavigator == MenuNavigator.MENUACTIVITIES && menuChange === 0 ? (
+          <>
+            {/* {loder ===true && [1, 2, 3, 4,5].map((index) =>
     <ActivityListSkeleton key={index} />)
     } */}
 
-          {loder === true ? (
-            [1, 2, 3, 4, 5].map(index => <ActivityListSkeleton key={index} />)
-          ) : (
-            <MenuActivities
-              menuActivitList={menuActivitList}
-              menuChange={menuChange}
-              setChildActivityEventType={setChildActivityEventType}
-              setChildActivityEventList={setChildActivityEventList}
-              setMenuChange={setMenuChange}
-            />
-          )}
-        </>
-      ) : (
-        <></>
-      )}
-      {menuChange === 1 ? (
-        <>
-          {childActivityEventType === 'auction' ? (
-            <>
-              <AuctionActivityCard
-                childActivityEventList={childActivityEventList}
-                childActivityEventType={childActivityEventType}
+            {loder === true ? (
+              [1, 2, 3, 4, 5].map(index => <ActivityListSkeleton key={index} />)
+            ) : (
+              <MenuActivities
+                setMenuNavigator={setMenuNavigator}
+                menuNavigator={menuNavigator}
+                menuActivitList={menuActivitList}
+                menuChange={menuChange}
+                setChildActivityEventType={setChildActivityEventType}
+                setChildActivityEventList={setChildActivityEventList}
+                setMenuChange={setMenuChange}
               />
-            </>
-          ) : (
-            <></>
-          )}
-          {childActivityEventType != 'auction' ? (
-            <>
-              <ActivitiesCard
-                childActivityEventList={childActivityEventList}
-                childActivityEventType={childActivityEventType}
-              />
-            </>
-          ) : (
-            <></>
-          )}
-        </>
-      ) : // <ActivityEventList childActivityEventList={childActivityEventList} childActivityEventType={childActivityEventType} />
-        null}
-      {menuNavigator == MenuNavigator.MENUFOLLOWERS ? <MenuFollowers /> : <></>}
-      {menuNavigator == MenuNavigator.MENUFANGROUP ? <MenuFanGroup /> : <></>}
+            )}
+          </>
+        ) : (
+          <></>
+        )}
+        {menuChange === 1 ? (
+          <>
+            {childActivityEventType === 'auction' ? (
+              <>
+                <AuctionActivityCard
+                  menuNavigator={menuNavigator}
+                  menuChange={menuChange}
+                  setMenuNavigator={setMenuNavigator}
+                  setMenuChange={setMenuChange}
+                  childActivityEventList={childActivityEventList}
+                  childActivityEventType={childActivityEventType}
+                />
+              </>
+            ) : (
+              <></>
+            )}
+            {childActivityEventType != 'auction' ? (
+              <>
+                <ActivitiesCard
 
-      {/*
+                  menuNavigator={menuNavigator}
+                  menuChange={menuChange}
+                  setMenuNavigator={setMenuNavigator}
+                  setMenuChange={setMenuChange}
+                  childActivityEventList={childActivityEventList}
+                  childActivityEventType={childActivityEventType}
+                />
+              </>
+            ) : (
+              <></>
+            )}
+          </>
+        ) : // <ActivityEventList childActivityEventList={childActivityEventList} childActivityEventType={childActivityEventType} />
+          null}
+        {menuNavigator == MenuNavigator.MENUFOLLOWERS ? (
+          <MenuFollowers setMenuNavigator={setMenuNavigator}
+            menuNavigator={menuNavigator}
+            menuChange={menuChange}
+            setMenuChange={setMenuChange}
+          />
+        ) : (
+          <></>
+        )}
+        {menuNavigator == MenuNavigator.MENUFANGROUP ? <MenuFanGroup /> : <></>}
+
+        {/*
   <MenuHome />
   <MenuActivities />
   <MenuFollowers />
   <MenuFanGroup /> */}
 
-      {/*
+        {/*
 </SafeAreaView> */}
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 };
 

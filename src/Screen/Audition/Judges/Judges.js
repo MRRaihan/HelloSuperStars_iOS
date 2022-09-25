@@ -1,45 +1,114 @@
-import React from 'react'
-import { Image, StyleSheet, View } from 'react-native'
-import Heading from '../../../Components/GLOBAL/Reuseable/Heading'
-import HeaderComp from '../../../Components/HeaderComp'
-// import Heading from '../../../Components/Reuseable/Heading'
+import React from 'react';
+import {Image, ScrollView, StyleSheet, View} from 'react-native';
+import Heading from '../../../Components/GLOBAL/Reuseable/Heading';
+import HeaderComp from '../../../Components/HeaderComp';
+import {FlatGrid} from 'react-native-super-grid';
+import UnderlineImage from '../../../Components/GLOBAL/Reuseable/UnderlineImage';
+import imagePath from '../../../Constants/imagePath';
 
-import UnderlineImage from '../../../Components/GLOBAL/Reuseable/UnderlineImage'
-import imagePath from '../../../Constants/imagePath'
-import RoundTopBanner from '../Round1/RoundTopBanner'
+import RoundTopBanner from '../Round1/RoundTopBanner';
+import {Text} from 'react-native-paper';
+import AppUrl from '../../../RestApi/AppUrl';
 
-const Judges = () => {
+const Judges = ({navigation, route}) => {
+  const {
+    title,
+    roundName,
+    auditionTitle,
+    auditionImage,
+    auditionId,
+    roundId,
+    remainingTime,
+    judges,
+    juries,
+  } = route.params;
+  console.log('remainTime', route.params);
   return (
-    <View style={styles.container}>
-      <HeaderComp />
-      <RoundTopBanner title='AUDITION FIRST ROUND ENDING SOON' />
-      <View style={{ backgroundColor: '#272727', paddingBottom: 10, borderRadius: 10 }}>
-        <Heading heading="Incredible jury waiting for you" />
-        <UnderlineImage />
-        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+    <ScrollView>
+      <View style={styles.container}>
+        <HeaderComp backFunc={() => navigation.goBack()} />
+        <RoundTopBanner
+          title={title}
+          RoundName={roundName}
+          auditionTitle={auditionTitle}
+          auditionImage={auditionImage}
+          remainingTime={remainingTime}
+        />
+        <View
+          style={{
+            backgroundColor: '#272727',
+            paddingBottom: 10,
+            borderRadius: 10,
+          }}>
+          <Heading heading="Who will judge you" />
+          <UnderlineImage />
 
-          <View style={styles.borderBg}>
-            <Image source={imagePath.judge1} style={{ height: '100%', width: '100%' }} />
-          </View>
-          <View style={styles.borderBg}>
-            <Image source={imagePath.judge2} style={{ height: '100%', width: '100%' }} />
-          </View>
-
+          <FlatGrid
+            itemDimension={180}
+            data={judges}
+            renderItem={({item}) => {
+              return (
+                <View style={styles.borderBg}>
+                  {item.user.image === null ? (
+                    <Image
+                      source={imagePath.noImageUser}
+                      style={{height: '90%', width: '100%'}}
+                    />
+                  ) : (
+                    <Image
+                      source={{
+                        uri: AppUrl.MediaBaseUrl + item.user.image,
+                      }}
+                      style={{height: '90%', width: '100%'}}
+                    />
+                  )}
+                  <Text style={{color: 'white', textAlign: 'center'}}>
+                    {item.user.first_name} {item.user.last_name}
+                  </Text>
+                </View>
+              );
+            }}
+          />
+          <Heading heading="Incredible jury waiting for you" />
+          <UnderlineImage />
+          <FlatGrid
+            itemDimension={180}
+            data={juries}
+            renderItem={({item}) => {
+              return (
+                <View style={styles.borderBg}>
+                  {item.user.image === null ? (
+                    <Image
+                      source={imagePath.noImageUser}
+                      style={{height: '90%', width: '100%'}}
+                    />
+                  ) : (
+                    <Image
+                      source={{
+                        uri: AppUrl.MediaBaseUrl + item.user.image,
+                      }}
+                      style={{height: '90%', width: '100%'}}
+                    />
+                  )}
+                  <Text style={{color: 'white', textAlign: 'center'}}>
+                    {item.user.first_name} {item.user.last_name}
+                  </Text>
+                </View>
+              );
+            }}
+          />
         </View>
-        {/* <View>
-
-        </View> */}
       </View>
-    </View>
-  )
-}
+    </ScrollView>
+  );
+};
 
-export default Judges
+export default Judges;
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'black',
-    flex: 1
+    flex: 1,
   },
   jamesImg: {
     flexDirection: 'row',
@@ -62,12 +131,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   borderBg: {
-
     margin: 8,
     borderColor: '#ff0',
     borderWidth: 1,
-    height: 150,
-    width: '40%',
+    height: 180,
+    width: '90%',
     overflow: 'hidden',
     borderRadius: 10,
   },
@@ -79,4 +147,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-})
+});

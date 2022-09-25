@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Image, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { Image, Text, TouchableOpacity, View, useWindowDimensions} from 'react-native';
 import Toast from 'react-native-root-toast';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -60,7 +60,7 @@ const FangroupCard = ({ data }) => {
     axios.post(AppUrl.FanGroupLike + data.id, LinkIds, axiosConfig).then((res) => {
       console.log(res.data)
       if (res.data.status === 200) {
-        Toast.show(mesg, Toast.SHORT);
+        Toast.show(mesg, Toast.durations.SHORT);
       }
     }).catch((err) => {
 

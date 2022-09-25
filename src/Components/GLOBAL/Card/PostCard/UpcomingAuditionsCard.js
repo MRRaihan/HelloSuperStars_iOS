@@ -1,219 +1,280 @@
-import React from 'react';
+import React, {useState} from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import imagePath from '../../../../Constants/imagePath';
-import VideoPlayer from 'react-native-video-player'
+import RenderHtml from 'react-native-render-html';
+import VideoPlayer from 'react-native-video-player';
+
+import * as Animatable from 'react-native-animatable';
+import LinearGradient from 'react-native-linear-gradient';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {
-View,
-Text,
-Image,
-TouchableOpacity,
-Button,
-ImageBackground,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Button,
+  ImageBackground,
+  useWindowDimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import styles from './styles';
 import navigationStrings from '../../../../Constants/navigationStrings';
 import {useNavigation} from '@react-navigation/native';
-
+import AppUrl from '../../../../RestApi/AppUrl';
 export default function UpcomingAuditionsCard(props) {
-const Navigation = useNavigation();
-return (
-<View>
+  const {width} = useWindowDimensions();
+  const post = props.post;
+  console.log(post);
+  const Navigation = useNavigation();
+  const [share, setShare] = useState(false);
+  const [like, setlike] = useState(0);
+  const [likeCount, setLikeCount] = useState(0);
+  const [postShare, setPostShare] = useState(0);
+  const handelLike = () => {
+    setlike(!like);
+    if (like) {
+      setLikeCount(prev => {
+        handelLikeUnlike(likeId.slice(0, likeId.length), 'Unlike');
 
-    <View style={styles.CardRow}>
+        return prev - 1;
+      });
+    }
+    if (!like) {
+      setLikeCount(prev => {
+        handelLikeUnlike([...likeId, useInfo.id], 'Like');
 
-        <View style={styles.CardContent}>
+        return prev + 1;
+      });
+    }
 
-            <View style={{position: 'relative',}}>
+    // console.log('fdjkgdg', userLikeIds + post?.id)
+  };
+  const onShare = async () => {
+    axios
+      .get(AppUrl.PostShare + post.id, axiosConfig)
+      .then(res => {
+        console.log(res);
+        setPostShare(post?.share_count + 1);
+      })
+      .catch(err => {
+        console.log(err.message);
+      });
 
-                <ImageBackground source={imagePath.BannerAu} style={styles.BannerCardImg}>
-                    <Text style={styles.TextBanner}>Audition Title</Text>
-                </ImageBackground>
+    try {
+      const result = await Share.share({
+        title: 'app Link',
+        message: `https://www.hellosuperstars.com/ `,
+        url: `https://www.hellosuperstars.com`,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
-                <Image style={styles.cardCoverImg} source={imagePath.meetUpBanner2} />
+  const dateMonthConverter = (date = null) => {
+    const d = new Date(date);
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const monthName = months[d.getMonth()];
+    const day = d.getDate();
+    return monthName + ' ' + day;
+  };
 
-                <View style={styles.BannerCs}>
-
-                    <View>
-                        <Text style={styles.BannerCsText}>With :</Text>
-                    </View>
-
-                    <View style={styles.SText}>
-                        <Image style={styles.starCardImg} source={imagePath.cardProfileIcon} />
-                    </View>
-
-                    <View>
-                        <Image style={styles.starCardImgA} source={imagePath.cardProfileIcon} />
-                    </View>
-
-                    <View style={styles.SText}>
-                        <Image style={styles.starCardImg} source={imagePath.cardProfileIcon} />
-                    </View>
-
+  return post.map((item, index) => {
+    return (
+      <View>
+        <View style={styles.CardRow}>
+          <View style={styles.CardContent}>
+            <View style={{position: 'relative'}}>
+              <ImageBackground
+                source={imagePath.BannerAu}
+                style={styles.BannerCardImg}>
+                <View style={styles.TextBanner}>
+                  <RenderHtml
+                    contentWidth={width}
+                    source={{
+                      html: `<div style='color:#F6EA45; display: inline; font-size: 18px; font-weight: 'bold'>${item.audition.description}</div>`,
+                    }}
+                    style={{color: 'red'}}
+                  />
                 </View>
-
-                <View style={styles.mainMeetUpView}>
+              </ImageBackground>
+              <VideoPlayer
+                style={styles.BannerCardImg}
+                video={{
+                  uri: `${AppUrl.MediaBaseUrl}${item.audition.video}`,
+                }}
+                videoWidth={1600}
+                videoHeight={900}
+                thumbnail={{
+                  uri: `${AppUrl.MediaBaseUrl}${item.audition.banner}`,
+                }}
+                blurRadius={10}
+              />
+              <View style={styles.BannerCse}>
+                <View style={{paddingVertical: 2}}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      fontSize: 18,
+                      paddingHorizontal: 3,
+                      paddingTop: 2,
+                    }}>
                     <View style={{paddingVertical: 2}}>
-
-                        <Text
-                            style={{color: 'white', fontWeight: 'bold', fontSize: 18,paddingHorizontal:3,paddingTop:2}}>
-                            FROM JUNE 25 - july 30
-                        </Text>
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontWeight: 'bold',
+                          fontSize: 15,
+                          paddingHorizontal: 3,
+                          paddingTop: 2,
+                        }}>
+                        FROM {dateMonthConverter(item.audition.start_date)} -{' '}
+                        {dateMonthConverter(item.audition.end_date)}
+                      </Text>
                     </View>
-                    <View style={{justifyContent: 'center'}}>
-                        <TouchableOpacity onPress={()=>Navigation.navigate(navigationStrings.MEETUP,{type:'online'})}
-                            style={styles.meetupBtn}>
-                            <Text style={styles.meetupTxt}>Registration</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-
-            <View style={styles.cardInfo}>
-                <View>
-                    <Text style={styles.infoText}>
-                        <FontAwesome5 name={'heart'} />
-                        240
-                    </Text>
-                </View>
-                <View style={{flexDirection: 'row'}}>
-                    <View>
-                        <Text style={styles.infoText}>16 Comments</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.infoText}>106 Share</Text>
-                    </View>
-                </View>
-            </View>
-            <View style={{
-              borderBottomColor: 'black',
-              borderBottomWidth: 0.7,
-              margin: 10,
-            }} />
-            <View style={styles.cardButtons}>
-                <TouchableOpacity style={styles.likeBtn}>
-                    <Text style={styles.btnText}>
-                        {' '}
-                        <Icon name="heart" color={'red'} />
-                        Like
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.likeBtn}>
-                    <Text style={styles.btnText}>
-                        {' '}
-                        <FontAwesome5 name={'comment'} />
-                        Comment
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.likeBtn}>
-                    <Text style={styles.btnText}>
-                        {' '}
-                        <FontAwesome5 name={'share'} />
-                        Share
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-    </View>
-
-    <View style={styles.CardRow}>
-
-        <View style={styles.CardContent}>
-
-            <View style={{position: 'relative',}}>
-                <ImageBackground source={imagePath.BannerAu} style={styles.BannerCardImg}>
-                    <Text style={styles.TextBanner}>Audition Title</Text>
-                </ImageBackground>
-                <Image style={styles.cardCoverImg} source={imagePath.meetUpBanner2} />
-                {/*
-                <VideoPlayer video={{ uri: 'http:///backend.hellosuperstars.com/assets/video/demoVedio1.mp4' }}
-                    videoWidth={100} videoHeight={80} autoplay={true} pauseOnPress hideControlsOnStart
-                    resizeMode='contain' /> */}
-                <View style={styles.BannerCse}>
-                    <View style={{paddingVertical: 2}}>
-
-                        <Text
-                            style={{color: 'white', fontWeight: 'bold', fontSize: 18,paddingHorizontal:3,paddingTop:2}}>
-                            FROM JUNE 25 - july 30
-                        </Text>
-                    </View>
-                    <View style={{justifyContent: 'center'}}>
-                        <TouchableOpacity onPress={()=>Navigation.navigate(navigationStrings.MEETUP,{type:'online'})}
-                            style={styles.meetupBtn}>
-                            <Text style={styles.meetupTxt}>Registration</Text>
-                        </TouchableOpacity>
-                    </View>
+                  </Text>
                 </View>
 
+                <View
+                  style={{
+                    justifyContent: 'flex-end',
+                    marginHorizontal: 10,
+                    marginVertical: 5,
+                  }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      return Navigation.navigate(
+                        navigationStrings.AUDITIONREGISTER,
+                        {
+                          data: item,
+                        },
+                      );
+                    }}>
+                    <LinearGradient
+                      style={styles.meetupBtn}
+                      colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}>
+                      <Animatable.Text
+                        animation="pulse"
+                        easing="ease-out"
+                        iterationCount="infinite"
+                        style={{color: '#fff', fontSize: 12}}>
+                        Register Now
+                      </Animatable.Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
 
             <View style={styles.BannerCse}>
-
-                <View>
-                    <Text style={styles.BannerCseText}>With :</Text>
-                </View>
-
-                <View style={styles.SText}>
-                    <Image style={styles.starCardImg} source={imagePath.cardProfileIcon} />
-                </View>
-
-                <View>
-                    <Image style={styles.starCardImgA} source={imagePath.cardProfileIcon} />
-                </View>
-
-                <View style={styles.SText}>
-                    <Image style={styles.starCardImg} source={imagePath.cardProfileIcon} />
-                </View>
-
+              <View>
+                <Text style={styles.BannerCseText}>With :</Text>
+              </View>
+              {item.audition?.assigned_judges?.map(judge => {
+                return (
+                  <>
+                    <View style={styles.SText}>
+                      {/* <Text style={{ color: 'white' }}>AppUrl.MediaBaseUrl + judge?.user?.image</Text> */}
+                      <Image
+                        style={styles.starCardImg}
+                        source={AppUrl.MediaBaseUrl + judge?.user?.image}
+                      />
+                    </View>
+                  </>
+                );
+              })}
             </View>
 
             <View style={styles.cardInfo}>
+              <View style={{flexDirection: 'row', marginTop: 5}}>
+                <Text style={styles.infoText}>
+                  <Icon name="heart" color={'red'} size={12} />
+                </Text>
+                <Text style={{marginLeft: 4, color: '#d9d9d9'}}>
+                  {likeCount}
+                </Text>
+              </View>
+              <View style={{flexDirection: 'row'}}>
+                <View style={{marginTop: 7}}>
+                  <Icon name="paper-plane" color={'#03a5fc'} size={12} />
+                </View>
                 <View>
-                    <Text style={styles.infoText}>
-                        <FontAwesome5 name={'heart'} />
-                        240
-                    </Text>
+                  <Text style={styles.infoText}>{postShare} Share</Text>
                 </View>
-                <View style={{flexDirection: 'row'}}>
-                    <View>
-                        <Text style={styles.infoText}>16 Comments</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.infoText}>106 Share</Text>
-                    </View>
-                </View>
+              </View>
             </View>
-            <View style={{
-      borderBottomColor: 'black',
-      borderBottomWidth: 0.7,
-      margin: 10,
-    }} />
             <View style={styles.cardButtons}>
-                <TouchableOpacity style={styles.likeBtn}>
-                    <Text style={styles.btnText}>
-                        {' '}
-                        <Icon name="heart" color={'red'} />
-                        Like
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.likeBtn}>
-                    <Text style={styles.btnText}>
-                        {' '}
-                        <FontAwesome5 name={'comment'} />
-                        Comment
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.likeBtn}>
-                    <Text style={styles.btnText}>
-                        {' '}
-                        <FontAwesome5 name={'share'} />
-                        Share
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-    </View>
+              <TouchableOpacity style={styles.likeBtn} onPress={handelLike}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    paddingHorizontal: 10,
+                    marginTop: 5,
+                  }}>
+                  <View>
+                    {like ? (
+                      <Icon name="heart" color={'red'} size={22} />
+                    ) : (
+                      <AntDesign name="hearto" color={'red'} size={22} />
+                    )}
+                  </View>
+                  <Text style={{marginLeft: 8, marginTop: 1, color: '#d9d9d9'}}>
+                    Like
+                  </Text>
+                </View>
+              </TouchableOpacity>
 
-</View>
-);
+              <TouchableOpacity
+                style={styles.likeBtn}
+                onPress={() => {
+                  setShare(!share);
+                  onShare();
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    paddingHorizontal: 10,
+                    marginTop: 5,
+                  }}>
+                  <View>
+                    {share ? (
+                      <Icon name="paper-plane" color={'#03a5fc'} size={21} />
+                    ) : (
+                      <Icon name="paper-plane-o" color={'#03a5fc'} size={21} />
+                    )}
+                  </View>
+                  <Text style={{marginLeft: 8, marginTop: 1, color: '#d9d9d9'}}>
+                    Share
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  });
 }

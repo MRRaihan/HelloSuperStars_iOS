@@ -25,11 +25,13 @@ const Message = ({ navigation }) => {
 
 
 
+  console.log('mychat list', resData)
+
 
 
   return (
     <View style={{ flex: 1, backgroundColor: 'black' }}>
-      <HeaderComp msgNotificaiton='msgNotification' />
+      <HeaderComp backFunc={() => navigation.goBack()} />
 
 
       <View style={{ backgroundColor: 'black', marginVertical: 3 }}>

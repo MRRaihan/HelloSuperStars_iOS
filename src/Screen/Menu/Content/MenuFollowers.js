@@ -4,7 +4,9 @@ import {FlatGrid} from 'react-native-super-grid';
 import {SwiperFlatList} from 'react-native-swiper-flatlist';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import imagePath from '../../../Constants/imagePath';
+import { BackHandler } from "react-native";
 import styles from './FollowersStyle';
+
 const dummyData = [
   {
     name: 'Shakib All Hasan',
@@ -47,13 +49,40 @@ const suggetionDummy = [
     type: 'Follow',
   },
 ];
-const MenuFollowers = () => {
+
+
+
+const MenuFollowers = ({setMenuNavigator,MenuNavigator,menuChange,setMenuChange}) => {
   const Category = ['Bollywood', 'Tollywood', 'Hollywood', 'Kollywood'];
   const [select, setSelect] = useState();
   const [data, setData] = React.useState(dummyData);
   const [data2, setData2] = React.useState(suggetionDummy);
   const [userData, setUserData] = useState(false);
   const [userData2, setUserData2] = useState(false);
+
+
+
+
+//============back handler==================
+function handleBackButtonClick() {
+  setMenuNavigator('MenuHome');
+  setMenuChange(0);
+  return true;
+  
+  }
+  
+  React.useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
+    };
+  }, []);
+  
+  
+  //============back handler==================
+
+
+
   const updateObjectInArray = click_id => {
     setData(current =>
       current.map(obj => {
@@ -85,6 +114,20 @@ const MenuFollowers = () => {
       }),
     );
   };
+
+
+  // function handleBackButtonClick() {
+  //   setMenuNavigator('MenuHome');
+  //   return true
+     
+  //     }
+      
+  //     React.useEffect(() => {
+  //       BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+  //       return () => {
+  //         BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
+  //       };
+  //     }, []);
 
   return (
     <View>

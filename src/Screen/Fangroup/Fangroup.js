@@ -104,7 +104,7 @@ const Fangroup = ({ route }) => {
                 if (res.data.status == 200) {
                   console.log(res.data)
                   HandelGetData()
-                  Toast.show('Posted', Toast.SHORT);
+                  Toast.show('Posted', Toast.durations.SHORT);
                 }
               })
               .catch(err => {
@@ -115,12 +115,12 @@ const Fangroup = ({ route }) => {
           }
         })
         .catch(err => {
-          Toast.show(err.message, Toast.SHORT);
+          Toast.show(err.message, Toast.durations.SHORT);
           console.log(err);
         });
     } else {
 
-      Toast.show("please Select Media", Toast.SHORT);
+      Toast.show("please Select Media", Toast.durations.SHORT);
     }
 
 
@@ -134,7 +134,7 @@ const Fangroup = ({ route }) => {
     if (videoUpload.uri) {
       setPostBuffer(true)
       axios
-        .post(AppUrl.GroupVideoUpload, videoUpload, axiosConfig)
+        .post(AppUrl.OnlyMediaUpload, videoUpload, axiosConfig)
         .then(res => {
           if (res.data.status == 200) {
             setVideoUpload({
@@ -158,7 +158,7 @@ const Fangroup = ({ route }) => {
                 if (res.data.status == 200) {
                   console.log(res.data)
                   HandelGetData()
-                  Toast.show('Posted', Toast.SHORT);
+                  Toast.show('Posted', Toast.durations.SHORT);
                 }
               })
               .catch(err => {
@@ -169,12 +169,12 @@ const Fangroup = ({ route }) => {
           }
         })
         .catch(err => {
-          Toast.show(err.message, Toast.SHORT);
+          Toast.show(err.message, Toast.durations.SHORT);
           console.log(err);
         });
     } else {
 
-      Toast.show("please Select Media", Toast.SHORT);
+      Toast.show("please Select Media", Toast.durations.SHORT);
     }
 
 
@@ -211,7 +211,7 @@ const Fangroup = ({ route }) => {
 
         })
           .catch(err => {
-            Toast.show(err.message, Toast.SHORT);
+            Toast.show(err.message, Toast.durations.SHORT);
           });
 
 

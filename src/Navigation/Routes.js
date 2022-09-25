@@ -12,11 +12,13 @@ import { AuthContext } from '../Constants/context';
 import AppUrl from '../RestApi/AppUrl';
 import Loader from '../Screen/Auth/Loader';
 import axios from 'axios';
+
 const Stack = createNativeStackNavigator();
 
 const Routes = () => {
   const [loading, setLoading] = useState(true);
   const [userToken, setUserToken] = useState('');
+
   const [useInfo, setUserInfo] = useState({});
   const [notification, setNotification] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -191,13 +193,13 @@ const Routes = () => {
         setPosts,
         posts,
         setWaletInfo,
-        waletInfo
+        waletInfo,
+        socket
       }}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {/* !!loginStatus */}
-        {loginStatus ? <>{MainStack(Stack)}</> : <>{AuthStack(Stack)}</>}
-          {/* <>{MainStack(Stack)}</> */}
+          {!!loginStatus ? <>{MainStack(Stack)}</> : <>{AuthStack(Stack)}</>}
         </Stack.Navigator>
       </NavigationContainer>
     </AuthContext.Provider>

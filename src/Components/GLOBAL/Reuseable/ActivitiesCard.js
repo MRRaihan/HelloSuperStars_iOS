@@ -1,58 +1,87 @@
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import moment from 'moment';
-import React, { useContext, useState } from 'react';
-import { Image, Linking, Text, TouchableOpacity, View } from 'react-native';
-import { FlatGrid } from 'react-native-super-grid';
-import { AuthContext } from '../../Constants/context';
+import React, {useContext, useEffect, useState} from 'react';
+import {Image, Linking, Text, TouchableOpacity, View} from 'react-native';
+import {FlatGrid} from 'react-native-super-grid';
+import {AuthContext} from '../../Constants/context';
 // import AppUrl from '../../RestApi/AppUrl';
 import styles from './ActivitiesCardStyle';
-
+import {BackHandler} from 'react-native';
 import imagePath from '../../../Constants/imagePath';
 import navigationStrings from '../../../Constants/navigationStrings';
 import AppUrl from '../../../RestApi/AppUrl';
+import MenuNavigator from '../../../Screen/Menu/MenuNavigator';
 
+const ActivitiesCard = ({
+  childActivityEventList,
+  childActivityEventType,
+  setMenuNavigator,
+  setMenuChange,
+  MenuBackRoute,
+}) => {
+  // console.log('menu data', childActivityEventList);
+  // console.log('menu event type', childActivityEventType);
 
-const ActivitiesCard = ({ childActivityEventList, childActivityEventType }) => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
+  //============back handler==================
+  function handleBackButtonClick() {
+    setMenuNavigator(MenuNavigator.MENUACTIVITIES);
+    setMenuChange(0);
+    return true;
+  }
 
+  React.useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    return () => {
+      BackHandler.removeEventListener(
+        'hardwareBackPress',
+        handleBackButtonClick,
+      );
+    };
+  }, []);
 
-  let title = "";
+  //============back handler==================
+
+  let title = '';
   switch (childActivityEventType) {
     case 'learningSession':
-      title = "Learning Session";
+      title = 'Learning Session';
       break;
     case 'general':
-      title = "General";
+      title = 'General';
       break;
     case 'souviner':
-      title = "Souviner";
+      title = 'Souvenir';
       break;
     case 'auction':
-      title = "Auction";
+      title = 'Auction';
       break;
     case 'marketplace':
-      title = "Marketplace";
+      title = 'Marketplace';
       break;
     case 'meetup':
-      title = "Meetup";
+      title = 'Meetup';
       break;
     case 'liveChat':
-      title = "Live Chat";
+      title = 'Live Chat';
       break;
     case 'qna':
-      title = "Question & Answer";
+      title = 'Question & Answer';
       break;
   }
   // const width = Dimensions.get('window').width;
-  const renderEventItem = ({ item }) => {
+  const renderEventItem = ({item}) => {
+    // console.log('market place', item.market_place);
     let event = {};
     let eventRegistration = {};
-
+    let eventType = '';
 
     switch (childActivityEventType) {
       case 'learningSession':
         event = item.learning_session;
+        eventType = 'learningSession';
+        console.log(event);
         break;
       case 'general':
         event = item.general;
@@ -68,164 +97,279 @@ const ActivitiesCard = ({ childActivityEventList, childActivityEventType }) => {
         event = item.qna;
         eventRegistration = item.qna_registration;
         break;
+      case 'marketplace':
+        eventType = 'marketplace';
+        event = item.market_place_order;
+        break;
+      case 'souviner':
+        eventType = 'souvenir';
+        event = item.souvenir_apply;
     }
 
-    console.log('event data', event)
-    let ActualEventDate = moment(event?.date ? event?.date : event?.event_date).format("YYYY-MM-DD");
+    console.log('event data', event);
+    let ActualEventDate = moment(
+      event?.date ? event?.date : event?.event_date,
+    ).format('YYYY-MM-DD');
 
     // console.log('ActualEventDate------------', ActualEventDate);
-    let EndTime = "";
-    let StartTime = "";
+    let EndTime = '';
+    let StartTime = '';
     if (childActivityEventType == 'liveChat') {
-      EndTime = moment('2022-01-20 ' + eventRegistration?.live_chat_end_time).format("HH:mm:ss");
-      StartTime = moment('2022-01-20 ' + eventRegistration?.live_chat_start_time).format("HH:mm:ss");
+      EndTime = moment(
+        '2022-01-20 ' + eventRegistration?.live_chat_end_time,
+      ).format('HH:mm:ss');
+      StartTime = moment(
+        '2022-01-20 ' + eventRegistration?.live_chat_start_time,
+      ).format('HH:mm:ss');
     } else if (childActivityEventType == 'qna') {
-      EndTime = moment('2022-01-20 ' + eventRegistration?.qna_end_time).format("HH:mm:ss");
-      StartTime = moment('2022-01-20 ' + eventRegistration?.qna_start_time).format("HH:mm:ss");
+      EndTime = moment('2022-01-20 ' + eventRegistration?.qna_end_time).format(
+        'HH:mm:ss',
+      );
+      StartTime = moment(
+        '2022-01-20 ' + eventRegistration?.qna_start_time,
+      ).format('HH:mm:ss');
+    } else if (childActivityEventType == 'marketplace') {
     } else {
-      EndTime = moment('2022-01-20 ' + event?.end_time).format("HH:mm:ss");
-      StartTime = moment('2022-01-20 ' + event?.start_time).format("HH:mm:ss");
+      EndTime = moment('2022-01-20 ' + event?.end_time).format('HH:mm:ss');
+      StartTime = moment('2022-01-20 ' + event?.start_time).format('HH:mm:ss');
     }
 
-    let EventDateWithEndTime = new Date(moment(ActualEventDate + " " + EndTime));
-    let EventDateWithStartTime = new Date(moment(ActualEventDate + " " + StartTime));
+    let EventDateWithEndTime = new Date(
+      moment(ActualEventDate + ' ' + EndTime),
+    );
+    let EventDateWithStartTime = new Date(
+      moment(ActualEventDate + ' ' + StartTime),
+    );
     let CurrentDateWithTime = new Date();
 
-    let days = parseInt((EventDateWithStartTime - CurrentDateWithTime) / (1000 * 60 * 60 * 24));
-    let hours = parseInt((EventDateWithStartTime - CurrentDateWithTime) / (1000 * 60 * 60) % 24);
-    let minutes = parseInt(Math.abs(EventDateWithStartTime.getTime() - CurrentDateWithTime.getTime()) / (1000 * 60) % 60);
+    let days = parseInt(
+      (EventDateWithStartTime - CurrentDateWithTime) / (1000 * 60 * 60 * 24),
+    );
+    let hours = parseInt(
+      ((EventDateWithStartTime - CurrentDateWithTime) / (1000 * 60 * 60)) % 24,
+    );
+    let minutes = parseInt(
+      (Math.abs(
+        EventDateWithStartTime.getTime() - CurrentDateWithTime.getTime(),
+      ) /
+        (1000 * 60)) %
+        60,
+    );
 
     const handleJoinNow = () => {
-
-      console.log('jdshfgjs', event)
+      // console.log('jdshfgjs', event);
 
       if (childActivityEventType == 'liveChat') {
-
         navigation.navigate('VideoSdk', {
           meetingId: `a3en-kih1-ls2r`,
-          type: 'videoChat'
-        })
-
+          type: 'videoChat',
+        });
       } else if (childActivityEventType == 'qna') {
-        alert('under devolpment')
+        alert('under devolpment');
       } else if (childActivityEventType == 'meetup') {
-
         navigation.navigate('VideoSdk', {
           meetingId: event.room_id,
-          type: 'meetup'
-        })
-
+          type: 'meetup',
+        });
       } else if (childActivityEventType == 'learningSession') {
-
         navigation.navigate('VideoSdk', {
           meetingId: event.room_id,
-          type: 'learningSession'
-        })
-
+          type: 'learningSession',
+        });
       } else {
-
       }
-    }
+    };
 
-    //video upload 
+    //video upload
     const videoUpload = () => {
-      return (
-        navigation.navigate(navigationStrings.LEARNINGSESSIONNAV, {
-          event: event
-        })
-      )
-    }
+      return navigation.navigate(navigationStrings.LEARNINGSESSIONNAV, {
+        event: event,
+      });
+    };
+    const showDetails = () => {
+      return navigation.navigate(navigationStrings.ORDERSTATUS, {
+        event: event,
+      });
+    };
+    const showSouvinorDetails = () => {
+      return navigation.navigate(navigationStrings.SOUVENIRSTATUS, {
+        event: event,
+      });
+    };
 
     return (
-
-      <View style={{ flexDirection: 'row' }}>
-
+      <View style={{flexDirection: 'row'}}>
         <View style={styles.Container}>
-
-          {event?.banner == null
-            ? <Image source={imagePath.AuditionTitle} style={styles.ImgBanner} />
-            : <Image source={{
-              uri: `${AppUrl.MediaBaseUrl + event?.banner}`,
-            }} style={styles.ImgBanner}
-            />
-          }
+          {event?.banner == null && eventType == '' ? (
+            <>
+              <Image
+                source={imagePath.AuditionTitle}
+                style={styles.ImgBanner}
+              />
+            </>
+          ) : eventType == 'marketplace' ? ( //for marketplace image is return as image not banner
+            <>
+              <TouchableOpacity onPress={showDetails}>
+                <Image
+                  source={{
+                    uri: `${AppUrl.MediaBaseUrl + event?.marketplace?.image}`,
+                  }}
+                  style={styles.ImgBanner}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={showDetails}>
+                <Text style={styles.Title}>{event?.marketplace?.title}</Text>
+              </TouchableOpacity>
+            </>
+          ) : eventType == 'souvenir' ? ( //for souvenir
+            <>
+              <TouchableOpacity onPress={showSouvinorDetails}>
+                <Image
+                  source={{
+                    uri: `${AppUrl.MediaBaseUrl + event?.image}`,
+                  }}
+                  style={styles.ImgBanner}
+                />
+                <Text style={styles.Title}>{event?.souvenir?.title}</Text>
+                <Text style={styles.Title}>{event?.souvenir?.status}</Text>
+                <View style={styles.DateBox}>
+                  <View style={styles.Join}>
+                    <Text style={styles.JoinText}>
+                      {event?.souvenir?.status == 0 ? (
+                        <> Pending</>
+                      ) : event?.souvenir?.status == 1 ? (
+                        <> Please Pay</>
+                      ) : event?.souvenir?.status == 2 ? (
+                        <> Payment Complete</>
+                      ) : event?.souvenir?.status == 3 ? (
+                        <> Processing</>
+                      ) : event?.souvenir?.status == 4 ? (
+                        <> Product Received</>
+                      ) : eevent?.souvenir?.status == 5 ? (
+                        <> Processing</>
+                      ) : event?.souvenir?.status == 6 ? (
+                        <> Out for Delivery</>
+                      ) : (
+                        <> Delivered</>
+                      )}
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <Image
+                source={{
+                  uri: `${AppUrl.MediaBaseUrl + event?.banner}`,
+                }}
+                style={styles.ImgBanner}
+              />
+              <Text style={styles.Title}>{event?.title}</Text>
+            </>
+          )}
           {/* <Image source={imagePath.BgLane1} style={styles.ImgBanner} /> */}
-          <Text style={styles.Title}>{event?.title}</Text>
 
           <View style={styles.DateBox}>
-            {EventDateWithEndTime.getTime() < CurrentDateWithTime.getTime() ? (
+            {eventType == 'marketplace' ? (
               <>
-                {/* completed  */}
-              </>
-            ) : (
-              <>
-                {EventDateWithStartTime.getTime() > CurrentDateWithTime.getTime() ? (
-                  <>
-                    <View style={styles.DateColor} >
-                      <Text style={styles.textDay}>{days}</Text>
-                      <Text style={styles.textSec}>DAYS</Text>
-                    </View>
-
-                    <View style={styles.DateColor} >
-                      <Text style={styles.textDay}>{hours}</Text>
-                      <Text style={styles.textSec}>HOURS</Text>
-                    </View>
-
-                    <View style={styles.DateColor} >
-                      <Text style={styles.textDay}>{minutes}</Text>
-                      <Text style={styles.textSec}>MIN</Text>
-                    </View>
-                  </>
-                ) : (
-                  <>
-                    {EventDateWithStartTime.getTime() < CurrentDateWithTime.getTime() || EventDateWithEndTime.getTime() > CurrentDateWithTime.getTime() ? (
-                      <>
-                        <TouchableOpacity onPress={handleJoinNow}>
-                          <Text style={styles.JoinNowColor}>Join Now</Text>
-                        </TouchableOpacity>
-                      </>
-                    ) : (
-                      <>
-                      </>
-                    )}
-                  </>
-                )}
-              </>
-            )}
-
-            {EventDateWithEndTime.getTime() < CurrentDateWithTime.getTime() ? (
-              <View style={styles.Join}>
-                <TouchableOpacity onPress={videoUpload}>
-                  <Text style={styles.JoinText}>Completed</Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <>
-                {EventDateWithStartTime.getTime() > CurrentDateWithTime.getTime() ? (
+                {event?.marketplace.status == 0 ? (
                   <View style={styles.Join}>
-                    <TouchableOpacity>
-                      <Text style={styles.JoinText}>Upcomming</Text>
+                    <TouchableOpacity onPress={showDetails}>
+                      <Text style={styles.JoinText}>Pending</Text>
                     </TouchableOpacity>
                   </View>
                 ) : (
                   <>
-                    {EventDateWithStartTime.getTime() < CurrentDateWithTime.getTime() || EventDateWithEndTime.getTime() > CurrentDateWithTime.getTime() ? (
-                      <View style={styles.Join}>
-                        <TouchableOpacity onPress={handleJoinNow}>
-                          <Text style={styles.JoinText}>Running</Text>
-                        </TouchableOpacity>
-                      </View>
+                    <View style={styles.Join}>
+                      <TouchableOpacity onPress={showDetails}>
+                        <Text style={styles.JoinText}>Approved</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                {/* <Text style={{color: 'white'}}>I am date Box</Text> */}
+                {EventDateWithEndTime.getTime() <
+                CurrentDateWithTime.getTime() ? (
+                  <>{/* completed  */}</>
+                ) : (
+                  <>
+                    {EventDateWithStartTime.getTime() >
+                    CurrentDateWithTime.getTime() ? (
+                      <>
+                        <View style={styles.DateColor}>
+                          <Text style={styles.textDay}>{days}</Text>
+                          <Text style={styles.textSec}>DAYS</Text>
+                        </View>
+
+                        <View style={styles.DateColor}>
+                          <Text style={styles.textDay}>{hours}</Text>
+                          <Text style={styles.textSec}>HOURS</Text>
+                        </View>
+
+                        <View style={styles.DateColor}>
+                          <Text style={styles.textDay}>{minutes}</Text>
+                          <Text style={styles.textSec}>MIN</Text>
+                        </View>
+                      </>
                     ) : (
                       <>
+                        {EventDateWithStartTime.getTime() <
+                          CurrentDateWithTime.getTime() ||
+                        EventDateWithEndTime.getTime() >
+                          CurrentDateWithTime.getTime() ? (
+                          <>
+                            <TouchableOpacity onPress={handleJoinNow}>
+                              <Text style={styles.JoinNowColor}>Join Now</Text>
+                            </TouchableOpacity>
+                          </>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     )}
                   </>
                 )}
-              </>
-            )}
 
+                {EventDateWithEndTime.getTime() <
+                CurrentDateWithTime.getTime() ? (
+                  <View style={styles.Join}>
+                    <TouchableOpacity onPress={videoUpload}>
+                      <Text style={styles.JoinText}>Completed</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <>
+                    {EventDateWithStartTime.getTime() >
+                    CurrentDateWithTime.getTime() ? (
+                      <View style={styles.Join}>
+                        <TouchableOpacity>
+                          <Text style={styles.JoinText}>Upcomming</Text>
+                        </TouchableOpacity>
+                      </View>
+                    ) : (
+                      <>
+                        {EventDateWithStartTime.getTime() <
+                          CurrentDateWithTime.getTime() ||
+                        EventDateWithEndTime.getTime() >
+                          CurrentDateWithTime.getTime() ? (
+                          <View style={styles.Join}>
+                            <TouchableOpacity onPress={handleJoinNow}>
+                              <Text style={styles.JoinText}>Running</Text>
+                            </TouchableOpacity>
+                          </View>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
 
-            {/* {EventDateWithEndTime.getTime() < CurrentDateWithTime.getTime() ? (
+                {/* {EventDateWithEndTime.getTime() < CurrentDateWithTime.getTime() ? (
               <View style={styles.Join}>
                 <TouchableOpacity>
                   <Text style={styles.JoinText}>Completed</Text>
@@ -251,11 +395,9 @@ const ActivitiesCard = ({ childActivityEventList, childActivityEventType }) => {
                 )}
               </>
             )} */}
+              </>
+            )}
           </View>
-
-
-
-
 
           {/* {EventDateWithEndTime.getTime() < CurrentDateWithTime.getTime() ? (
             <View style={styles.BannerCsText1}>
@@ -303,24 +445,20 @@ const ActivitiesCard = ({ childActivityEventList, childActivityEventType }) => {
             <Image source={imagePath.BgTag} />
           </View>
 
-          {item.days === '00' && item.hours === '00' ?
+          {item.days === '00' && item.hours === '00' ? (
             <View style={styles.Join}>
               <TouchableOpacity>
                 <Text style={styles.JoinText}>Join Now</Text>
               </TouchableOpacity>
             </View>
-            :
-            null
-          }
-
+          ) : null}
         </View>
       </View>
-    )
-  }
+    );
+  };
 
   return (
     <>
-
       <View style={styles.Header}>
         <Image source={imagePath.BgLane} style={styles.HeaderImg} />
         <Text style={styles.HeaderText}>{title}</Text>
@@ -331,11 +469,8 @@ const ActivitiesCard = ({ childActivityEventList, childActivityEventType }) => {
         data={childActivityEventList}
         renderItem={renderEventItem}
       />
-
-
-
     </>
-  )
-}
+  );
+};
 
-export default ActivitiesCard
+export default ActivitiesCard;

@@ -58,7 +58,7 @@ const EditProfileModal = ({ editProfile, setEditProfile }) => {
           Navigation.navigate('category');
         } else {
           setBuffer(false);
-          Toast.show(res.data.message, Toast.SHORT);
+          Toast.show(res.data.message, Toast.durations.SHORT);
         }
       })
       .catch(err => {

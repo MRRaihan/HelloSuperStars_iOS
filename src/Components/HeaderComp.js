@@ -1,122 +1,89 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useContext } from 'react';
+import {useNavigation} from '@react-navigation/native';
+import React, {useContext, useState} from 'react';
 import {
   Image,
-  StyleSheet, Text, TextInput, TouchableOpacity, View
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import MatarialIcon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { AuthContext } from '../Constants/context';
+import {AuthContext} from '../Constants/context';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import AntIcon from 'react-native-vector-icons/AntDesign';
 import imagePath from '../Constants/imagePath';
 
-const HeaderComp = ({ action, text, status, FanGroup,msgNotificaiton=null }) => {
+const HeaderComp = ({action, text, status, backFunc}) => {
   const [showBar, setSHowBar] = React.useState(false);
 
   const navigation = useNavigation();
 
-  const { authContext } = useContext(AuthContext);
+  const {authContext} = useContext(AuthContext);
   return (
     <View style={styles.container}>
-
       {!!status ? (
-
-        <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => authContext.signOut()}>
-          <MaterialCommunityIcons
-            name="logout"
-            color={'#F7F7F7'}
-            size={20}
-          />
-          <Text style={{ color: 'white' }}>LOGOUT</Text>
+        <TouchableOpacity
+          style={{flexDirection: 'row'}}
+          onPress={() => authContext.signOut()}>
+          <MaterialCommunityIcons name="logout" color={'#F7F7F7'} size={20} />
+          <Text style={{color: 'white'}}>LOGOUT</Text>
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-        {msgNotificaiton?     <MaterialCommunityIcons
-            name="arrow-left"
-            color={'#F7F7F7'}
-            size={20}
-          />:   <Image
-            source={imagePath.logo}
-            style={{ height: 30, width: 30, borderRadius: 50 }}
-          />}
-   
-       
-        </TouchableOpacity>
+        <>
+          {backFunc ? (
+            <TouchableOpacity style={{marginTop:5}} onPress={() => backFunc()}>
+              <Text style={{color: 'white'}}>
+                <Icon name="arrow-back" size={25}  />
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+              <Image
+                source={imagePath.logo}
+                style={{height: 30, width: 30, borderRadius: 50}}
+              />
+            </TouchableOpacity>
+          )}
+        </>
       )}
 
-
       <View style={styles.row}>
-{msgNotificaiton?<></>:    <View style={styles.Search}>
-          {showBar ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={styles.Search}>
+          {/* {showBar ? (
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity
-                style={{ marginRight: 3 }}
+                style={{marginRight: 3,marginTop:3}}
                 onPress={() => setSHowBar(false)}>
-                <MaterialCommunityIcons
-                  name="arrow-right"
+                <MatarialIcon
+                  name="arrow-back-ios"
                   color={'#F7F7F7'}
-                  size={20}
+                  size={18}
                 />
               </TouchableOpacity>
               <TextInput
                 style={styles.SearchBar}
                 placeholder="Search Superstar"></TextInput>
             </View>
-          ) : null}
-          {showBar ? null : (
+          ) : null} */}
+        
             <TouchableOpacity
-              onPress={() => setSHowBar(!showBar)}
+              onPress={()=>navigation.navigate('SearchPage')}
               style={styles.text}>
-              <AntDesign name="search1" size={18} color="#494949" />
+              <Icon name="search" size={22} color="#F7F6F6" />
             </TouchableOpacity>
-          )}
+     
         </View>
 
-
-
-}
-
-    
-
-
-
-        {FanGroup === 'fangroup' ? <TouchableOpacity style={styles.Message} onPress={() => navigation.navigate('Messenger')}>
+        <TouchableOpacity
+          style={styles.Message}
+          onPress={() => navigation.navigate('Message')}>
           <Text style={styles.text}>
-            <AntDesign
-              name="message1"
-              color={'#494949'}
-              size={18}
-            />
+            <AntIcon name="message1" color="#F7F6F6" size={18} />
           </Text>
-        </TouchableOpacity> : <TouchableOpacity style={styles.Message} onPress={
-          msgNotificaiton?()=>{}:
-          () => navigation.navigate('Message')}>
-          <Text style={msgNotificaiton?'': styles.text}>
-            <AntDesign
-              name="message1"
-              color={msgNotificaiton?'#ffaa00':'#494949'}
-              size={msgNotificaiton?25:18}
-            />
-          </Text>
-        </TouchableOpacity>}
-
-      </View>
-
-      {/* {!!status ? (
-       
-        <TouchableOpacity onPress={() => signOut()}>
-          <Text>Log Out</Text>
         </TouchableOpacity>
-      ) : (
-        <></>
-      )} */}
-
-      {/* <Text style={{color: 'white', fontSize: 20}}>{text}</Text> */}
-      {/* <TouchableOpacity>
-        <Image
-          source={imagePath.defultImage}
-          style={{height: 30, width: 30, borderRadius: 50}}
-        />
-      </TouchableOpacity> */}
+      </View>
     </View>
   );
 };
@@ -136,20 +103,21 @@ const styles = StyleSheet.create({
   text: {
     textAlign: 'center',
     color: 'white',
-    marginHorizontal: 4,
-    backgroundColor: '#b3b3b3',
+    marginHorizontal: 0,
+    // backgroundColor: '#b3b3b3',
     padding: 3,
     borderRadius: 50,
-    padding: 7
+    padding: 7,
   },
   SearchBar: {
     borderColor: '#FFAD00',
-    borderWidth: 1,
-    width: 280,
-    height: 28,
+    borderWidth: 0.5,
+    width: 260,
+    height: 26,
     padding: 3,
     borderRadius: 20,
     paddingLeft: 10,
+    marginTop:4,
     backgroundColor: 'white',
   },
   row: {

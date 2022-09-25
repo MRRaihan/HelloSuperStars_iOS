@@ -10,6 +10,8 @@ import navigationStrings from '../../Constants/navigationStrings';
 import styles from './styles';
 const Notification = ({navigation}) => {
   const {notification} = useContext(AuthContext);
+
+console.log('notification is ===> ', notification.length)
   const starNotify = [
     {
       key: 1,
@@ -76,9 +78,9 @@ const Notification = ({navigation}) => {
       <SafeAreaView>
         {/*.............. custom header start .............. */}
         {/* <HeaderComp text="Home" /> */}
-        <HeaderComp text="Notification" />
+        <HeaderComp text="Notification" backFunc={() => navigation.goBack()} />
         {/* ..........custom header end....................  */}
-
+        {/* 
         {starNotify &&
           starNotify?.map((item, index) => (
             <TouchableOpacity
@@ -87,7 +89,7 @@ const Notification = ({navigation}) => {
               <Animatable.View animation={'slideInUp'} style={styles.row}>
                 <View style={styles.content}>
                   <View style={styles.ContentItems}>
-                    <View style={styles.ContentItemBar}></View>
+                    <View style={stles.ContentItemBar}></View>
                     <View style={styles.imgBorder}>
                       <Image style={styles.starCardImg} source={item.img} />
                     </View>
@@ -104,7 +106,27 @@ const Notification = ({navigation}) => {
                 </View>
               </Animatable.View>
             </TouchableOpacity>
-          ))}
+          ))} */}
+
+{notification.length===0&&
+  <View style={{height: 600, justifyContent: 'center'}}>
+          <View>
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+              <Image
+                source={imagePath.lazyDog}
+                style={{height: 100, width: 100}}
+              />
+            </View>
+
+            <Text style={{color: 'white', textAlign: 'center'}}>
+              Sorry No Data Available !
+            </Text>
+          </View>
+        </View>
+      }
+
+      
+
         {notification?.map((data, index) => (
           <TouchableOpacity
             key={index}

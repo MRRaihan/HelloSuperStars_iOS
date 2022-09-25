@@ -5,6 +5,8 @@ import {Image, Text, TouchableOpacity, View} from 'react-native';
 import imagePath from '../../../Constants/imagePath';
 import navigationStrings from '../../../Constants/navigationStrings';
 import styles from './stylesActive';
+import {BackHandler} from 'react-native';
+import MenuNavigator from '../MenuNavigator';
 
 const MenuActivities = ({
   menuActivitList,
@@ -12,11 +14,33 @@ const MenuActivities = ({
   setChildActivityEventType,
   setChildActivityEventList,
   setMenuChange,
+  menuNavigator,
+  setMenuNavigator,
+  MenuBackRoute,
 }) => {
   const navigation = useNavigation();
-  const [check, setCheck] = React.useState(false);
-  // console.log('menuActivitList------------',menuActivitList);
 
+  const [check, setCheck] = React.useState(false);
+  console.log('menuActivitList------------', menuActivitList);
+
+  // ###############back handler not added due to some bug here ################
+
+  //============back handler==================
+  // function handleBackButtonClick() {
+  // setMenuNavigator(MenuNavigator.MENUHOME);
+  // setMenuChange(0);
+  // return true;
+
+  // }
+
+  // React.useEffect(() => {
+  //   BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+  //   return () => {
+  //     BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
+  //   };
+  // }, []);
+
+  //============back handler==================
   return (
     <>
       <View
@@ -86,6 +110,7 @@ const MenuActivities = ({
           }}
         />
       </TouchableOpacity>
+
       {/* Live Chat  */}
       <TouchableOpacity
         onPress={() => {
@@ -205,8 +230,8 @@ const MenuActivities = ({
               <View style={styles.ContentItems2}>
                 <Text style={styles.contentText}>Meetup Events</Text>
                 <Text style={styles.contentText2}>
-                  {menuActivitList?.meetup_activities.length > 0
-                    ? menuActivitList?.meetup_activities.length
+                  {menuActivitList?.meetup_activities?.length > 0
+                    ? menuActivitList?.meetup_activities?.length
                     : 'No'}{' '}
                   activities available now
                 </Text>
@@ -235,10 +260,14 @@ const MenuActivities = ({
           }}
         />
       </TouchableOpacity>
+
       {/* Upcoming Auditions  */}
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate(navigationStrings.LEARNING);
+          navigation.navigate(navigationStrings.LEARNING, {
+            activeAudition: menuActivitList?.audition_activities,
+          });
+
           // setMenuChange(1);
         }}>
         <View style={styles.Touch}>
@@ -246,16 +275,26 @@ const MenuActivities = ({
             <View style={styles.ContentItems}>
               <Text style={styles.Bar}></Text>
               <Image source={imagePath.activities4} />
-              <Text style={styles.NotifyText}>13</Text>
+              <Text style={styles.NotifyText}>
+                {menuActivitList?.audition_activities?.length}
+              </Text>
               <View style={styles.ContentItems2}>
                 <Text style={styles.contentText}>Auditions</Text>
                 <Text style={styles.contentText2}>
-                  No activities available now
+                  {menuActivitList?.audition_activities?.length > 0
+                    ? menuActivitList?.audition_activities?.length
+                    : 'No'}{' '}
+                  audition available now
                 </Text>
               </View>
             </View>
             <View style={{justifyContent: 'center'}}>
-              <Text style={styles.contentText2}>5 min ago</Text>
+              <Text style={styles.contentText2}>
+  
+                {/* {moment(
+                  menuActivitList?.audition_activities[0]?.created_at,
+                ).fromNow()} */}
+              </Text>
             </View>
           </View>
         </View>
@@ -267,6 +306,7 @@ const MenuActivities = ({
           }}
         />
       </TouchableOpacity>
+
       {/* MarketPlace  */}
       <TouchableOpacity
         onPress={() => {
@@ -280,13 +320,13 @@ const MenuActivities = ({
               <Text style={styles.Bar}></Text>
               <Image source={imagePath.activities5} />
               <Text style={styles.NotifyText}>
-                {menuActivitList?.marketplace_activities.length}
+                {menuActivitList?.marketplace_activities?.length}
               </Text>
               <View style={styles.ContentItems2}>
                 <Text style={styles.contentText}>MarketPlace</Text>
                 <Text style={styles.contentText2}>
-                  {menuActivitList?.marketplace_activities.length > 0
-                    ? menuActivitList?.marketplace_activities.length
+                  {menuActivitList?.marketplace_activities?.length > 0
+                    ? menuActivitList?.marketplace_activities?.length
                     : 'No'}{' '}
                   activities available now
                 </Text>
@@ -328,13 +368,13 @@ const MenuActivities = ({
               <Text style={styles.Bar}></Text>
               <Image source={imagePath.activities5} />
               <Text style={styles.NotifyText}>
-                {menuActivitList?.auction_activities.length}
+                {menuActivitList?.auction_activities?.length}
               </Text>
               <View style={styles.ContentItems2}>
                 <Text style={styles.contentText}>Auction</Text>
                 <Text style={styles.contentText2}>
-                  {menuActivitList?.auction_activities.length > 0
-                    ? menuActivitList?.auction_activities.length
+                  {menuActivitList?.auction_activities?.length > 0
+                    ? menuActivitList?.auction_activities?.length
                     : 'No'}{' '}
                   activities available now
                 </Text>
@@ -376,13 +416,13 @@ const MenuActivities = ({
               <Text style={styles.Bar}></Text>
               <Image source={imagePath.activities5} />
               <Text style={styles.NotifyText}>
-                {menuActivitList?.souviner_activities.length}
+                {menuActivitList?.souviner_activities?.length}
               </Text>
               <View style={styles.ContentItems2}>
                 <Text style={styles.contentText}>Souvenir</Text>
                 <Text style={styles.contentText2}>
-                  {menuActivitList?.souviner_activities.length > 0
-                    ? menuActivitList?.souviner_activities.length
+                  {menuActivitList?.souviner_activities?.length > 0
+                    ? menuActivitList?.souviner_activities?.length
                     : 'No'}{' '}
                   activities available now
                 </Text>

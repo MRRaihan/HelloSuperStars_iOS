@@ -8,7 +8,7 @@ import * as Animatable from 'react-native-animatable';
 import styles from './Styles';
 
 
-const PackageItem = ({ data, handelPaymentView }) => {
+const PackageItem = ({ data, handelPaymentView, type }) => {
     const [toggol, setToggol] = useState(false);
     const [platinum, setPlatinum] = useState(false);
     const [gold, setGold] = useState(false);
@@ -33,7 +33,7 @@ const PackageItem = ({ data, handelPaymentView }) => {
                         <View style={styles.cardGrid2}>
                             <Text
                                 style={{ fontSize: 30, fontWeight: 'bold', color: 'white' }}>
-                                {data?.price}
+                                {type === 'packageBuy' ? data?.club_points : data?.love_points}
                             </Text>
                             <Text style={{ color: 'white', fontWeight: 'bold' }}>
                                 {data?.title}
@@ -61,7 +61,7 @@ const PackageItem = ({ data, handelPaymentView }) => {
                 </Animatable.View>
             </View>}
 
-            {toggol ? <PackageDetails handelPaymentView={() => handelPaymentView(data.id)} setToggol={setToggol} packageName='SILVER' LiniarColor={['#C2C2C2', '#797979']} price={data?.price} /> : null}
+            {toggol ? <PackageDetails handelPaymentView={() => handelPaymentView()} setToggol={setToggol} packageName={data?.title} LiniarColor={['#C2C2C2', '#797979']} price={data?.price} /> : null}
         </>
     )
 }

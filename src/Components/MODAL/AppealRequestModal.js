@@ -1,5 +1,5 @@
 //import liraries
-import React from 'react';
+import React, {useContext} from 'react';
 import {
   View,
   Text,
@@ -14,13 +14,17 @@ import {
 import styles from './Styles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import imagePath from '../../Constants/imagePath';
+import axios from 'axios';
+import AppUrl from '../../RestApi/AppUrl';
+import {AuthContext} from '../../Constants/context';
+import {useNavigation} from '@react-navigation/native';
 
 const AppealRequestModal = ({show, setShow, appeal, setAppeal}) => {
-  
+  const Navigation = useNavigation();
   const handleDone = () => {
-    setShow(false),
-    setAppeal(true)
-  }
+    setShow(false);
+    Navigation.goBack();
+  };
 
   return (
     <Modal
@@ -45,23 +49,20 @@ const AppealRequestModal = ({show, setShow, appeal, setAppeal}) => {
               </TouchableOpacity>
             </View>
             <View style={{alignItems: 'center'}}>
-              <Image
-                source={imagePath.DeleteM}
-                style={styles.LearnMoImgA}
-              />
+              <Image source={imagePath.DeleteM} style={styles.LearnMoImgA} />
             </View>
             <View style={styles.FleXFoZ}>
-            <Text style={styles.FleXFoZY}>Your Appeal Request Submitted.!</Text>
-            <Text style={styles.FleXFoZYX}>We will notify you as soon as possible
-            how to resubmit your content again.</Text>
+              <Text style={styles.FleXFoZY}>
+                Your Appeal Request Submitted.!
+              </Text>
+              <Text style={styles.FleXFoZYX}>
+                We will notify you as soon as possible how to resubmit your
+                content again.
+              </Text>
 
-            <TouchableOpacity onPress={() => handleDone()}>
-            <Text style={styles.DoneS}>
-              Done
-            </Text>
-            </TouchableOpacity>
-          
-  
+              <TouchableOpacity onPress={() => handleDone()}>
+                <Text style={styles.DoneS}>Done</Text>
+              </TouchableOpacity>
             </View>
           </ImageBackground>
         </View>

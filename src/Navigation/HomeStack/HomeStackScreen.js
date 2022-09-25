@@ -20,6 +20,8 @@ import StarShowCase from '../../Screen/StarCase/StarShowCase';
 import StarProfile from '../../Screen/StarProfile/Profile/StarProfile';
 import VoiceMessage from '../../Screen/VoiceMessage/VoiceMessage';
 import Souvenir from './../../Screen/StarProfile/ShowCase/Souvenir';
+import UpcomingAuditionsCard from '../../Components/GLOBAL/Card/PostCard/UpcomingAuditionsCard';
+import RegisterUpCoAudition from '../../Components/AUDITION/UpcomingAudition/RegisterUpCoAudition';
 const HomeStack = createNativeStackNavigator();
 
 export function HomeStackScreen() {
@@ -88,6 +90,11 @@ export function HomeStackScreen() {
       />
 
       <HomeStack.Screen name={'StarShowCase'} component={StarShowCase} />
+      {/* <HomeStack.Screen name={'Audition'} component={RegisterUpCoAudition} /> */}
+      <HomeStack.Screen
+        name={navigationStrings.AUDITIONREGISTER}
+        component={RegisterUpCoAudition}
+      />
       <HomeStack.Screen name={'Souviner'} component={Souvenir} />
       <HomeStack.Screen name={'SouvinerInvoice'} component={SouvenirInvoice} />
     </HomeStack.Navigator>

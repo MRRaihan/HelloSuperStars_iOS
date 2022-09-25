@@ -25,7 +25,7 @@ import AlertModal from '../../MODAL/AlertModal';
 import imagePath from '../../../Constants/imagePath';
 import UnderlineImage from '../Reuseable/UnderlineImage';
 
-const PaymentComp = ({ eventType, eventId, modelName, type = null, setPaymentView, PackegeId = null }) => {
+const PaymentComp = ({ eventType, eventId, modelName, type = null, setPaymentView, PackegeId = null, buyFor }) => {
   const { axiosConfig, setWaletInfo } = useContext(AuthContext);
   const Navigation = useNavigation()
   const [buffer, setBuffer] = useState(false)
@@ -47,12 +47,13 @@ const PaymentComp = ({ eventType, eventId, modelName, type = null, setPaymentVie
       'packages_id': PackegeId,
       'card_no': data.card_number,
       'card_expire_date': '648726842',
-      'card_cvv': '84923804'
+      'card_cvv': '84923804',
+      'type': buyFor
 
     }
     setBuffer(true)
     axios.post(AppUrl.BuyPackages, PackageData, axiosConfig).then(res => {
-      console.log('gsagjs ', res)
+      console.log('payment responce ', res)
       setBuffer(false)
       if (res.data.status === 200) {
         setWaletInfo(res.data.waletInfo)
@@ -77,6 +78,7 @@ const PaymentComp = ({ eventType, eventId, modelName, type = null, setPaymentVie
 
 
   const onSubmit = (data) => {
+
     let aditionalData = {
       ...data,
       'event_id': eventId,

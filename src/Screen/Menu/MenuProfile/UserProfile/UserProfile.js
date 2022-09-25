@@ -13,10 +13,12 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import MatarialIcon from 'react-native-vector-icons/MaterialIcons';
+import UserProPost from '../../../../Components/GLOBAL/Card/PostCard/UserProPost';
 import HeaderComp from '../../../../Components/HeaderComp';
 import CardSkeleton from '../../../../Components/Skeleton/CardSkeleton/CardSkeleton';
 import { AuthContext } from '../../../../Constants/context.js';
 import imagePath from '../../../../Constants/imagePath.js';
+import { useAxiosGet } from '../../../../CustomHooks/useAxiosGet';
 import AppUrl from '../../../../RestApi/AppUrl.js';
 import EditProfileModal from './profileComp/EditProfileModal/EditProfileModal';
 import ProfilePhotos from './profileComp/ProfilePhotos/ProfilePhotos.js';
@@ -30,6 +32,8 @@ const windowWidth = Dimensions.get('window').width;
 const UserProfile = () => {
   const Navigation = useNavigation();
   const [buffer, setBuffer] = useState(true);
+  const { resData } = useAxiosGet(AppUrl.UserInfo)
+
   const { useInfo, authContext, axiosConfig } = useContext(AuthContext);
   const [data, setData] = React.useState('posts');
 
@@ -38,6 +42,11 @@ const UserProfile = () => {
   const [editProfile, setEditProfile] = useState(false);
   const [imageBuffer, setImageBuffer] = useState(false);
   const [coverBuffer, setCoverBuffer] = useState(false);
+
+
+  useEffect(() => {
+    authContext.userInfoUpate(resData.users)
+  }, [resData])
 
   const [profileUpload, setProfileUpload] = useState({
     img: {
@@ -65,7 +74,7 @@ const UserProfile = () => {
 
 
   useEffect(() => {
-    // getUserActivityData();
+    getUserActivityData();
 
   }, []);
 
@@ -74,10 +83,11 @@ const UserProfile = () => {
     axios
       .get(AppUrl.UserActivityData, axiosConfig)
       .then(res => {
+        setBuffer(false);
         if (res.data.status === 200) {
           // console.log('activities data', res.data.userActivites);
           setUserActivites(res.data?.userActivites);
-          setBuffer(false);
+
         }
       })
       .catch(err => {
@@ -211,7 +221,7 @@ const UserProfile = () => {
 
         if (res.data.status == 200) {
           authContext.userInfoUpate(res.data.userInfo)
-          Toast.show(res.data.message, Toast.SHORT);
+          Toast.show(res.data.message, Toast.durations.SHORT);
           console.log('uplad status', res.data)
           if (type === "profile") {
             clearPhoto()
@@ -234,31 +244,18 @@ const UserProfile = () => {
   return (
     <>
       <View style={styles.container}>
-        <HeaderComp />
-        <View style={styles.topView}>
-          <TouchableOpacity
-            onPress={() => Navigation.goBack()}
-            style={styles.topArrow}>
-            <Icon name="arrow-left" size={16} color="white" />
-          </TouchableOpacity>
+        <HeaderComp backFunc={() => Navigation.goBack()} />
 
-          <View style={styles.topName}>
-            <Text style={styles.Text}>
-              {' '}
-              {useInfo?.first_name} {useInfo?.last_name}
-            </Text>
-          </View>
-        </View>
 
         <ScrollView>
           {/* cover photo work start here */}
           <View style={styles.container2}>
             <Image style={styles.image}
               source={coverUpload.img.uri != "" ?
-                { uri: coverUpload.img.uri } : useInfo.cover_photo == null
+                { uri: coverUpload.img.uri } : useInfo?.cover_photo == null
                   ? imagePath.coverNoImgae
                   : {
-                    uri: `${AppUrl.MediaBaseUrl + useInfo.cover_photo}`,
+                    uri: `${AppUrl.MediaBaseUrl + useInfo?.cover_photo}`,
                   }
               }
             />
@@ -420,30 +417,32 @@ const UserProfile = () => {
                 </View>
               </View>
             }
-
-            {/* <View style={styles.infoView}>
-                  <View style={styles.infoChild}>
-                    <View style={{ marginRight: 10 }}>
-                      <Icon2 name="heart" size={16} color="white" />
-                    </View>
-                    <View style={styles.infoChild}>
-                      <Text style={{ color: 'white' }}>Matarial Status</Text>
-                      <Text style={styles.infoTextmain}>Married</Text>
-                    </View>
-                  </View>
-                </View> */}
-
-            <View style={styles.infoView}>
-              <View style={styles.infoChild}>
-                <View style={{ marginRight: 10 }}>
-                  <Icon name="city" size={16} color="white" />
-                </View>
+            {useInfo?.user_info?.dob &&
+              <View style={styles.infoView}>
                 <View style={styles.infoChild}>
-                  <Text style={{ color: 'white' }}>Lives in</Text>
-                  <Text style={styles.infoTextmain}>{useInfo?.user_info?.country}</Text>
+                  <View style={{ marginRight: 10 }}>
+                    <Icon2 name="birthday-cake" size={16} color="white" />
+                  </View>
+                  <View style={styles.infoChild}>
+                    <Text style={{ color: 'white' }}>Birth Date </Text>
+                    <Text style={styles.infoTextmain}>{useInfo?.user_info?.dob}</Text>
+                  </View>
                 </View>
               </View>
-            </View>
+            }
+            {useInfo?.user_info?.country &&
+              <View style={styles.infoView}>
+                <View style={styles.infoChild}>
+                  <View style={{ marginRight: 10 }}>
+                    <Icon name="city" size={16} color="white" />
+                  </View>
+                  <View style={styles.infoChild}>
+                    <Text style={{ color: 'white' }}>Lives in</Text>
+                    <Text style={styles.infoTextmain}>{useInfo?.user_info?.country}</Text>
+                  </View>
+                </View>
+              </View>
+            }
           </View>
 
           {/* =======working information sections end  =========*/}
@@ -497,11 +496,15 @@ const UserProfile = () => {
           </View>}
           {data === 'posts' ? (
             <>
-              <ProfilePost userActivites={userActivites} />
+              {userActivites && userActivites.map((item, index) =>
+                <UserProPost post={item} key={index} />
+              )}
+              {/* <ProfilePost userActivites={userActivites} /> */}
             </>
           ) : data === 'photos' ? (
             <ProfilePhotos userActivites={userActivites} />
           ) : data === 'videos' ? (
+
             <ProfileVideos userActivites={userActivites} />
           ) : null}
 

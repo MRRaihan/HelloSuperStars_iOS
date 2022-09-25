@@ -1,7 +1,7 @@
 //import liraries
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Dimensions,
   ImageBackground,
@@ -13,11 +13,11 @@ import {
 import Toast from 'react-native-root-toast';
 import * as Animatable from 'react-native-animatable';
 import LoaderComp from '../../Components/LoaderComp';
-import {AuthContext} from '../../Constants/context';
+import { AuthContext } from '../../Constants/context';
 import imagePath from '../../Constants/imagePath';
 
 import LinearGradient from 'react-native-linear-gradient';
-import {FlatGrid} from 'react-native-super-grid';
+import { FlatGrid } from 'react-native-super-grid';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AppUrl from '../../RestApi/AppUrl';
@@ -26,13 +26,15 @@ import AppUrl from '../../RestApi/AppUrl';
 const CategorySelection = () => {
   const navigation = useNavigation();
   const windowWidth = Dimensions.get('window').width;
-  const {axiosConfig, authContext} = useContext(AuthContext);
-
+  const { axiosConfig, authContext } = useContext(AuthContext);
   const [buffer, setBuffer] = useState(true);
   const [category, setCategory] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
 
   const screen = Dimensions.get('screen');
+
+
+
 
   useEffect(() => {
     getAllCategory();
@@ -59,7 +61,7 @@ const CategorySelection = () => {
   const makeCatrgoryArry = data => {
     let categoryArry = data.map((item, index) => {
       item.isSelected = false;
-      return {...item};
+      return { ...item };
     });
 
     setCategory(categoryArry);
@@ -70,7 +72,7 @@ const CategorySelection = () => {
       if (valu == index) {
         item.isSelected = !item.isSelected;
       }
-      return {...item};
+      return { ...item };
     });
 
     setCategory(categoryArry);
@@ -81,7 +83,7 @@ const CategorySelection = () => {
     let categoryArry = category.map(item => {
       item.isSelected = !selectAll;
 
-      return {...item};
+      return { ...item };
     });
 
     setCategory(categoryArry);
@@ -98,7 +100,7 @@ const CategorySelection = () => {
     });
 
     if (selected.length <= 0) {
-      Toast.show('Place Select Some Category', Toast.SHORT);
+      Toast.show('Place Select Some Category', Toast.durations.SHORT);
     } else {
       let formData = {
         category: JSON.stringify(selectedCategory),
@@ -110,12 +112,12 @@ const CategorySelection = () => {
           setBuffer(false);
           if (res.data.status === 200) {
             authContext.category();
-            Toast.show('Successfully Added', Toast.SHORT);
+            Toast.show('Successfully Added', Toast.durations.SHORT);
           }
         })
         .catch(err => {
           console.log(err);
-          Toast.show('problem', Toast.SHORT);
+          Toast.show('problem', Toast.durations.SHORT);
           // alert('network problem')
         });
     }
@@ -135,7 +137,7 @@ const CategorySelection = () => {
             // duration="1500"
 
             source={imagePath.logo}
-            style={{height: 100, width: 100}}
+            style={{ height: 100, width: 100 }}
           />
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Choose Category</Text>
@@ -148,7 +150,7 @@ const CategorySelection = () => {
             spacing={10}
             itemDimension={120}
             data={category}
-            renderItem={({item, index}) => (
+            renderItem={({ item, index }) => (
               <View>
                 <TouchableOpacity
                   style={styles.categoryitem}
@@ -156,8 +158,8 @@ const CategorySelection = () => {
                   onPress={() => selectHandaler(index)}>
                   {item.isSelected ? (
                     <LinearGradient
-                      start={{x: 0, y: 0}}
-                      end={{x: 1, y: 0}}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
                       colors={['#ffa825', '#ffce48', '#ab6616']}>
                       <Text style={styles.btn_textActive}>{item.name}</Text>
                       {/* <Text style={styles.btn_text}>

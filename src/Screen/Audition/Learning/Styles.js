@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 
 const stylesActive = StyleSheet.create({
   container: {
@@ -17,7 +17,7 @@ const stylesActive = StyleSheet.create({
     width: 3,
     marginRight: 10,
     backgroundColor: '#ffaa00',
-    alignSelf: 'stretch'
+    alignSelf: 'stretch',
   },
   ActiveNew: {
     margin: 12,
@@ -40,7 +40,6 @@ const stylesActive = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-
   },
   LagEr: {
     marginVertical: 8,
@@ -51,8 +50,7 @@ const stylesActive = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     borderColor: 'gold',
-    backgroundColor: '#ffaa00'
-
+    backgroundColor: '#ffaa00',
   },
   LagEr2: {
     marginVertical: 8,
@@ -63,13 +61,13 @@ const stylesActive = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     borderColor: 'gold',
-    backgroundColor: 'black'
-
+    backgroundColor: 'black',
   },
 
   ImgLan: {
     width: '100%',
     borderRadius: 15,
+    height: 200,
     // marginBottom:25,
   },
   ImgLanB: {
@@ -80,7 +78,7 @@ const stylesActive = StyleSheet.create({
   },
   LearnText: {
     color: 'white',
-    fontSize: 10,
+    fontSize: 13,
     textAlign: 'center',
     fontWeight: 'bold',
     paddingVertical: 10,
@@ -95,7 +93,6 @@ const stylesActive = StyleSheet.create({
     bottom: -25,
     justifyContent: 'center',
     alignItems: 'center',
-
   },
   BgLang: {
     margin: 2,
@@ -105,7 +102,6 @@ const stylesActive = StyleSheet.create({
     backgroundColor: 'gold',
   },
 
-
   autionTitleText: {
     position: 'absolute',
     bottom: '75%',
@@ -113,13 +109,7 @@ const stylesActive = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     width: '100%',
-  }
-  ,
-
-
-
-
-
+  },
   textLearM: {
     fontSize: 12,
     fontWeight: 'bold',
@@ -133,7 +123,6 @@ const stylesActive = StyleSheet.create({
     textAlign: 'center',
     color: 'black',
   },
-
 });
 
 export default stylesActive;

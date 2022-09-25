@@ -14,8 +14,8 @@ export const useAxiosGet = (url) => {
     useEffect(() => {
         axios.get(url, axiosConfig).then((res) => {
             setBuffer(false)
+            setResData(res.data)
             if (res.data.status === 200) {
-                setResData(res.data)
             }
         }).catch((err) => {
             console.log(err)
@@ -26,8 +26,8 @@ export const useAxiosGet = (url) => {
     const HandelGetData = () => {
         axios.get(url, axiosConfig).then((res) => {
             setBuffer(false)
+            setResData(res.data)
             if (res.data.status === 200) {
-                setResData(res.data)
             }
         }).catch((err) => {
             console.log(err)

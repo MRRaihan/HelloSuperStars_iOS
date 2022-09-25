@@ -38,33 +38,39 @@ const SignUp = () => {
   const [buffer, setBuffer] = useState(false);
   const [serverError, setServerError] = useState({});
   const screen = Dimensions.get('screen');
-
+  const [passwordError, setPasswordError] = useState();
   const onSubmit = data => {
-    setBuffer(true);
-
-    axios
-      .post(AppUrl.CreateUser, data)
-      .then(res => {
-        //console.log(res.data.validation_errors)
-        if (res.data.status === 200) {
-          // alert('hello')
+    if (data.cpassword === data.password) {
+      setBuffer(true);
+      setPasswordError(false)
+      axios
+        .post(AppUrl.CreateUser, data)
+        .then(res => {
+          //console.log(res.data.validation_errors)
+          if (res.data.status === 200) {
+            // alert('hello')
+            setBuffer(false);
+            authContext.signUp(res.data.token, res.data.user);
+            navigation.navigate('Otp', {
+              phone: data.phone,
+            });
+            // navigation.navigate('userInformation');
+          } else {
+            console.log(res.data.validation_errors)
+            setServerError(res.data.validation_errors);
+            setBuffer(false);
+          }
+        })
+        .catch(err => {
+          console.log(err);
           setBuffer(false);
-          authContext.signUp(res.data.token, res.data.user);
           navigation.navigate('Otp', {
-            phone: data.phone,
-          });
-        } else {
-          setServerError(res.data.validation_errors);
-          setBuffer(false);
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        setBuffer(false);
-        // navigation.navigate('Otp', {
-        //     phone: data.phone
-        // })
-      });
+            phone: data.phone
+          })
+        });
+    } else {
+      setPasswordError(true)
+    }
   };
 
   return (
@@ -98,7 +104,7 @@ const SignUp = () => {
               <Text style={styles.title}>SIGN UP</Text>
               {/* </LinearTextGradient> */}
               {/* Name input  */}
-              <Text style={styles.inputText}>First Name</Text>
+              <Text style={styles.inputText}>Full Name</Text>
               <View style={styles.input}>
                 <Icon
                   name="user"
@@ -131,7 +137,7 @@ const SignUp = () => {
               )}
 
               {/* Name input  */}
-              <Text style={styles.inputText}>Last Name </Text>
+              {/* <Text style={styles.inputText}>Last Name </Text>
               <View style={styles.input}>
                 <Icon
                   name="user"
@@ -161,7 +167,9 @@ const SignUp = () => {
                 <Text style={{ color: 'red', marginLeft: 8, marginBottom: -15 }}>
                   This field is required !
                 </Text>
-              )}
+              )} */}
+
+
               {/* email input  */}
               <Text style={styles.inputText}>Email </Text>
 
@@ -312,6 +320,57 @@ const SignUp = () => {
               {errors.password && (
                 <Text style={{ color: 'red', marginLeft: 8, marginBottom: -15 }}>
                   This field is required {errors.password.message}
+                </Text>
+              )}
+              {/*confirm password input  */}
+              <Text style={styles.inputText}>Confirm Password</Text>
+              <View style={styles.input}>
+                <Icon
+                  name="lock"
+                  color={'#ffaa00'}
+                  size={20}
+                  style={styles.Icon}
+                />
+                <Controller
+                  control={control}
+                  rules={{
+                    required: true,
+                    minLength: {
+                      value: 5,
+                      message: ', Min length is 5',
+                    },
+                    maxLength: {
+                      value: 10,
+                      message: ', Max length is 10',
+                    },
+
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      placeholderTextColor="#9e9e9e"
+                      placeholder="******"
+                      secureTextEntry={showPass}
+                      style={styles.input_fild}
+                    />
+                  )}
+                  name="cpassword"
+                />
+                <TouchableOpacity
+                  style={styles.password}
+                  onPress={() => setShowPass(!showPass)}>
+                  {showPass ? (
+                    <Entypo name="eye-with-line" size={20} color={'#ffad00'} />
+                  ) : (
+                    <Entypo name="eye" size={20} color={'#ffad00'} />
+                  )}
+                </TouchableOpacity>
+              </View>
+              {passwordError && (
+                <Text style={{ color: 'red', marginLeft: 8, marginBottom: -15 }}>
+                  Password not match !
                 </Text>
               )}
 

@@ -13,8 +13,8 @@ const PackageDetails = ({ setToggol, packageName, LiniarColor, price, handelPaym
 
 
         <View>
-          <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>{packageName} PACKAGE</Text>
-          <Text style={{ color: '#F4EAFB', fontSize: 30, fontWeight: 'bold', textAlign: 'center' }}>{price}</Text>
+          <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>{packageName}</Text>
+          <Text style={{ color: '#F4EAFB', fontSize: 30, fontWeight: 'bold', textAlign: 'center' }}>{price} TK</Text>
 
           <View style={{ margin: 10 }}>
             <Text style={{ fontWeight: 'bold', marginVertical: 5, fontSize: 18 }}>

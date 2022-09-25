@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 10,
   },
-  secondRow: {width: '60%', alignItems: 'center'},
+  secondRow: { width: '60%', alignItems: 'center' },
   smallContent: {
     height: 60,
     width: 60,
@@ -26,13 +26,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#484848',
     borderRadius: 25,
     marginVertical: 10,
-    paddingRight:10,
-   marginLeft:5,
-   marginRight:4
+    paddingRight: 10,
+    marginLeft: 5,
+    marginRight: 4
   },
   fourthRow: {
-    height: 40,
-    width: 40,
+    height: 25,
+    width: 25,
     backgroundColor: 'black',
     borderRadius: 100,
     margin: 10,
@@ -47,12 +47,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     margin: 10,
   },
-  cardGrid:{
+  cardGrid: {
     width: '45%',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  cardGrid2:{
+  cardGrid2: {
     width: '55%',
     padding: 10,
     justifyContent: 'center',

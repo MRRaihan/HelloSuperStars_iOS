@@ -11,9 +11,12 @@ export default {
   //MENU
   ACTIVITIES: 'Activities',
   WALLET: 'wallet',
+  POSTSHOWBYTYPE: 'postBaseOnType',
 
   // Learning Session
   LEARNINGSESSION: 'LearningSession',
+  ORDERSTATUS: 'OrderStatus',
+  SOUVENIRSTATUS: 'SouvenirOrderStatus',
   ONLINELEARNINGSESSION: 'OnlineLearningSession',
   LEARNINGSESSIONNAV: 'LearningSessionNav',
   VIDEOUPLOADLEARNINGSESSION: 'VideoUploadLearningSession',
@@ -77,4 +80,9 @@ export default {
   MARKDISTIBUTION: 'MarkDistribution',
   PARTICIPATION: 'Participation',
   RESULT: 'Result',
+
+  //PDF
+  SHOWPDF: 'showPDF',
+  //Register audition
+  AUDITIONREGISTER: 'RegisterUpCoAudition',
 };

@@ -9,9 +9,11 @@ import React, { Component } from 'react'
 import imagePath from '../../Constants/imagePath';
 import { useNavigation } from '@react-navigation/native';
 import AppUrl from '../../RestApi/AppUrl';
+import { checkPluginState } from 'react-native-reanimated/lib/reanimated2/core';
 
 function ChatBox({ data }) {
 
+    console.log(data)
     const navigation = useNavigation()
     let chatData
     if (data.type === 'fan-group') {
@@ -21,9 +23,25 @@ function ChatBox({ data }) {
     }
 
     const handelInsertChat = () => {
-        navigation.navigate('MessageStar', {
-            room_id: chatData.room_id,
-            group_id: chatData.id
+        let messageInfo
+        if (data.type === 'fan-group') {
+            messageInfo = {
+                room_id: chatData.room_id,
+                group_id: chatData.id,
+                data: chatData
+            }
+        } else {
+            messageInfo = {
+                room_id: chatData.room_id,
+                qna_id: chatData.qna.id,
+                data: chatData
+            }
+        }
+
+
+
+        navigation.navigate(`${data.type === 'fan-group' ? 'MessageStar' : 'QnaMessages'}`, {
+            messageInfo
         })
     }
 
@@ -42,7 +60,7 @@ function ChatBox({ data }) {
                             borderRadius: 100,
                             padding: 3,
                         }}>
-                        <Image style={styles.starCardImg} source={{ uri: AppUrl.MediaBaseUrl + chatData.banner }} />
+                        <Image style={styles.starCardImg} source={data.type !== 'qna' ? { uri: AppUrl.MediaBaseUrl + chatData.banner } : { uri: AppUrl.MediaBaseUrl + chatData?.qna?.banner }} />
                     </View>
 
                     <View style={styles.ContentItems2}>
@@ -71,6 +89,8 @@ const styles = StyleSheet.create({
         height: 50,
         width: 50,
         borderRadius: 50,
+        resizeMode: 'cover',
+
     },
     SearchBar: {
         borderColor: '#FFAD00',

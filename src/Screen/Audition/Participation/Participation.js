@@ -5,60 +5,276 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Alert,
 } from 'react-native';
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import HeaderComp from '../../../Components/HeaderComp';
 import RoundTopBanner from '../../Audition/Round1/RoundTopBanner';
 import imagePath from '../../../Constants/imagePath';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
-import ImagePicker from 'react-native-image-picker';
 import VideoUploadModal from '../../../Components/MODAL/VideoUploadModal';
 import AuditionTimer from '../../../Components/AUDITION/AuditionTimer';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import RNFS from 'react-native-fs';
+import VideoPlayer from 'react-native-video-player';
+import {androidCameraPermission} from '../../../../permission';
+import ImagePicker from 'react-native-image-crop-picker';
+import axios from 'axios';
+import AppUrl from '../../../RestApi/AppUrl';
+import {AuthContext} from '../../../Constants/context';
+import navigationStrings from '../../../Constants/navigationStrings';
+import {FlatGrid} from 'react-native-super-grid';
 const Participation = ({route}) => {
-  const {roundName} = route.params;
+  const {
+    title,
+    roundName,
+    auditionTitle,
+    auditionImage,
+    roundInformation,
+    videoSrc = '',
+    auditionId,
+    roundId,
+  } = route.params;
+  console.log('-----------props ', route.params);
   const navigation = useNavigation();
   const [pick, setPick] = React.useState('');
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [remainTime, setRemainTime] = useState(0);
+  const [videos, setVideos] = useState([]);
+  const [appealVideos, setAppealVideos] = useState([]);
+  const [myArray, setMyArray] = useState([]);
+  const [myArrayAppeal, setMyArrayAppeal] = useState([]);
+  const {axiosConfig} = useContext(AuthContext);
+  const [oldVideos, setOldVideos] = useState([]);
 
-  const options = {
-    title: 'Video Picker',
-    // mediaType: 'video',
-    mediaType: 'image',
-    storageOptions: {
-      skipBackup: true,
-      path: 'images',
-    },
+  const [videoList, setVideoList] = React.useState([]);
+  const [appealVideoList, setAppealVideoList] = useState([]);
+  const [markTracking, setMarkTracking] = useState({});
+  const [appealMarkTracking, setAppealMarkTracking] = useState({});
+  const [isAppealedForThisRound, setIsAppealedForThisRound] = useState(false);
+  const [appealedRegistration, setAppealedRegistration] = useState({});
+  const [videoType, setVideoType] = useState('general');
+  const fetchUploadedVideo = () => {
+    console.log('click');
+    axios
+      .get(
+        AppUrl.getUploadedRoundVideo + auditionId + '/' + roundId,
+        axiosConfig,
+      )
+      .then(res => {
+        if (res.data.status === 200) {
+          console.log(res.data);
+          setVideoList(res?.data?.videos);
+          setAppealVideoList(res?.data?.appeal_videos);
+          setMarkTracking(res?.data?.auditionRoundMarkTracking);
+          setAppealMarkTracking(res?.data?.appealAuditionRoundMarkTracking);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
-  const openPicker = () => {
-    ImagePicker.showImagePicker(options, response => {
-      console.log('Response = ', response);
+  useEffect(() => {
+    fetchUploadedVideo();
+    checkIsAppealForRound();
+  }, [auditionId, roundId]);
+  useEffect(() => {
+    fetchUploadedVideo();
+    checkIsAppealForRound();
+  }, [isAppealedForThisRound]);
+  const checkIsAppealForRound = () => {
+    axios
+      .get(AppUrl.isAppealRound + auditionId + '/' + roundId, axiosConfig)
+      .then(res => {
+        if (res?.data?.status === 200) {
+          console.log(res.data);
+          setIsAppealedForThisRound(res?.data?.isAppealedForThisRound);
+          if (res?.data?.isAppealedForThisRound == true) {
+            setAppealedRegistration(res?.data?.appealedRegistration);
+          }
+        }
+      });
+  };
+  const handleAppealedVideo = () => {
+    if (appealedRegistration?.id) {
+      setVideoType('appeal');
+    }
+  };
+  const handleGeneralVideo = () => {
+    setVideoType('general');
+  };
 
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else {
-        const source = {uri: response.uri};
-        console.log(source);
-        setPick(source);
-
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+  const onChoose = async () => {
+    if (videos.length > roundInformation.video_slot_num - 1) {
+      alert(`Only ${videos.length} slot are there for uploading`);
+      return;
+    }
+    const permissionStatus = await androidCameraPermission();
+    if (permissionStatus || Platform.OS == 'ios') {
+      Alert.alert('Profile Picture', 'Choose an option', [
+        {text: 'Camera', onPress: onCamera},
+        {text: 'Gallery', onPress: onGallery},
+        {text: 'Cancel', onPress: () => {}},
+      ]);
+    }
+  };
+  const onChooseAppeal = async () => {
+    if (videos.length > roundInformation.video_slot_num - 1) {
+      alert(`Only ${videos.length} slot are there for uploading`);
+      return;
+    }
+    const permissionStatus = await androidCameraPermission();
+    if (permissionStatus || Platform.OS == 'ios') {
+      Alert.alert('Profile Picture', 'Choose an option', [
+        {text: 'Camera', onPress: onCamera},
+        {text: 'Gallery', onPress: onGallery},
+        {text: 'Cancel', onPress: () => {}},
+      ]);
+    }
+  };
+  const onCamera = () => {
+    ImagePicker.openCamera({
+      mediaType: 'video',
+    }).then(image => {
+      if (image.duration > roundInformation.video_duration * 60000) {
+        alert(
+          `Video must be less than ${roundInformation.video_duration} Minutes`,
+        );
+        return;
       }
+      const url = image.path;
+      const type = image.mime;
+      console.log(image);
+      RNFS.readFile(url, 'base64').then(res => {
+        // console.log('========>baseData=>Video', res);
+        // console.log('---------------type--------------', image.mime);
+        if (isAppealedForThisRound) {
+          setAppealVideos([...videos, {type: type, url: url, base64: res}]);
+          submitVideo(type, res, 'appeal');
+          return;
+        }
+        setVideos([...videos, {type: type, url: url, base64: res}]);
+        // console.log(videos);
+        submitVideo(type, res, 'general');
+      });
     });
   };
 
+  const onGallery = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      mediaType: `video`,
+    }).then(video => {
+      const url = video.path;
+      const type = video.mime;
+      console.log('selected video', video);
+      alert('Uploaded');
+      RNFS.readFile(url, 'base64').then(res => {
+        setVideos([...videos, {type: type, url: url, base64: res}]);
+        console.log('Video', res);
+        submitVideo(type, res, 'general');
+      });
+    });
+  };
+
+  const remainingTime = (start, end) => {
+    const startTime = new Date(start.concat(' 00:00:00')).getTime();
+    const endTime = new Date(end.concat(' 23:59:59')).getTime();
+    setRemainTime((endTime - startTime) / 1000);
+  };
+  useEffect(() => {
+    remainingTime(
+      roundInformation.video_upload_start_date,
+      roundInformation.video_upload_end_date,
+    );
+    if (oldVideos.length === 0) {
+      slots();
+      slotAppeal();
+      console.log('yes');
+    }
+    getUploadedVideo();
+    console.log(oldVideos);
+  }, []);
+  const slotAppeal = () => {
+    let iterator = 0;
+    const a = [];
+    console.log(
+      'slot appeal -----------',
+      roundInformation.appeal_video_slot_num,
+    );
+    while (iterator < roundInformation.appeal_video_slot_num) {
+      a.push(Math.floor(Math.random() * 100));
+      iterator++;
+      console.log('create');
+    }
+    setMyArrayAppeal(a);
+  };
+  const slots = () => {
+    let iterator = 0;
+    const a = [];
+    console.log('slot -----------', roundInformation.video_slot_num);
+    while (iterator < roundInformation.video_slot_num) {
+      a.push(Math.floor(Math.random() * 100));
+      iterator++;
+      console.log('create');
+    }
+    setMyArray(a);
+  };
+  const submitVideo = (type, res, videoType) => {
+    let data = {
+      audition_id: auditionId,
+      round_info_id: roundId,
+      type: videoType,
+      videoType: type,
+      base64: res,
+    };
+    console.log('data going api', data);
+    axios
+      .post(AppUrl.auditionVideoUpload, data, axiosConfig)
+      .then(res => {
+        console.log('video array response', res);
+        if (res.data.status === 200) {
+          console.log(res);
+          alert('submitted');
+          myArray.pop();
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  const getUploadedVideo = () => {
+    axios
+      .get(
+        AppUrl.getUploadedRoundVideo + auditionId + '/' + roundId,
+        axiosConfig,
+      )
+      .then(res => {
+        console.log('video array response', res);
+        if (res.data.videos.length > 0) {
+          setOldVideos(res?.data?.videos);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    console.log('--------oldVIDEO', oldVideos);
+  };
   return (
     <View style={styles.container}>
-      <HeaderComp />
+      <HeaderComp backFunc={() => navigation.goBack()} />
       <ScrollView>
         <RoundTopBanner
-          title={`AUDITION ${roundName} ROUND ENDING SOON`}
+          title={title}
           RoundName={roundName}
+          auditionTitle={auditionTitle}
+          auditionImage={auditionImage}
+          remainingTime={remainTime}
         />
+
         <View
           style={{
             backgroundColor: '#272727',
@@ -68,6 +284,14 @@ const Participation = ({route}) => {
           }}>
           <View>
             <Text
+              onPress={() => {
+                console.log('-----------------');
+                console.log(markTracking);
+                console.log('Old Videos', videoList);
+                console.log('appeal video', appealVideoList);
+                console.log(appealMarkTracking);
+                console.log('------------------');
+              }}
               style={[
                 styles.textColor,
                 {textAlign: 'center', paddingVertical: 10, fontSize: 18},
@@ -79,34 +303,40 @@ const Participation = ({route}) => {
           <View style={styles.uploadStyle}>
             <View>
               {/*========== condition ========== */}
-              {roundName === 6||roundName === 7||roundName === 8 ? (
+              {roundName === 6 || roundName === 7 || roundName === 8 ? (
                 <Text style={styles.textColor}>Live Video Date</Text>
               ) : (
                 <Text style={styles.textColor}>Video Submission Date</Text>
               )}
               {/*========== condition ========== */}
-              {roundName === 6||roundName === 7||roundName === 8? (
+              {roundName === 6 || roundName === 7 || roundName === 8 ? (
                 <Text style={styles.textColor}>Live Video Time</Text>
               ) : (
-                <Text style={styles.textColor}>Video Submission Time</Text>
+                <Text style={styles.textColor}>Video Submission Duration</Text>
               )}
               {/*========== condition ========== */}
-              {roundName === 6||roundName === 7||roundName === 8? null : (
-                <Text style={styles.textColor}>Fee</Text>
+              {roundName === 6 || roundName === 7 || roundName === 8 ? null : (
+                <Text style={styles.textColor}>Upload Slot</Text>
               )}
             </View>
             <View>
-              <Text style={{color: '#ddd'}}>15-062022</Text>
-              <Text style={{color: '#ddd'}}>10:45 PM</Text>
+              <Text style={{color: '#ddd'}}>
+                {roundInformation.video_upload_start_date}
+              </Text>
+              <Text style={{color: '#ddd'}}>
+                {roundInformation.video_duration} Minutes
+              </Text>
               {/*========== condition ========== */}
-              {roundName === 6||roundName === 7||roundName === 8 ? null : (
-                <Text style={{color: '#ddd'}}>250 BDT</Text>
+              {roundName === 6 || roundName === 7 || roundName === 8 ? null : (
+                <Text style={{color: '#ddd'}}>
+                  {roundInformation.video_slot_num}
+                </Text>
               )}
             </View>
           </View>
 
           {/*========== condition ========== */}
-          {roundName === 6||roundName === 7||roundName === 8 ? (
+          {roundName === 6 || roundName === 7 || roundName === 8 ? (
             <>
               <AuditionTimer />
 
@@ -141,61 +371,9 @@ const Participation = ({route}) => {
         </View>
 
         {/*============ round condition here =========== */}
-        {roundName === 6||roundName === 7||roundName === 8 ? null : (
-
-
-
+        {roundName === 6 || roundName === 7 || roundName === 8 ? null : (
           <>
-          <View
-            style={{
-              backgroundColor: '#272727',
-              marginVertical: 10,
-              borderRadius: 10,
-            }}>
-            <View style={styles.uploadVideoStyle}>
-              <View style={styles.pickVideo}>
-                <TouchableOpacity onPress={openPicker} style={styles.uploadBtn}>
-                  <View style={styles.browse}>
-                    <AntDesign name="upload" color="#FFAD00" size={20} />
-                    <Text style={{color: '#FFAD00'}}>Browse</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.pickVideo}>
-                <TouchableOpacity style={styles.uploadBtn}>
-                  <View style={styles.browse}>
-                    <AntDesign name="upload" color="#FFAD00" size={20} />
-                    <Text style={{color: '#FFAD00'}}>Browse</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.pickVideo}>
-                <TouchableOpacity style={styles.uploadBtn}>
-                  <View style={styles.browse}>
-                    <AntDesign name="upload" color="#FFAD00" size={20} />
-                    <Text style={{color: '#FFAD00'}}>Browse</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-            {pick ? (
-              <View style={styles.uploadVideoStyle}>
-                <View style={styles.pickVideo}>
-                  <Image style={{height: '100%'}} source={pick} />
-                </View>
-                <View style={styles.pickVideo}>
-                  <Image style={{height: '100%'}} source={pick} />
-                </View>
-                <View style={styles.pickVideo}>
-                  <Image style={{height: '100%'}} source={pick} />
-                </View>
-                <View style={styles.pickVideo}>
-                  <Image style={{height: '100%'}} source={pick} />
-                </View>
-              </View>
-            ) : null}
-
-            <View>
+            {/* <View style={{flex: 1, }}>
               <TouchableOpacity style={styles.btnStyle}>
                 <LinearGradient
                   colors={['#343434', '#343434']}
@@ -209,23 +387,213 @@ const Participation = ({route}) => {
                     <AntDesign name="cloudupload" size={25} color={'#FFAD00'} />
                   </View>
                   <TouchableOpacity
-                    onPress={() => setModalVisible(true)}
                     style={{justifyContent: 'center', alignItems: 'center'}}>
                     <Text style={styles.uploadTxt}>Upload Video</Text>
                   </TouchableOpacity>
                 </LinearGradient>
               </TouchableOpacity>
+              <TouchableOpacity style={styles.btnStyle}>
+                <LinearGradient
+                  colors={['#343434', '#343434']}
+                  style={styles.uploadMainBtn}>
+                  <View
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginHorizontal: 10,
+                    }}>
+                    <AntDesign name="cloudupload" size={25} color={'#FFAD00'} />
+                  </View>
+                  <TouchableOpacity
+                    style={{justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={styles.uploadTxt}>Upload Video</Text>
+                  </TouchableOpacity>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View> */}
+            <View
+              style={{
+                backgroundColor: '#272727',
+                marginVertical: 10,
+                borderRadius: 10,
+              }}>
+              <View style={{flex: 1, flexDirection: 'row'}}>
+                {videos.map((video, index) => {
+                  return (
+                    <View style={{flex: 1, flexDirection: 'column'}}>
+                      <VideoPlayer
+                        video={{
+                          uri: `${video.url}`,
+                        }}
+                        videoWidth={20}
+                        videoHeight={30}
+                      />
+                    </View>
+                  );
+                })}
+              </View>
+              <View style={styles.uploadVideoStyle}>
+                {videoList.length != 0 ? (
+                  <FlatGrid
+                    spacing={10}
+                    itemDimension={120}
+                    data={videoList}
+                    renderItem={({item, index}) => (
+                      <>
+                        <View style={{width: '100%'}}>
+                          <VideoPlayer
+                            video={{
+                              uri: `${AppUrl.MediaBaseUrl + item.video}`,
+                            }}
+                            videoWidth={200}
+                            videoHeight={200}
+                            autoplay={false}
+                            pauseOnPress
+                            hideControlsOnStart
+                            resizeMode="stretch"
+                          />
+                        </View>
+                      </>
+                    )}
+                  />
+                ) : videoList.length === 0 ? (
+                  myArray.map((item, index) => {
+                    return (
+                      <>
+                        <View style={styles.pickVideo} key={index}>
+                          <TouchableOpacity
+                            onPress={onChoose}
+                            style={styles.uploadBtn}>
+                            <View style={styles.browse}>
+                              <AntDesign
+                                name="upload"
+                                color="#FFAD00"
+                                size={20}
+                              />
+                              {videoSrc != '' && (
+                                <Text style={{color: '#FFAD00'}}>Browse</Text>
+                              )}
+                            </View>
+                          </TouchableOpacity>
+                        </View>
+                      </>
+                    );
+                  })
+                ) : (
+                  <></>
+                )}
+              </View>
+              {videoList.length > 0 && (
+                <View>
+                  <Text
+                    style={{
+                      color: 'green',
+                      marginHorizontal: 80,
+                      fontSize: 16,
+                    }}>
+                    Your Videos Has Been Uploaded
+                  </Text>
+                </View>
+              )}
+              {isAppealedForThisRound && (
+                <>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: 20,
+                      textAlign: 'center',
+                      marginVertical: 20,
+                    }}>
+                    Appeal Video
+                  </Text>
+                  <View style={styles.uploadVideoStyle}>
+                    {appealVideoList.length != 0 ? (
+                      <FlatGrid
+                        spacing={10}
+                        itemDimension={120}
+                        data={appealVideoList}
+                        renderItem={({item, index}) => (
+                          <>
+                            <View style={{width: '100%'}}>
+                              <VideoPlayer
+                                video={{
+                                  uri: `${AppUrl.MediaBaseUrl + item.video}`,
+                                }}
+                                videoWidth={200}
+                                videoHeight={200}
+                                autoplay={false}
+                                pauseOnPress
+                                hideControlsOnStart
+                                resizeMode="stretch"
+                              />
+                            </View>
+                          </>
+                        )}
+                      />
+                    ) : appealVideoList.length === 0 ? (
+                      myArrayAppeal.map((item, index) => {
+                        return (
+                          <>
+                            <View style={styles.pickVideo} key={index}>
+                              <TouchableOpacity
+                                onPress={onChooseAppeal}
+                                style={styles.uploadBtn}>
+                                <View style={styles.browse}>
+                                  <AntDesign
+                                    name="upload"
+                                    color="#FFAD00"
+                                    size={20}
+                                  />
+                                  {videoSrc != '' && (
+                                    <Text style={{color: '#FFAD00'}}>
+                                      Browse
+                                    </Text>
+                                  )}
+                                </View>
+                              </TouchableOpacity>
+                            </View>
+                          </>
+                        );
+                      })
+                    ) : (
+                      <></>
+                    )}
+                  </View>
+                  {appealVideoList.length > 0 && (
+                    <View>
+                      <Text
+                        style={{
+                          color: 'green',
+                          marginHorizontal: 80,
+                          fontSize: 16,
+                        }}>
+                        Your Appeal Videos Uploaded
+                      </Text>
+                    </View>
+                  )}
+                </>
+              )}
 
+              {pick ? (
+                <View style={styles.uploadVideoStyle}>
+                  <View style={styles.pickVideo}>
+                    <Image style={{height: '100%'}} source={pick} />
+                  </View>
+                  <View style={styles.pickVideo}>
+                    <Image style={{height: '100%'}} source={pick} />
+                  </View>
+                  <View style={styles.pickVideo}>
+                    <Image style={{height: '100%'}} source={pick} />
+                  </View>
+                  <View style={styles.pickVideo}>
+                    <Image style={{height: '100%'}} source={pick} />
+                  </View>
+                </View>
+              ) : null}
 
-
-
+              <View></View>
             </View>
-          </View>
-
-</>
-
-
-
+          </>
         )}
 
         <VideoUploadModal
@@ -293,5 +661,12 @@ const styles = StyleSheet.create({
     height: 100,
     flex: 1,
     margin: 5,
+  },
+  VideoT: {
+    flexDirection: 'row',
+    marginVertical: 10,
+    // paddingLeft: 30,
+    justifyContent: 'space-around',
+    // margin:8,
   },
 });

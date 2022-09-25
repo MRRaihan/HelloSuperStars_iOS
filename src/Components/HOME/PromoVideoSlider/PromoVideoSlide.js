@@ -10,6 +10,8 @@ import styles from './Styles2';
 import AppUrl from '../../../RestApi/AppUrl';
 import { useNavigation } from '@react-navigation/native';
 
+import Toast from 'react-native-root-toast';
+
 const PromoVideoSlide = ({ currentIndex, index, item }) => {
     const vedioRef = useRef(null)
     const windowHight = Dimensions.get('window').height;

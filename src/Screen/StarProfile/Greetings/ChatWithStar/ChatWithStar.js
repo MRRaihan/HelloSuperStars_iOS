@@ -9,10 +9,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import imagePath from '../../../../Constants/imagePath';
 import { styles } from './styles';
 
-const ChatWithStar = () => {
+const ChatWithStar = ({navigation}) => {
   return (
     <View style={styles.chatContainer}>
-      <View style={styles.topHeader}>
+      {/* <View style={styles.topHeader}>
         <Image
           style={styles.logo}
           resizeMode="stretch"
@@ -21,11 +21,11 @@ const ChatWithStar = () => {
         <TouchableOpacity style={{ marginTop: 3 }}>
           <AntDesign style={styles.icon} name={'message1'} />
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       <View style={styles.chatHeader}>
         <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity style={{ marginTop: 3 }}>
+          <TouchableOpacity style={{ marginTop: 3 }} onPress={()=>navigation.goBack()}>
             <Ionicons style={styles.icon} name={'arrow-back'} />
           </TouchableOpacity>
           <Text style={[styles.text, { marginTop: 5, marginLeft: 5 }]}>

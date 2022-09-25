@@ -15,10 +15,10 @@ const AuthStack = Stack => {
 
 
       <Stack.Screen name="Login" component={Login} />
-     
+
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="Otp" component={Otp} />
-     
+
       <Stack.Screen name="category" component={CategorySelection} />
       <Stack.Screen name="virtualTour" component={VirtualTour} />
 

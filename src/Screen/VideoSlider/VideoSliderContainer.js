@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Dimensions, View } from 'react-native';
+import { Dimensions, View,Text, TouchableOpacity } from 'react-native';
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import VideoSlider from '../../Components/HOME/VideoSlider/VideoSlider';
-
-const VideoSliderContainer = () => {
+import Icon from 'react-native-vector-icons/MaterialIcons';
+const VideoSliderContainer = ({navigation}) => {
   const [videoData, setVideoData] = useState([
     {
       key: 1,
@@ -59,6 +59,8 @@ const VideoSliderContainer = () => {
   };
 
   return (
+    <>
+
     <View
       style={{
         height: windowHight,
@@ -73,7 +75,14 @@ const VideoSliderContainer = () => {
         )}
         keyExtractor={(item, index) => index}
       />
+
+      <TouchableOpacity style={{position:'absolute', left:10,top:10}} onPress={()=>navigation.goBack()}>
+        <Text>
+          <Icon name='arrow-back' size={25} color='#fff'/>
+        </Text>
+      </TouchableOpacity>
     </View>
+    </>
   );
 };
 

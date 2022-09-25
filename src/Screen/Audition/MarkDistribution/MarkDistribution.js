@@ -1,55 +1,68 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import HeaderComp from '../../../Components/HeaderComp';
 import Heading from '../../../Components/GLOBAL/Reuseable/Heading';
 import UnderlineImage from '../../../Components/GLOBAL/Reuseable/UnderlineImage';
 import imagePath from '../../../Constants/imagePath';
 import RoundTopBanner from '../../Audition/Round1/RoundTopBanner';
-const MarkDistribution = () => {
+const MarkDistribution = ({navigation, route}) => {
+  const {
+    userMarks,
+    juryOrJudge,
+    roundName,
+    auditionTitle,
+    auditionImage,
+    remainingTime,
+  } = route.params;
   return (
     <View style={styles.container}>
-      <HeaderComp />
+      <HeaderComp backFunc={() => navigation.goBack()} />
 
-      <RoundTopBanner title='AUDITION FIRST ROUND ENDING TIME' />
-      <View style={{ backgroundColor: '#343434', borderRadius: 10 }}>
+      <RoundTopBanner
+        title={`AUDITION ${roundName} ROUND ENDING TIME`}
+        RoundName={roundName}
+        auditionTitle={auditionTitle}
+        auditionImage={auditionImage}
+        remainingTime={remainingTime}
+      />
+      <View style={{backgroundColor: '#343434', borderRadius: 10}}>
         <Heading heading="Audition Mark Distribution" />
         <UnderlineImage />
         <View style>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{flexDirection: 'row'}}>
             <View style={styles.userVote}>
               <Image resizeMode="stretch" source={imagePath.UserVote} />
             </View>
             <View style={styles.userVoteView}>
-              <Text style={{ color: '#fff', paddingLeft: 5 }}>User Vote</Text>
+              <Text style={{color: '#fff', paddingLeft: 5}}>User Vote</Text>
             </View>
             <View style={styles.userVoteMarkView}>
-              <Text style={styles.userVoteMarkTxt}>30</Text>
+              <Text style={styles.userVoteMarkTxt}>{userMarks}</Text>
             </View>
           </View>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{flexDirection: 'row'}}>
             <View style={styles.userVote}>
               <Image resizeMode="stretch" source={imagePath.JuryMark} />
             </View>
             <View style={styles.userVoteView}>
-              <Text style={{ color: '#fff', paddingLeft: 5 }}>Jury Mark</Text>
+              <Text style={{color: '#fff', paddingLeft: 5}}>Jury Mark</Text>
             </View>
             <View style={styles.userVoteMarkView}>
-              <Text style={styles.userVoteMarkTxt}>30</Text>
+              <Text style={styles.userVoteMarkTxt}>{juryOrJudge}</Text>
             </View>
           </View>
-
         </View>
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default MarkDistribution
+export default MarkDistribution;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black'
+    backgroundColor: 'black',
   },
   userVote: {
     flex: 1,
@@ -78,4 +91,4 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#fff',
   },
-})
+});

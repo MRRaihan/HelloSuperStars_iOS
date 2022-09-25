@@ -1,8 +1,5 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 const styles = StyleSheet.create({
-
-
-
   container: {
     padding: 8,
     backgroundColor: '#000',
@@ -75,8 +72,6 @@ const styles = StyleSheet.create({
     margin: '5%',
   },
 
-
-
   // Auction
 
   containerAc: {
@@ -125,10 +120,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-
   // Auction Product Card
   MaiN: {
-
     marginBottom: 8,
     padding: 12,
     borderRadius: 10,
@@ -139,7 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: 'black',
     padding: 2,
-    borderWidth: .5,
+    borderWidth: 0.5,
     marginBottom: 3,
   },
 
@@ -172,7 +165,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     paddingVertical: 5,
-    fontSize: 25
+    fontSize: 25,
   },
 
   PriceBest: {
@@ -183,7 +176,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     marginTop: 8,
     marginLeft: 5,
-    borderWidth: .2,
+    borderWidth: 0.2,
     borderRadius: 15,
     borderColor: 'gold',
   },
@@ -203,14 +196,9 @@ const styles = StyleSheet.create({
     padding: 1,
   },
 
-
-
-
   // Participate
 
   PText: {
-
-
     color: 'white',
     fontWeight: 'bold',
     fontSize: 18,
@@ -305,7 +293,6 @@ const styles = StyleSheet.create({
     padding: 5,
     height: 50,
     width: 50,
-
   },
 
   PriceTagImg: {
@@ -331,7 +318,6 @@ const styles = StyleSheet.create({
     // width:30,
     paddingTop: 12,
   },
-
 
   PriceDollar: {
     // backgroundColor:'#212121',
@@ -360,7 +346,6 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     paddingVertical: 4,
     // paddingHorizontal:8,
-
   },
   LiveBCarB: {
     flexDirection: 'row',
@@ -371,7 +356,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 5,
     borderRadius: 10,
-
   },
   PriceLive: {
     backgroundColor: '#212121',
@@ -379,12 +363,10 @@ const styles = StyleSheet.create({
     padding: 5,
     height: 50,
     width: 50,
-
   },
   PriceLiveDate: {
     padding: 5,
     paddingLeft: 8,
-
   },
 
   LiveImg: {
@@ -438,11 +420,10 @@ const styles = StyleSheet.create({
   },
   BidUser: {
     borderRadius: 100,
-    borderWidth: .5,
+    borderWidth: 0.5,
     width: 40,
     height: 40,
     borderColor: 'gold',
-
   },
   BidHis: {
     flexDirection: 'row',
@@ -480,7 +461,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 
-
   BidTextHiss: {
     color: 'white',
     textAlign: 'center',
@@ -488,16 +468,13 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
 
-
   LiveBCarBImg: {
     flexDirection: 'row',
     padding: 5,
     width: '100%',
     alignItems: 'center',
     borderRadius: 10,
-
   },
-
 
   Apply: {
     fontSize: 20,
@@ -521,7 +498,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 10,
   },
-
 
   MaiNApp: {
     marginBottom: 8,
@@ -592,14 +568,12 @@ const styles = StyleSheet.create({
     bottom: -330,
     justifyContent: 'center',
     alignItems: 'center',
-
   },
 
   UserWinnerTab: {
     bottom: -430,
     justifyContent: 'center',
     alignItems: 'center',
-
   },
 
   UserTse: {
@@ -628,11 +602,6 @@ const styles = StyleSheet.create({
     left: '27%',
   },
 
-
-
-
-
-
   Increment: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -648,9 +617,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
 
-  Flex1: {
-
-  },
+  Flex1: {},
 
   TextEr: {
     color: 'white',
@@ -693,7 +660,7 @@ const styles = StyleSheet.create({
   PulsText: {
     fontSize: 30,
     fontWeight: 'bold',
-    color: 'white'
+    color: 'white',
   },
 
   Increment2: {
@@ -740,7 +707,6 @@ const styles = StyleSheet.create({
     marginTop: 3,
     backgroundColor: '#222222',
   },
-
 
   Instruction: {
     color: 'white',
@@ -797,16 +763,14 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 15,
   },
 
-
   AppliedT: {
     backgroundColor: '#343333',
     borderRadius: 50,
   },
   WinnerES: {
-    // marginHorizontal:25, 
+    // marginHorizontal:25,
     paddingBottom: 10,
   },
-
 
   ApplyR: {
     color: 'white',
@@ -815,12 +779,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginHorizontal: 28,
     marginBottom: 8,
-
   },
   inputY: {
     height: 45,
     marginHorizontal: 27,
-    borderWidth: .5,
+    borderWidth: 0.5,
     padding: 10,
     fontSize: 17,
     color: '#B6B6B6',
@@ -832,7 +795,7 @@ const styles = StyleSheet.create({
     maxHeight: 110,
     fontSize: 17,
     marginHorizontal: 27,
-    borderWidth: .5,
+    borderWidth: 0.5,
     padding: 10,
     color: '#B6B6B6',
     borderColor: 'gold',
@@ -842,7 +805,7 @@ const styles = StyleSheet.create({
   inputYZ: {
     height: 45,
     marginHorizontal: 27,
-    borderWidth: .5,
+    borderWidth: 0.5,
     padding: 10,
     fontWeight: 'bold',
     fontSize: 17,
@@ -864,14 +827,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 10,
   },
-
-
-})
+});
 
 export default styles;
-
-
-
-
-
-

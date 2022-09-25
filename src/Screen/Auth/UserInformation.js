@@ -1,9 +1,9 @@
 //import liraries
-import {Picker} from '@react-native-picker/picker';
-import {useNavigation} from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import moment from 'moment';
-import React, {useContext, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Alert,
   Dimensions,
@@ -19,61 +19,74 @@ import Toast from 'react-native-root-toast';
 import * as Animatable from 'react-native-animatable';
 import DatePicker from 'react-native-date-picker';
 // import {launchImageLibrary} from 'react-native-image-picker';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { androidCameraPermission } from '../../../permission';
 import LoaderComp from '../../Components/LoaderComp';
-import {AuthContext} from '../../Constants/context';
+import { AuthContext } from '../../Constants/context';
 import imagePath from '../../Constants/imagePath';
 import AppUrl from '../../RestApi/AppUrl';
 import ImagePicker from 'react-native-image-crop-picker';
 import RNFS from 'react-native-fs';
 import LinearGradient from 'react-native-linear-gradient';
+import { useAxiosGet } from '../../CustomHooks/useAxiosGet';
 
 
 
 // create a component
 const UserInformation = () => {
   const Navigation = useNavigation();
-  const {axiosConfig, authContext} = useContext(AuthContext);
+  const { axiosConfig, authContext } = useContext(AuthContext);
   const [buffer, setBuffer] = useState(false);
-
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
   const [formImage, setFormImage] = useState({});
   const [document, setDocument] = useState('');
   const [updateData, setUpdateData] = useState({
-    occupation: '',
-    edu: '',
-    birthday: '',
-    country: '',
-    img: {},
+    occupation: null,
+    edu: null,
+    birthday: null,
+    country: null,
+    img: null,
   });
 
   // console.log(updateData)
+
+  const { resData } = useAxiosGet(AppUrl.infoUpdateInforamtion)
+  const { country, educationlevel, occupation } = resData
+  console.log(resData)
 
   const handelSkip = () => {
     Navigation.navigate('category');
   };
   //
   const hendalSubmitInformation = () => {
+
+
+
     setBuffer(true);
     axios
       .post(AppUrl.SignUpInforUpdate, updateData, axiosConfig)
       .then(res => {
-        // console.log(res.data.userInfo)
+        console.log(res.data.userInfo)
         if (res.data.status == 200) {
+          console.log('user infor update page', res.data.userInfo)
           authContext.userInfoUpate(res.data.userInfo);
           setBuffer(false);
           Navigation.navigate('category');
         } else {
-          Toast.show(res.data.message, Toast.SHORT);
+          Toast.show(res.data.message, Toast.durations.SHORT);
           setBuffer(false);
         }
       })
       .catch(err => {
         console.log(err);
       });
+
+
+
+
   };
+
 
 
   const onSelectImage = async () => {
@@ -96,8 +109,19 @@ const UserInformation = () => {
       height: 300,
       cropping: true,
     }).then(image => {
-      console.log(image.path)
-      setDocument(image.path)
+
+      RNFS.readFile(image.path, 'base64')
+        .then(res => {
+          setUpdateData({
+            ...updateData,
+            img: {
+              type: 'image/jpg',
+              data: res,
+            },
+          })
+          setDocument(image.path)
+        });
+
     });
   }
 
@@ -108,16 +132,25 @@ const UserInformation = () => {
       cropping: true
     }).then(image => {
       console.log("selected Image", image.path)
-      setDocument(image.path)
-   
+
+      RNFS.readFile(image.path, 'base64')
+        .then(res => {
+          setUpdateData({
+            ...updateData,
+            img: {
+              type: 'image/jpg',
+              data: res,
+            },
+          })
+          setDocument(image.path)
+        });
     });
   }
 
 
-  // RNFS.readFile(document, 'base64')
-  // .then(res =>{
-  //   console.log('========>baseData',res);
-  // });
+
+
+
 
 
 
@@ -182,10 +215,10 @@ const UserInformation = () => {
                   alignItems: 'center',
                 }}>
                 <TouchableOpacity onPress={onSelectImage}>
-                  <View style={{marginTop: 50}}>
+                  <View style={{ marginTop: 50 }}>
                     {document ? (
                       <Image
-                        source={{uri: document}}
+                        source={{ uri: document }}
                         style={{
                           height: 150,
                           width: 150,
@@ -215,6 +248,29 @@ const UserInformation = () => {
               </View>
 
               {/* Name input  */}
+              <Text style={styles.inputText}>Country</Text>
+              <View style={styles.input}>
+                <Picker
+                  dropdownIconColor="white"
+                  mode="dialog"
+                  style={styles.input_title}
+                  selectedValue={updateData.country}
+                  onValueChange={(itemValue, itemIndex) =>
+                    setUpdateData({
+                      ...updateData,
+                      country: itemValue,
+                    })
+                  }>
+                  <Picker.Item label="Slect Country" value="null" />
+                  {country && country.map((item, index) =>
+                    <Picker.Item label={item.name} value={item.name} key={index} />
+                  )
+                  }
+
+                </Picker>
+              </View>
+
+              {/* Name input  */}
               <Text style={styles.inputText}>Occupation</Text>
               <View style={styles.input}>
                 <Picker
@@ -229,13 +285,10 @@ const UserInformation = () => {
                     })
                   }>
                   <Picker.Item label="Select Occupation" value="null" />
-                  <Picker.Item label="Teacher" value="Teacher" />
-                  <Picker.Item label="Doctor" value="Doctor" />
-                  <Picker.Item label="Engineer" value="Engineer" />
-                  <Picker.Item label="Farmer" value="Farmer" />
-                  <Picker.Item label="House wife" value="House wife" />
-                  <Picker.Item label="Private Job" value="Private Job" />
-                  <Picker.Item label="Other" value="Other" />
+                  {occupation && occupation.map((item, index) =>
+                    <Picker.Item label={item.title} value={item.title} />
+                  )}
+
                 </Picker>
               </View>
               {/* Name input  */}
@@ -253,13 +306,11 @@ const UserInformation = () => {
                     })
                   }>
                   <Picker.Item label="Slect Education Level" value="null" />
-                  <Picker.Item label="PSC" value="PSC" />
-                  <Picker.Item label="JSC" value="JSC" />
-                  <Picker.Item label="SSC/A Level" value="SSC/A Level" />
-                  <Picker.Item label="HSC/O Level" value="HSC/O Level" />
-                  <Picker.Item label="Honours" value="Honours" />
-                  <Picker.Item label="Masters" value="Masters" />
-                  <Picker.Item label="Other" value="Other" />
+                  {educationlevel && educationlevel.map((item, index) =>
+                    <Picker.Item label={item.name} value={item.name} key={index} />
+
+                  )}
+
                 </Picker>
               </View>
               {/* email input  */}
@@ -267,7 +318,7 @@ const UserInformation = () => {
               <TouchableOpacity
                 style={styles.input_textInput}
                 onPress={() => setOpen(true)}>
-                <Text style={{color: '#ffffff'}}>
+                <Text style={{ color: '#ffffff' }}>
                   {moment(date).format('YYYY-MM-DD')}
                 </Text>
               </TouchableOpacity>
@@ -304,29 +355,7 @@ const UserInformation = () => {
 
 
                             </View> */}
-              {/* Name input  */}
-              <Text style={styles.inputText}>Country</Text>
-              <View style={styles.input}>
-                <Picker
-                  dropdownIconColor="white"
-                  mode="dialog"
-                  style={styles.input_title}
-                  selectedValue={updateData.country}
-                  onValueChange={(itemValue, itemIndex) =>
-                    setUpdateData({
-                      ...updateData,
-                      country: itemValue,
-                    })
-                  }>
-                  <Picker.Item label="Slect Country" value="null" />
-                  <Picker.Item label="BanglaDesh" value="BanglaDesh" />
-                  <Picker.Item label="India" value="india" />
-                  <Picker.Item label="Malaysia" value="Malaysia" />
-                  <Picker.Item label="Kuwait" value="Kuwait" />
-                  <Picker.Item label="UAE" value="UAE" />
-                  <Picker.Item label="Bahrain" value="Bahrain" />
-                </Picker>
-              </View>
+
 
               {/* button */}
               <View style={styles.btn_container}>
@@ -336,17 +365,17 @@ const UserInformation = () => {
 
 
 
-               
+
 
 
                 <TouchableOpacity
-                 
+
                   onPress={hendalSubmitInformation}>
-                   <LinearGradient
-                  style={styles.login_btn}
-                  colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}>
-                  <Text style={{ color: 'black' }}>UPDATE PROFILE</Text>
-                </LinearGradient>
+                  <LinearGradient
+                    style={styles.login_btn}
+                    colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}>
+                    <Text style={{ color: 'black' }}>UPDATE PROFILE</Text>
+                  </LinearGradient>
                 </TouchableOpacity>
               </View>
             </Animatable.View>

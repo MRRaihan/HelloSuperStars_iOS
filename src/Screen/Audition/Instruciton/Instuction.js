@@ -1,17 +1,51 @@
-import React from 'react';
-import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import HeaderComp from '../../../Components/HeaderComp';
 import Heading from '../../../Components/GLOBAL/Reuseable/Heading';
 import UnderlineImage from '../../../Components/GLOBAL/Reuseable/UnderlineImage';
 import imagePath from '../../../Constants/imagePath';
 import RoundTopBanner from '../../Audition/Round1/RoundTopBanner';
-const Instuction = () => {
+import VideoPlayer from 'react-native-video-player';
+import navigationStrings from '../../../Constants/navigationStrings';
+import RenderHtml from 'react-native-render-html';
+import AppUrl from '../../../RestApi/AppUrl';
+const Instuction = ({navigation, route}) => {
+  const {width} = useWindowDimensions();
+  const {
+    title,
+    roundName,
+    auditionTitle,
+    auditionImage,
+    remainingTime,
+    instruction,
+    startDate,
+    endDate,
+  } = route.params;
+
+  const instructionHTML = {
+    html: `<div style=color:#F6EA45;font-size:14px;font-weight: bold; '>${instruction?.instruction}</div>`,
+  };
+
+  console.log(route.params);
   return (
     <View style={styles.container}>
-      <HeaderComp />
+      <HeaderComp backFunc={() => navigation.goBack()} />
 
       <ScrollView>
-        <RoundTopBanner title={'AUDITION FIRST ROUND ENDING TIME'} />
+        <RoundTopBanner
+          title={`AUDITION ${roundName} ROUND ENDING TIME`}
+          RoundName={roundName}
+          auditionTitle={auditionTitle}
+          auditionImage={auditionImage}
+          remainingTime={remainingTime}
+        />
         <View style={styles.auditionDescriptionRound}>
           <Heading heading="Instructions" />
           <UnderlineImage />
@@ -25,64 +59,36 @@ const Instuction = () => {
                   source={imagePath.AuditionInstruction}
                   resizeMode="stretch"
                 />
-                <Text style={{color: '#fff', marginLeft: 4, marginRight: 4}}>
-                  Lorem ipsum dolor, sit amet consectetur adipisicing.
-                </Text>
-              </View>
-              <View
-                style={{flexDirection: 'row', marginTop: 10, marginBottom: 10}}>
-                <Image
-                  style={styles.imageWidth}
-                  source={imagePath.AuditionInstruction}
-                  resizeMode="stretch"
-                />
-                <Text style={{color: '#fff', marginLeft: 4, marginRight: 4}}>
-                  Lorem ipsum dolor, sit amet consectetur adipisicing.
-                </Text>
-              </View>
-              <View
-                style={{flexDirection: 'row', marginTop: 10, marginBottom: 10}}>
-                <Image
-                  style={styles.imageWidth}
-                  source={imagePath.AuditionInstruction}
-                  resizeMode="stretch"
-                />
-                <Text style={{color: '#fff', marginLeft: 4, marginRight: 4}}>
-                  Lorem ipsum dolor, sit amet consectetur adipisicing.
-                </Text>
-              </View>
-              <View
-                style={{flexDirection: 'row', marginTop: 10, marginBottom: 10}}>
-                <Image
-                  style={styles.imageWidth}
-                  source={imagePath.AuditionInstruction}
-                  resizeMode="stretch"
-                />
-                <Text style={{color: '#fff', marginLeft: 4, marginRight: 4}}>
-                  Lorem ipsum dolor, sit amet consectetur adipisicing.
-                </Text>
-              </View>
-              <View
-                style={{flexDirection: 'row', marginTop: 10, marginBottom: 10}}>
-                <Image
-                  style={styles.imageWidth}
-                  source={imagePath.AuditionInstruction}
-                  resizeMode="stretch"
-                />
-                <Text style={{color: '#fff', marginLeft: 4, marginRight: 4}}>
-                  Lorem ipsum dolor, sit amet consectetur adipisicing.
-                </Text>
+                <View style={{marginLeft: -20}}>
+                  <Text style={{color: '#fff'}}>
+                    {/* {instruction.instruction} */}
+                  </Text>
+                  <RenderHtml contentWidth={width} source={instructionHTML} />
+                </View>
               </View>
             </View>
           </View>
 
           <View style={{margin: 10, position: 'relative'}}>
-            <Image
+            {/* <Image
               source={imagePath.AuditionInstructionVideo}
               style={styles.video}
               resizeMode="stretch"
             />
-            <Image source={imagePath.PauseIcon} style={styles.pauseImg} />
+            <Image source={imagePath.PauseIcon} style={styles.pauseImg} /> */}
+
+            <VideoPlayer
+              style={styles.video}
+              video={{
+                uri: `${AppUrl.MediaBaseUrl}${instruction?.video}`,
+              }}
+              videoWidth={1600}
+              videoHeight={900}
+              thumbnail={{
+                uri: `${AppUrl.MediaBaseUrl}${instruction?.image}`,
+              }}
+              blurRadius={10}
+            />
           </View>
 
           <View style={styles.rowStyle}>
@@ -92,7 +98,7 @@ const Instuction = () => {
               </View>
               <View>
                 <Text style={styles.starts}>Starts</Text>
-                <Text style={styles.aprilTxt}>2 April 2022</Text>
+                <Text style={styles.aprilTxt}>{startDate}</Text>
               </View>
             </View>
             <View style={styles.endBg}>
@@ -101,7 +107,7 @@ const Instuction = () => {
               </View>
               <View>
                 <Text style={styles.starts}>End</Text>
-                <Text style={styles.aprilTxt}>8 April 2022</Text>
+                <Text style={styles.aprilTxt}>{endDate}</Text>
               </View>
             </View>
             <View style={styles.startBg}>
@@ -110,7 +116,7 @@ const Instuction = () => {
               </View>
               <View>
                 <Text style={styles.starts}>Starts</Text>
-                <Text style={styles.aprilTxt}>2 April 2022</Text>
+                <Text style={styles.aprilTxt}>{startDate}</Text>
               </View>
             </View>
           </View>

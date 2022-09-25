@@ -1,12 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import React, { useContext } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { BackHandler, Image, Text, TouchableOpacity, View } from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 import { AuthContext } from '../../../Constants/context';
 import imagePath from '../../../Constants/imagePath';
 import navigationStrings from '../../../Constants/navigationStrings';
 import AppUrl from '../../../RestApi/AppUrl';
+import MenuNavigator from '../../../Screen/Menu/MenuNavigator';
+
 // import { AuthContext } from '../../Constants/context';
 // import imagePath from '../../Constants/imagePath'
 // import navigationStrings from '../../Constants/navigationStrings';
@@ -15,9 +17,33 @@ import AppUrl from '../../../RestApi/AppUrl';
 import styles from './ActivitiesCardStyle';
 
 
-const AuctionActivityCard = ({ childActivityEventList, childActivityEventType }) => {
+const AuctionActivityCard = ({ childActivityEventList, childActivityEventType,setMenuNavigator,setMenuChange }) => {
     const Navigation = useNavigation();
     const { useInfo, authContext } = useContext(AuthContext);
+
+
+
+
+
+
+
+//============back handler==================
+function handleBackButtonClick() {
+    setMenuNavigator(MenuNavigator.MENUACTIVITIES);
+    setMenuChange(0);
+    return true;
+    
+    }
+    
+    React.useEffect(() => {
+      BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+      return () => {
+        BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
+      };
+    }, []);
+    
+    
+    //============back handler==================
 
 
 

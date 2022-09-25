@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, Text, View, FlatList, TouchableOpacity } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
@@ -10,6 +10,7 @@ import { AuthContext } from '../../../Constants/context';
 import imagePath from '../../../Constants/imagePath';
 import StarPromoVedio from '../StarPromoVideo/StarPromoVedio';
 import PostCard from '../../../Components/GLOBAL/Card/PostCard/PostCard';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const PostContainer = ({
   path = null,
@@ -25,15 +26,16 @@ const PostContainer = ({
   const { axiosConfig, authContext } = useContext(AuthContext);
 
   const [buffer, setBuffer] = useState(true);
-  const [loadMore, setLoadMore] = useState(false);
+  const [loadMore, setLoadMore] = useState(true);
   const [Refreshing, setRefreshing] = useState(false);
+  const [emptyPost, setEmptyPost] = useState(false)
   const [posts, setPosts] = useState([]);
   useEffect(() => {
 
     console.log('path', path)
     getAllPost();
     setBuffer(true);
-    setPostPage(1);
+    // setPostPage(2);
   }, []);
 
 
@@ -55,7 +57,9 @@ const PostContainer = ({
           if (setFilterPost != null) {
             setFilterPost(res.data.posts);
           }
-
+          if (res.data.posts.length === 0) {
+            setEmptyPost(true)
+          }
           setPosts([...posts, ...res.data.posts]);
         }
       })
@@ -66,114 +70,50 @@ const PostContainer = ({
       });
   };
 
+  const pageReload = () => {
+    setBuffer(true)
+    setPosts([])
+    getAllPost()
+  }
+
   const renderData = ({ item, index }) => {
     return (
       <>
-        {index === 0 ? (
-          setFilterPost == null ? (
-            <StarPromoVedio />
-          ) : (
-            <></>
-          )
-        ) : (
-          <PostCard key={index} post={item} />
-        )}
+        {type !== null ?
+          <>
+            {item.type === type &&
+
+              <PostCard key={index} post={item} />
+            }
+
+
+          </>
+          :
+          <>
+            {index === 0 ? (
+              setFilterPost == null ? (
+                <>
+                  <StarPromoVedio />
+                  {/* <Text style={{ color: '#fff' }}>{posts.length}</Text> */}
+                  <PostCard key={index} post={item} />
+                </>
+
+
+              ) : (
+                <></>
+              )
+            ) : (
+              <PostCard key={index} post={item} />
+            )}
+          </>
+        }
+
       </>
     );
   };
 
   return (
     <>
-      {/* <View style={styles.CardRow}>
-          <View style={styles.MainCard}>
-            <TouchableOpacity style={styles.cardImg}>
-              <Image
-                style={styles.starCardImg}
-                source={imagePath.srkProfileLogo}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => Navigation.navigate(navigationStrings.STARPROFILE)}>
-              <Text style={styles.cardText}>Shrukh khan</Text>
-              <Text style={styles.time}>5.31pm 2nd july</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.CardContent}>
-            <Text style={styles.cardContentText}>
-              Join Shrukh vs Salman fan group!
-            </Text>
-
-            <View style={{ position: 'relative' }}>
-              <Image style={styles.cardCoverImg} source={imagePath.bannerFan} />
-              <View style={styles.mainMeetUpView}>
-                <View style={{ paddingVertical: 2 }}>
-                  <Text style={{ color: '#FFAD00', fontSize: 15 }}>Fangroup</Text>
-                  <Text
-                    style={{ color: '#FFAD00', fontWeight: 'bold', fontSize: 18 }}>
-                    Explore fan group by joining now!
-                  </Text>
-                </View>
-                <View style={{ justifyContent: 'center' }}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      Navigation.navigate(navigationStrings.FANGROUP)
-                    }
-                    style={styles.meetupBtn}>
-                    <Text style={styles.meetupTxt}>Explore</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.cardInfo}>
-              <View>
-                <Text style={styles.infoText}>
-                  <FontAwesome5 name={'heart'} />
-                  240
-                </Text>
-              </View>
-              <View style={{ flexDirection: 'row' }}>
-                <View>
-                  <Text style={styles.infoText}>16 Comments</Text>
-                </View>
-                <View>
-                  <Text style={styles.infoText}>106 Share</Text>
-                </View>
-              </View>
-            </View>
-            <View
-              style={{
-                borderBottomColor: 'black',
-                borderBottomWidth: 0.7,
-                margin: 10,
-              }}
-            />
-            <View style={styles.cardButtons}>
-              <TouchableOpacity style={styles.likeBtn}>
-                <Text style={styles.btnText}>
-                  {' '}
-                  <Icon name="heart" color={'red'} />
-                  Like
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.likeBtn}>
-                <Text style={styles.btnText}>
-                  {' '}
-                  <FontAwesome5 name={'comment'} />
-                  Comment
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.likeBtn}>
-                <Text style={styles.btnText}>
-                  {' '}
-                  <FontAwesome5 name={'share'} />
-                  Share
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View> */}
-
 
       {buffer ? (
         <View>
@@ -183,377 +123,35 @@ const PostContainer = ({
         </View>
       ) : (
         <View style={{ marginBottom: 130 }}>
-          <InfiniteScroll
+          {/* <InfiniteScroll
             onScroll={() => console.log('jekhae')}
             renderData={renderData}
             data={posts}
             loadMore={getAllPost}
-          />
-          {loadMore && (
-            <View
-              style={{
-                position: 'absolute',
-                zIndex: 2,
-                bottom: 70,
-                left: '40%',
-                backgroundColor: '#00000071',
-                alignItems: 'center',
-                borderRadius: 10,
-                padding: 5,
-              }}>
-              <Image
-                source={imagePath.loadingGif}
-                style={{ width: 30, height: 15 }}
-              />
-              <Text
-                style={{
-                  paddingHorizontal: 5,
-                  paddingBottom: 3,
-                  fontSize: 12,
-                  color: '#ececec',
-                }}>
-                Loading . . .
-              </Text>
-            </View>
-          )}
+          /> */}
 
-          {/* <View style={styles.CardRow}>
-        <View style={styles.MainCard}>
-          <TouchableOpacity style={styles.cardImg}>
-            <Image
-              style={styles.starCardImg}
-              source={imagePath.cardProfileIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => Navigation.navigate(navigationStrings.STARPROFILE)}>
-            <Text style={styles.cardText}>Shakib Al Hasan</Text>
-            <Text style={styles.time}>5.31pm 2nd july</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.CardContent}>
-          <Text style={styles.cardContentText}>
-            bowling practice with Shakib Al Hasan.
-          </Text>
+          <FlatList
+            data={posts}
+            renderItem={renderData}
+            onEndReached={getAllPost}
+            ListFooterComponent={() =>
+              <View style={{ height: 250 }}>
+                {loadMore &&
+                  <CardSkeleton />
+                }
+                {emptyPost &&
+                  <View style={{ justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                    <Image source={imagePath.lazyDog} style={{ height: 70, width: 70 }} />
+                    <TouchableOpacity style={{ alignItems: 'center', marginTop: 10 }} onPress={pageReload}>
+                      <Text style={{ color: '#ffaa00' }}>No more post yet  <Icon name="reload" color={'#ffaa00'} size={20} /></Text>
 
-          <View style={{ position: 'relative' }}>
-            <Image
-              style={styles.cardCoverImg}
-              source={imagePath.LearningBanner}
-            />
-            <View style={styles.mainMeetUpView}>
-              <View style={{ paddingVertical: 2 }}>
-                <Text style={{ color: '#FFAD00', fontSize: 15 }}>
-                  Bowling Practice with
-                </Text>
-                <Text
-                  style={{ color: '#FFAD00', fontWeight: 'bold', fontSize: 18 }}>
-                  Shakib Al Hasan
-                </Text>
-              </View>
-              <View style={{ justifyContent: 'center' }}>
-                <TouchableOpacity
-                  onPress={() =>
-                    Navigation.navigate(navigationStrings.LEARNINGSESSION)
-                  }
-                  style={styles.meetupBtn}>
-                  <Text style={styles.meetupTxt}>Register Now</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.cardInfo}>
-            <View>
-              <Text style={styles.infoText}>
-                <FontAwesome5 name={'heart'} />
-                240
-              </Text>
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-              <View>
-                <Text style={styles.infoText}>16 Comments</Text>
-              </View>
-              <View>
-                <Text style={styles.infoText}>106 Share</Text>
-              </View>
-            </View>
-          </View>
-          <View
-            style={{
-              borderBottomColor: 'black',
-              borderBottomWidth: 0.7,
-              margin: 10,
-            }}
-          />
-          <View style={styles.cardButtons}>
-            <TouchableOpacity style={styles.likeBtn}>
-              <Text style={styles.btnText}>
-                {' '}
-                <Icon name="heart" color={'red'} />
-                Like
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.likeBtn}>
-              <Text style={styles.btnText}>
-                {' '}
-                <FontAwesome5 name={'comment'} />
-                Comment
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.likeBtn}>
-              <Text style={styles.btnText}>
-                {' '}
-                <FontAwesome5 name={'share'} />
-                Share
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View> */}
-
-          {/* .............Learning Session for offline end................... */}
-
-          {/* {DATA.map(item => {
-        return (
-          <View key={item.key} style={styles.CardRow}>
-            <View style={styles.MainCard}>
-              <TouchableOpacity style={styles.cardImg}>
-                <Image style={styles.starCardImg} source={item.imgCardIcon} />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Text style={styles.cardText}>{item.name}</Text>
-                <Text style={styles.time}>5.31pm 2nd july</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.CardContent}>
-              <Text style={styles.cardContentText}>{item.content}</Text>
-
-              <View>
-                <Image
-                  style={styles.cardCoverImg}
-                  source={item.imgCardContent}
-                />
-              </View>
-
-              <View style={styles.cardInfo}>
-                <View>
-                  <Text style={styles.infoText}>
-                    <FontAwesome5 name={'heart'} />
-                    240
-                  </Text>
-                </View>
-                <View style={{ flexDirection: 'row' }}>
-                  <View>
-                    <Text style={styles.infoText}>16 Comments</Text>
+                    </TouchableOpacity>
                   </View>
-                  <View>
-                    <Text style={styles.infoText}>106 Share</Text>
-                  </View>
-                </View>
+                }
               </View>
-              <View
-                style={{
-                  borderBottomColor: 'black',
-                  borderBottomWidth: 0.7,
-                  margin: 10,
-                }}
-              />
-              <View style={styles.cardButtons}>
-                <TouchableOpacity style={styles.likeBtn}>
-                  <Text style={styles.btnText}>
-                    {' '}
-                    <Icon name="heart" color={'red'} />
-                    Like
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.likeBtn}>
-                  <Text style={styles.btnText}>
-                    {' '}
-                    <FontAwesome5 name={'comment'} />
-                    Comment
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.likeBtn}>
-                  <Text style={styles.btnText}>
-                    {' '}
-                    <FontAwesome5 name={'share'} />
-                    Share
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        );
-      })} */}
-
-          {/* .............MeetUp card for offline start................... */}
-
-          {/* 
-      <View style={styles.CardRow}>
-        <View style={styles.MainCard}>
-          <TouchableOpacity style={styles.cardImg}>
-            <Image style={styles.starCardImg} source={imagePath.star8} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => Navigation.navigate(navigationStrings.STARPROFILE)}>
-            <Text style={styles.cardText}>Mizanur Rahman Azhari</Text>
-            <Text style={styles.time}>5.31pm 2nd july</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.CardContent}>
-          <Text style={styles.cardContentText}>
-            As-salamu alaykum Brothers. Take greetings!
-          </Text>
-
-          <View style={{ position: 'relative' }}>
-            <Image
-              style={styles.cardCoverImg}
-              source={imagePath.meetUpBanner2}
-            />
-            <View style={styles.mainMeetUpView}>
-              <View style={{ paddingVertical: 2 }}>
-                <Text style={{ color: '#FFAD00', fontSize: 15 }}>
-                  Meet Mizanur Rahman
-                </Text>
-                <Text
-                  style={{ color: '#FFAD00', fontWeight: 'bold', fontSize: 18 }}>
-                  At Friday night online
-                </Text>
-              </View>
-              <View style={{ justifyContent: 'center' }}>
-                <TouchableOpacity
-                  onPress={() =>
-                    Navigation.navigate(navigationStrings.MEETUP, {
-                      type: 'online',
-                    })
-                  }
-                  style={styles.meetupBtn}>
-                  <Text style={styles.meetupTxt}>Book Now</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.cardInfo}>
-            <View>
-              <Text style={styles.infoText}>
-                <FontAwesome5 name={'heart'} />
-                240
-              </Text>
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-              <View>
-                <Text style={styles.infoText}>16 Comments</Text>
-              </View>
-              <View>
-                <Text style={styles.infoText}>106 Share</Text>
-              </View>
-            </View>
-          </View>
-          <View
-            style={{
-              borderBottomColor: 'black',
-              borderBottomWidth: 0.7,
-              margin: 10,
-            }}
+            }
+            onEndReachedThreshold={0.5}
           />
-          <View style={styles.cardButtons}>
-            <TouchableOpacity style={styles.likeBtn}>
-              <Text style={styles.btnText}>
-                {' '}
-                <Icon name="heart" color={'red'} />
-                Like
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.likeBtn}>
-              <Text style={styles.btnText}>
-                {' '}
-                <FontAwesome5 name={'comment'} />
-                Comment
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.likeBtn}>
-              <Text style={styles.btnText}>
-                {' '}
-                <FontAwesome5 name={'share'} />
-                Share
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View> */}
-
-          {/* .............MeetUp card for offline end................... */}
-
-          {/* <FlatList data={DATA} renderItem={({item})=> {
-      return (
-      <View style={styles.CardRow}>
-        <View style={styles.MainCard}>
-          <TouchableOpacity style={styles.cardImg}>
-            <Image style={styles.starCardImg} source={item.imgCardIcon} />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={styles.cardText}>{item.name}</Text>
-            <Text style={styles.time}>5.31pm 2nd july</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.CardContent}>
-          <Text style={styles.cardContentText}>{item.content}</Text>
-
-          <View>
-            <Image style={styles.cardCoverImg} source={item.imgCardContent} />
-          </View>
-
-          <View style={styles.cardInfo}>
-            <View>
-              <Text style={styles.infoText}>
-                <FontAwesome5 name={'heart'} />
-                240
-              </Text>
-            </View>
-            <View style={{flexDirection: 'row'}}>
-              <View>
-                <Text style={styles.infoText}>16 Comments</Text>
-              </View>
-              <View>
-                <Text style={styles.infoText}>106 Share</Text>
-              </View>
-            </View>
-          </View>
-          <View style={{
-                    borderBottomColor: 'black',
-                    borderBottomWidth: 0.7,
-                    margin: 10,
-                  }} />
-          <View style={styles.cardButtons}>
-            <TouchableOpacity style={styles.likeBtn}>
-              <Text style={styles.btnText}>
-                {' '}
-                <Icon name="heart" color={'red'} />
-                Like
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.likeBtn}>
-              <Text style={styles.btnText}>
-                {' '}
-                <FontAwesome5 name={'comment'} />
-                Comment
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.likeBtn}>
-              <Text style={styles.btnText}>
-                {' '}
-                <FontAwesome5 name={'share'} />
-                Share
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-      );
-      }}
-      /> */}
         </View>
       )}
     </>

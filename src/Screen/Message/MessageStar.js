@@ -1,53 +1,37 @@
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import {
-  Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View
+  Image, ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View
 } from 'react-native';
 import EmojiSelector from 'react-native-emoji-selector';
 import ImagePicker from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MatarialIcon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AuthContext } from '../../Constants/context';
 import imagePath from '../../Constants/imagePath';
 import AppUrl from '../../RestApi/AppUrl';
-import moment from 'moment';
-const data = [1, 2, 3, 4, 5, 6];
+import { useAxiosGet } from '../../CustomHooks/useAxiosGet';
+
+
 const MessageStar = ({ route }) => {
 
-  const { room_id, group_id } = route.params;
-  const { useInfo, socketData } = useContext(AuthContext);
+  const { messageInfo } = route.params;
+  const { room_id, group_id } = messageInfo
+  const { useInfo, socketData, axiosConfig } = useContext(AuthContext);
   const navigation = useNavigation()
   const [showEmoji, setShowEmoji] = React.useState(false);
   const [store, setStore] = React.useState(null);
   const [sendType, setSendType] = React.useState(false);
   const [pick, setPick] = React.useState();
+  const { resData, buffer } = useAxiosGet(AppUrl.fanGroupMemeberList + group_id)
+  const [mentionStatus, setMentionStatus] = useState(false)
+  const [starList, setStarList] = useState();
 
   const scrollViewRef = useRef();
 
-  const starNotify = [
-    {
-      key: 1,
-      img: imagePath.StarZ,
-      name: 'Mizanur Rahman Raihan',
-      title: 'Hi man',
-      time: '2 min ago',
-    },
-    {
-      key: 2,
-      img: imagePath.notify2,
-      name: 'Ayman Siddique',
-      title: 'Hlo',
-      time: '4 min ago',
-    },
-  ];
-  const options = {
-    title: 'Pick an image',
-
-    storageOptions: {
-      skipBackup: true,
-      path: 'images',
-    },
-  };
+  // console.log('gggjkgkj', resData.members)
 
   const openPicker = () => {
     ImagePicker.showImagePicker(options, response => {
@@ -72,12 +56,12 @@ const MessageStar = ({ route }) => {
 
   const [text, setText] = useState()
   const handelType = async (e) => {
-    console.log(e)
+    // console.log(e)
     let eventdata = {
       'room_id': room_id,
       'status': true
     }
-    await socketData.emit('type_event_send', eventdata)
+    await socketData.emit('typing_event_send', eventdata)
 
 
 
@@ -105,7 +89,8 @@ const MessageStar = ({ route }) => {
       'group_id': group_id,
       'position': "",
       'text': text,
-      'time': time
+      'time': time,
+      'status': 1
     }
 
 
@@ -113,7 +98,9 @@ const MessageStar = ({ route }) => {
       'room_id': room_id,
       'status': false
     }
-    await socketData.emit('type_event_send', eventdata)
+
+
+    await socketData.emit('typing_event_send', eventdata)
 
 
     await socketData.emit('send_message', messageData)
@@ -121,6 +108,23 @@ const MessageStar = ({ route }) => {
       return [...prv, messageData]
     })
     setText("")
+    setMentionStatus(false)
+  }
+
+  /**
+   * message history get
+   */
+  const [messageLoad, setMessageLoad] = useState(true)
+  const getMessageHistory = () => {
+    axios.get(AppUrl.fanChatHistory + group_id, axiosConfig).then((res) => {
+      setMessageLoad(false)
+      if (res.data.status === 200) {
+        setMsgData(res.data.chat_history)
+      }
+    }).catch((err) => {
+      console.log(err)
+
+    })
   }
 
 
@@ -134,7 +138,7 @@ const MessageStar = ({ route }) => {
 
     })
 
-    socketData.on('type_event_recive', (data) => {
+    socketData.on('typing_event_recive', (data) => {
       setOnType(data.status)
       console.log(data.status)
     })
@@ -144,13 +148,68 @@ const MessageStar = ({ route }) => {
 
 
   useEffect(() => {
+    getMessageHistory()
     socketData.emit('join_room', room_id)
   }, [])
+
+  /**
+   * message type
+  */
+  const [searchName, setSearchName] = useState()
+  const HandelTypeMessage = (e) => {
+    handelType(e)
+
+    if (e.includes('@')) {
+      setSearchName(e)
+      handleFilterData(e, "first_name", "last_name")
+      setMentionStatus(true)
+    } else {
+      setMentionStatus(false)
+    }
+  }
+
+
+  /**
+  * filter data 
+ */
+  const handleFilterData = (value, ...props) => {
+    setMentionStatus(false)
+    let serachString = value.split("@");
+    let stringValue = serachString[1];
+
+    let array = resData.members?.filter(item => {
+      let state = false;
+
+      props.forEach(property => {
+        if (item.user[property].toLowerCase().includes(stringValue.toLowerCase())) {
+          state = true;
+        }
+      });
+
+      return state;
+    });
+    if (value.length > 0) {
+      setStarList(array)
+    } else {
+      setStarList([])
+    }
+  };
+
+  /**
+   * handel press to menation
+  */
+  const HandelPressMentaion = (value) => {
+    console.log(value)
+    setText(text + value)
+  }
+
+
 
   return (
     <>
 
       <View style={{ flex: 1, backgroundColor: 'black' }}>
+
         <View
           style={{
             backgroundColor: 'black',
@@ -158,8 +217,10 @@ const MessageStar = ({ route }) => {
             flexDirection: 'row',
             justifyContent: 'space-between',
           }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-            <Image source={imagePath.logo} style={{ height: 30, width: 30 }} />
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            {/* <Image source={imagePath.logo} style={{ height: 30, width: 30 }} /> */}
+
+            <MatarialIcon name='arrow-back' size={25} color='#fff' />
           </TouchableOpacity>
           <TouchableOpacity
             style={{
@@ -180,7 +241,7 @@ const MessageStar = ({ route }) => {
           </TouchableOpacity>
         </View>
 
-        <View
+        {/* <View
           style={{ backgroundColor: '#343434', marginVertical: 3, padding: 10 }}>
           <View style={{ flexDirection: 'row' }}>
             <View style={{ width: '15%' }} onPress={() => navigation.goBack()}>
@@ -193,7 +254,7 @@ const MessageStar = ({ route }) => {
             </View>
             <TouchableOpacity style={{ width: '70%', justifyContent: 'center' }}>
               <Text style={styles.Name}>{useInfo.first_name + " " + useInfo.last_name}</Text>
-              {/* <TextInput  */}
+           
             </TouchableOpacity>
             <TouchableOpacity style={{ width: '20%' }}>
               <Text style={styles.Name}>
@@ -203,86 +264,122 @@ const MessageStar = ({ route }) => {
                   size={30}
                 />
               </Text>
-              {/* <TextInput  */}
+             
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
+        <ImageBackground source={imagePath.VoiceChatBg} style={{ flex: 1, paddingBottom: 60 }}>
+          {messageLoad ?
+            <View style={{ justifyContent: 'center', alignItems: 'center', height: 300 }}>
 
-        <ScrollView
-          ref={scrollViewRef}
-          onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
-        >
-
-
-          <View style={{ flex: 1, paddingBottom: 60 }}>
-            {showEmoji && <EmojiSelector onEmojiSelected={emoji => {
-              setStore(emoji)
-              setShowEmoji(false)
-            }} />}
-
-            {msgData && msgData.map((item, index) =>
+              <Image source={imagePath.lazyDog} style={{ height: 100, width: 200 }} />
+              <Text style={{ color: '#ffaa00', fontSize: 15 }}>Try to finding your message!</Text>
+            </View>
+            :
+            <ScrollView
+              ref={scrollViewRef}
+              onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+            >
 
 
-              <View
-                key={index}
-                style={item.sender_id === useInfo.id ? styles.remoteChatStyle : styles.ownChatStyle
-                }>
-                <Image
-                  source={{ uri: AppUrl.MediaBaseUrl + item?.sender_image }}
-                  style={styles.UserImg}
-                />
-                <View
-                  style={item.sender_id === useInfo.id ? styles.ownChatBody : styles.remoteChatBody
-                  }>
-                  <Text style={{ color: 'black', marginLeft: 5, padding: 5 }}>
-                    {item.text}
-                  </Text>
-                </View>
-                <View style={{ justifyContent: 'center' }}>
-                  <Text style={{ color: 'gray' }}>{item?.time}</Text>
-                </View>
+              <View>
+                {showEmoji && <EmojiSelector onEmojiSelected={emoji => {
+                  setStore(emoji)
+                  setShowEmoji(false)
+                }} />}
+
+
+                {msgData && msgData.map((item, index) =>
+
+                  <View
+                    key={index}
+                    style={item.sender_id === useInfo.id ? styles.remoteChatStyle : styles.ownChatStyle
+                    }>
+                    <Image
+                      source={{ uri: AppUrl.MediaBaseUrl + item?.sender_image }}
+                      style={styles.UserImg}
+                    />
+                    <View
+                      style={item.sender_id === useInfo.id ? styles.ownChatBody : styles.remoteChatBody
+                      }>
+                      <Text style={{ color: 'black', marginLeft: 5, paddingVertical: 12 }}>
+                        {item.text}
+                      </Text>
+
+                      {/* <View style={{ backgroundColor: `${item.sender_id === useInfo.id ? '#ffaa00' : 'white'}`, height: 20, position: 'absolute', right: '0%', bottom: 18, borderRadius: 15, justifyContent: 'center', alignItems: 'center', top: -10 }}>
+                      <Text style={{ fontSize: 10, paddingHorizontal: 5 }}>Baler group</Text>
+                    </View> */}
+                    </View>
+                    <View style={{ justifyContent: 'center' }}>
+                      <Text style={{ color: 'gray' }}>{item?.time}</Text>
+                    </View>
+
+                  </View>
+
+
+
+
+
+                )}
+
+
+                {onType &&
+                  <View
+
+                    style={styles.ownChatStyle
+                    }>
+                    <View style={styles.UserImgTyping}>
+                      <Image
+                        source={imagePath.loadingGif}
+                        style={{ height: 10, width: 20 }}
+                      />
+                    </View>
+                    <View
+                      style={[styles.remoteChatBody, { backgroundColor: '#ffff004b' }]
+                      }>
+                      <Text style={{ color: 'black', marginLeft: 5, padding: 5, color: 'white' }}>
+                        Some one typing...
+                      </Text>
+                    </View>
+
+                  </View>
+                }
+
+
               </View>
+            </ScrollView>
+          }
+
+        </ImageBackground>
+
+        {mentionStatus &&
+          <View style={{ backgroundColor: 'black', borderTopColor: 'gray', borderWidth: 1, paddingBottom: 50 }}>
+            <ScrollView>
+              {starList && starList.map((item) => {
+                return <>
+                  <TouchableOpacity style={{ flexDirection: 'row', margin: 10 }} onPress={() => HandelPressMentaion(`${item.user.first_name + " " + item.user.last_name}`)}>
+                    <View style={{ height: 30, width: 30, backgroundColor: 'red', borderRadius: 100 }}>
+                      <Image source={imagePath.SakibBalHasan} style={{ height: 30, width: 30, }} />
+                    </View>
+                    <View style={{ justifyContent: 'center', alignItems: 'center', marginHorizontal: 5 }}><Text style={{ color: '#fff' }}>{item.user.first_name + " " + item.user.last_name}</Text></View>
+                  </TouchableOpacity>
+                  <View style={{ borderWidth: 0.5, borderColor: 'gray' }} />
+                </>
+              })}
+
+            </ScrollView>
+          </View>}
 
 
-            )}
-
-
-
-
-
-            {onType &&
-              <View
-
-                style={styles.ownChatStyle
-                }>
-                <View style={styles.UserImgTyping}>
-                  <Image
-                    source={imagePath.loadingGif}
-                    style={{ height: 10, width: 20 }}
-                  />
-                </View>
-                <View
-                  style={[styles.remoteChatBody, { backgroundColor: '#ffff004b' }]
-                  }>
-                  <Text style={{ color: 'black', marginLeft: 5, padding: 5, color: 'white' }}>
-                    Some one typing...
-                  </Text>
-                </View>
-
-              </View>
-            }
-
-
-          </View>
-        </ScrollView>
 
         <View style={styles.bottomContainer}>
 
+
           <View style={{ justifyContent: 'center' }}>
             <View style={{ flexDirection: 'row' }}>
-              <TouchableOpacity onPress={() => setShowEmoji(true)}>
+              {/* <TouchableOpacity onPress={() => setShowEmoji(true)}>
                 <Icon name="smile-o" color={'gray'} size={28} />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
           <View
@@ -293,7 +390,7 @@ const MessageStar = ({ route }) => {
             }}>
             <TextInput
 
-              onChangeText={e => handelType(e)}
+              onChangeText={e => HandelTypeMessage(e)}
               value={text}
               placeholder="Type your message here..."
               placeholderTextColor={'gray'}
@@ -304,9 +401,9 @@ const MessageStar = ({ route }) => {
 
           <View style={{ justifyContent: 'center', position: 'absolute', right: '18%', top: '25%' }}>
             <View style={{ flexDirection: 'row' }}>
-              <TouchableOpacity >
+              {/* <TouchableOpacity >
                 <Icon name="camera" color={'gray'} size={20} />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
 
@@ -379,8 +476,8 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 100,
-    borderWidth: 0.3,
-    borderColor: 'gold',
+    // borderWidth: 0.3,
+    // borderColor: 'gold',
     backgroundColor: 'black',
     justifyContent: 'center',
     alignItems: 'center'
@@ -424,13 +521,13 @@ const styles = StyleSheet.create({
   },
   ownChatStyle: {
     flexDirection: 'row',
-    marginVertical: 8,
+    marginVertical: 15,
     // justifyContent: 'flex-end',
     marginLeft: 10
   },
   remoteChatStyle: {
     flexDirection: 'row',
-    marginVertical: 8,
+    marginVertical: 10,
     justifyContent: 'flex-end',
     marginRight: 10,
   },
@@ -439,14 +536,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginHorizontal: 8,
     width: '50%',
-    borderRadius: 20,
+    borderRadius: 10,
   },
   remoteChatBody: {
     backgroundColor: '#0E82FD',
     justifyContent: 'center',
     marginHorizontal: 8,
     width: '50%',
-    borderRadius: 20,
+    borderRadius: 10,
+
   }
 });
 

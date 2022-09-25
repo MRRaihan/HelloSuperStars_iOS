@@ -1,7 +1,7 @@
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import moment from 'moment';
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   ImageBackground,
   Text,
@@ -13,7 +13,7 @@ import LinearGradient from 'react-native-linear-gradient';
 // import {LinearTextGradient} from 'react-native-text-gradient';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { AuthContext } from '../../../Constants/context';
+import {AuthContext} from '../../../Constants/context';
 import imagePath from '../../../Constants/imagePath';
 import AppUrl from '../../../RestApi/AppUrl';
 import LoaderComp from '../../LoaderComp';
@@ -38,8 +38,8 @@ const RegistrationComp = ({
   const [buffer, setBuffer] = useState(false);
   const [forParentIsShowPaymentModal, setForParentIsShowPaymentModal] =
     useState(false);
-  const { axiosConfig } = useContext(AuthContext);
-  const { useInfo } = useContext(AuthContext);
+  const {axiosConfig} = useContext(AuthContext);
+  const {useInfo} = useContext(AuthContext);
   const [modal, setModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showPass, setShowPass] = useState(true);
@@ -159,7 +159,7 @@ const RegistrationComp = ({
   useEffect(() => {
     axios
       .get(
-        AppUrl.RegistrationChecker + `${event_type}/${post.slug}`,
+        AppUrl.RegistrationChecker + `${event_type}/${post?.slug}`,
         axiosConfig,
       )
       .then(res => {
@@ -170,7 +170,7 @@ const RegistrationComp = ({
       .catch(err => {
         console.log(err);
       });
-  }, [post.slug, event_type]);
+  }, [post?.slug, event_type]);
 
   return (
     <>
@@ -202,10 +202,10 @@ const RegistrationComp = ({
             }}
             source={imagePath.background}
             resizeMode="cover">
-            <View style={{ marginTop: 30 }}>
+            <View style={{marginTop: 30}}>
               {/* <Image source={imagePath.sorry} style={{  justifyContent:'center', width: 300, height: 150 }} /> */}
               <Text
-                style={{ color: '#FFAD00', textAlign: 'center', fontSize: 30 }}>
+                style={{color: '#FFAD00', textAlign: 'center', fontSize: 30}}>
                 Already Registered at:{' '}
                 {moment(registered.created_at).format('LL')}
               </Text>
@@ -224,7 +224,7 @@ const RegistrationComp = ({
               colors={['#ffaa00', '#fcfab6']}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 0}}> */}
-            <Text  style={styles.fonts}>Registration</Text>
+            <Text style={styles.fonts}>Registration</Text>
             {/* </LinearTextGradient> */}
             {/* <UnderlineImage /> */}
             <View
@@ -249,8 +249,8 @@ const RegistrationComp = ({
                       justifyContent: 'center',
                       marginVertical: 5,
                     }}>
-                    <Text style={{ color: 'white', width: '30%' }}>Fee: </Text>
-                    <Text style={{ color: 'white', width: '60%' }}>{fee}</Text>
+                    <Text style={{color: 'white', width: '30%'}}>Fee: </Text>
+                    <Text style={{color: 'white', width: '60%'}}>{fee}</Text>
                   </View>
                   <View
                     style={{
@@ -258,8 +258,8 @@ const RegistrationComp = ({
                       justifyContent: 'center',
                       marginVertical: 5,
                     }}>
-                    <Text style={{ color: 'white', width: '30%' }}>Start:</Text>
-                    <Text style={{ color: 'white', width: '60%' }}>
+                    <Text style={{color: 'white', width: '30%'}}>Start:</Text>
+                    <Text style={{color: 'white', width: '60%'}}>
                       {moment(start_time, 'HH:mm::ss').format('h:mm a')}
                     </Text>
                   </View>
@@ -269,8 +269,8 @@ const RegistrationComp = ({
                       justifyContent: 'center',
                       marginVertical: 5,
                     }}>
-                    <Text style={{ color: 'white', width: '30%' }}>End:</Text>
-                    <Text style={{ color: 'white', width: '60%' }}>
+                    <Text style={{color: 'white', width: '30%'}}>End:</Text>
+                    <Text style={{color: 'white', width: '60%'}}>
                       {moment(end_time, 'HH:mm::ss').format('h:mm a')}
                     </Text>
                   </View>
@@ -339,7 +339,7 @@ const RegistrationComp = ({
                 />
                 <TextInput
                   secureTextEntry={showPass}
-                  style={{ color: '#9e9e9e', marginLeft: 10, width: '76%' }}
+                  style={{color: '#9e9e9e', marginLeft: 10, width: '76%'}}
                   placeholderTextColor="#9e9e9e"
                   placeholder="Enter Password"
                   onChangeText={value => setPassword(value)}
@@ -385,7 +385,7 @@ const RegistrationComp = ({
                     borderRadius: 20,
                   }}
                   colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}>
-                  <Text style={{ color: 'black', fontWeight: 'bold' }}>
+                  <Text style={{color: 'black', fontWeight: 'bold'}}>
                     Register
                   </Text>
                 </LinearGradient>

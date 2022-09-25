@@ -1,9 +1,9 @@
 import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AlertModal from '../../../Components/MODAL/AlertModal';
-import { AuthContext } from '../../../Constants/context';
+import {AuthContext} from '../../../Constants/context';
 import imagePath from '../../../Constants/imagePath';
 import AppUrl from '../../../RestApi/AppUrl';
 import LoaderComp from '../../LoaderComp/LoaderComp';
@@ -21,32 +21,57 @@ const ShowCase = data => {
   const [modalStartFrom, setModalStartFrom] = useState('Default');
   const [buffer, setBuffer] = useState(false);
   const [modal, setModal] = useState(false);
-  const { axiosConfig } = useContext(AuthContext);
+  const {axiosConfig} = useContext(AuthContext);
+  const [marketPlaceToggle, setMarketPlaceToggle] = useState([]);
   const [modalObj, setModalObj] = useState({
     modalType: '',
     buttonTitle: '',
     message: '',
     available: '',
   });
-
+  const handleMarketPlace = () => {
+    setBuffer(true);
+    axios
+      .get(AppUrl.MarketplaceAllPost + `/${star?.id}`, axiosConfig)
+      .then(res => {
+        if (res.data.status === 200) {
+          setView(showcaseNavigator.MARKETPLACE);
+          setMarketPlaceToggle([res.data.starMarketplace]);
+          console.log(' hitted bro');
+        } else {
+          setModalObj({
+            modalType: 'warning',
+            buttonTitle: 'Ok',
+            message: 'Opps... Marketplace not possible now !',
+          });
+          setModal(true);
+        }
+        setBuffer(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setBuffer(false);
+      });
+  };
   const handleSouvenir = () => {
     setBuffer(true);
-    axios.get(AppUrl.GetStarSouvenir + `${star?.id}`, axiosConfig).then(res => {
-      //console.log('res.data--------------', res.data);
+    axios
+      .get(AppUrl.GetStarSouvenir + `${star?.id}`, axiosConfig)
+      .then(res => {
+        //console.log('res.data--------------', res.data);
 
-
-      if (res.data.status === 200) {
-        setView(showcaseNavigator.SOUVENIR);
-      } else {
-        setModalObj({
-          modalType: 'warning',
-          buttonTitle: 'Ok',
-          message: 'Opps... Souvenir not possible now !',
-        });
-        setModal(true);
-      }
-      setBuffer(false);
-    })
+        if (res.data.status === 200) {
+          setView(showcaseNavigator.SOUVENIR);
+        } else {
+          setModalObj({
+            modalType: 'warning',
+            buttonTitle: 'Ok',
+            message: 'Opps... Souvenir not possible now !',
+          });
+          setModal(true);
+        }
+        setBuffer(false);
+      })
       .catch(err => {
         console.log(err);
         setBuffer(false);
@@ -62,7 +87,6 @@ const ShowCase = data => {
     setModal(false);
 
     if (modalStartFrom === 'Default') {
-
     }
     //  else if (modalStartFrom === 'N') {
     //     if (Number(auctionApply?.notify_status) === 1) {
@@ -71,7 +95,6 @@ const ShowCase = data => {
     //         navigation.navigate('Home');
     //     }
     // }
-
   };
   useEffect(() => {
     // console.log('star-----ShowCase----', star);
@@ -101,8 +124,8 @@ const ShowCase = data => {
                   style={styles.singleContent}
                   onPress={() => setView(showcaseNavigator.AUCTION)}>
                   <LinearGradient
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}
                     colors={[
                       '#FFAD00',
                       '#FFD273',
@@ -117,11 +140,11 @@ const ShowCase = data => {
                   <Image source={imagePath.Auction} style={styles.postImage} />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => setView(showcaseNavigator.MARKETPLACE)}
+                  onPress={handleMarketPlace}
                   style={styles.singleContent}>
                   <LinearGradient
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}
                     colors={[
                       '#FFAD00',
                       '#FFD273',
@@ -145,8 +168,8 @@ const ShowCase = data => {
                   style={styles.singleContent}
                   onPress={handleSouvenir}>
                   <LinearGradient
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}
                     colors={[
                       '#FFAD00',
                       '#FFD273',
@@ -174,6 +197,7 @@ const ShowCase = data => {
             <></>
           )}
           {view == showcaseNavigator.PARTICIPATE ? <Participate /> : <></>}
+          {/* {view == showcaseNavigator.BUYNOW ? <BuyNowShowcase /> : <></>} */}
           {view == showcaseNavigator.BUYNOW ? <BuyNowShowcase /> : <></>}
           {view == showcaseNavigator.MARKETPLACE ? (
             <MarketPlaceShowcase />
@@ -182,6 +206,9 @@ const ShowCase = data => {
           )}
           {view == showcaseNavigator.SOUVENIR ? (
             <Souvenir star={star} />
+          ) : view == showcaseNavigator.MARKETPLACE &&
+            marketPlaceToggle.length > 0 ? (
+            <MarketPlaceShowcase star={star} />
           ) : (
             <></>
           )}

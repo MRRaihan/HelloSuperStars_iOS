@@ -105,6 +105,21 @@ const styles = StyleSheet.create({
     borderColor: '#00000027',
     borderWidth: 1,
   },
+
+  userProfileButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 13,
+    backgroundColor: '#474747',
+    marginTop: 9,
+    borderRadius: 50,
+    paddingBottom: 5,
+    paddingVertical: 2,
+    borderColor: '#00000027',
+    borderWidth: 1,
+  },
+
   likeBtn: {
     //backgroundColor: '#FFAD00',
     borderRadius: 50,
@@ -162,21 +177,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFAD00',
     justifyContent: 'center',
     margin: 3,
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     borderRadius: 50,
     paddingVertical: 5,
+    borderWidth: 0.8,
+    borderColor: '#000',
   },
   meetupTxt: {
-    fontSize:12,
+    fontSize: 12,
     color: 'white',
     fontWeight: 'bold',
-    borderWidth:0.5,
-    borderColor:'#fff',
-paddingVertical:5,
-paddingHorizontal:12,
-    borderRadius:50,
-    backgroundColor:'#ffaa00'
-  
+    borderWidth: 0.5,
+    borderColor: '#fff',
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    borderRadius: 50,
+    backgroundColor: '#ffaa00',
   },
 
   // Learn Card
@@ -315,9 +331,9 @@ paddingHorizontal:12,
   BannerCse: {
     backgroundColor: '#00000099',
     borderRadius: 10,
-    paddingHorizontal: 5,
-    paddingVertical: 10,
-    marginVertical: 10,
+    paddingHorizontal: 0,
+    paddingVertical: 5,
+    marginVertical: 8,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
@@ -328,7 +344,7 @@ paddingHorizontal:12,
   BannerCseText: {
     color: '#FDDC00',
     fontWeight: 'bold',
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
   },
 });
 

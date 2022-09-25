@@ -68,7 +68,7 @@ const Login = () => {
         .catch(err => {
           Toast.show(
             'Network Problem, Check you Internet',
-            Toast.SHORT,
+            Toast.durations.SHORT,
           );
           setBuffer(false);
           console.log(err);

@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
     // marginBottom : 25,
     position: 'relative',
     backgroundColor: 'black',
+    marginTop:10
   },
 
   image: {

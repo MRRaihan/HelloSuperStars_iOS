@@ -5,17 +5,18 @@ import HeaderComp from '../../../Components/HeaderComp';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icon2 from 'react-native-vector-icons/Fontisto';
 import Icon3 from 'react-native-vector-icons/FontAwesome5';
+import Icon4 from 'react-native-vector-icons/AntDesign';
 import LinearGradient from 'react-native-linear-gradient';
 import imagePath from '../../../Constants/imagePath';
 import Packages from './Packages';
 import { AuthContext } from '../../../Constants/context';
-const Wallet = () => {
+const Wallet = ({ navigation }) => {
   const { waletInfo, setWaletInfo } = useContext(AuthContext);
 
 
   return (
     <View style={Styles.container}>
-      <HeaderComp />
+      <HeaderComp backFunc={() => navigation.goBack()} />
 
       <View style={Styles.mainRow}>
         <View style={Styles.secondRow}>
@@ -117,7 +118,7 @@ const Wallet = () => {
             <View style={Styles.fourthRow}>
               <Image
                 source={imagePath.goldenStar}
-                style={{ height: 30, width: 30 }}
+                style={{ height: 20, width: 20 }}
               />
             </View>
             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -149,16 +150,18 @@ const Wallet = () => {
               backgroundColor: '#484848',
               borderRadius: 25,
               marginVertical: 10,
-              marginTop: 25,
+              marginTop: 5,
               marginLeft: 5,
               marginRight: 4
             }}>
+            {/* status */}
             <View style={Styles.fourthRow}>
               <Image
                 source={imagePath.onlyStar}
-                style={{ height: 30, width: 30 }}
+                style={{ height: 20, width: 20 }}
               />
             </View>
+            {/* clube point */}
             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               <View>
                 <LinearGradient
@@ -178,6 +181,45 @@ const Wallet = () => {
                 <Text
                   style={{ color: '#FFAD00', fontWeight: 'bold', fontSize: 20 }}>
                   {waletInfo?.club_points}
+                </Text>
+              </View>
+            </View>
+          </View>
+          {/* react bundel count */}
+
+
+          <View
+            style={{
+              flexDirection: 'row',
+              backgroundColor: '#484848',
+              borderRadius: 25,
+              marginVertical: 10,
+              marginTop: 5,
+              marginLeft: 5,
+              marginRight: 4
+            }}>
+            <View style={Styles.fourthRow}>
+              <Icon4 name="heart" color={'#FFC448'} size={15} />
+            </View>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <View>
+                <LinearGradient
+                  colors={[
+                    '#FFAD00',
+                    '#FFD273',
+                    '#FACF75',
+                    '#E7A725',
+                    '#FFAD00',
+                  ]}
+                  style={{ borderRadius: 5 }}>
+                  <Text style={{ paddingHorizontal: 5, fontWeight: 'bold', fontSize: 10 }}>
+                    Love bundle
+                  </Text>
+                </LinearGradient>
+
+                <Text
+                  style={{ color: '#FFAD00', fontWeight: 'bold', fontSize: 20 }}>
+                  {waletInfo?.love_points}
                 </Text>
               </View>
             </View>

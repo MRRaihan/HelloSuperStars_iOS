@@ -64,7 +64,7 @@ function MarketPlace({route = null}) {
         buttoPress={modalOkBtn}
       />
       {buffer ? <LoaderComp /> : <></>}
-      <HeaderComp />
+      <HeaderComp backFunc={()=>navigation.goBack()} />
       <ScrollView
         style={{backgroundColor: 'black'}}
         refreshControl={

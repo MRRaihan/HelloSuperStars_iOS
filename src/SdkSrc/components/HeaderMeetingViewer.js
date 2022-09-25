@@ -79,7 +79,7 @@ const HeaderMeetingViewer = ({ setCurrentTabModes, animeVal, exitMeeting }) => {
               } else {
                 const message = "First, you should have to on video cam";
                 if (Platform.OS === "android") {
-                  Toast.show(message, Toast.SHORT);
+                  Toast.show(message, Toast.durations.SHORT);
                 } else {
                   AlertIOS.alert(message);
                 }

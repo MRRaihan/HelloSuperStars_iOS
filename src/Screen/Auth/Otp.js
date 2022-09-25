@@ -1,8 +1,8 @@
 //import liraries
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import axios from 'axios';
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Dimensions,
   ImageBackground,
@@ -12,18 +12,18 @@ import {
   View,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LoaderComp from '../../Components/LoaderComp';
-import {AuthContext} from '../../Constants/context';
+import { AuthContext } from '../../Constants/context';
 import imagePath from '../../Constants/imagePath';
 import AppUrl from '../../RestApi/AppUrl';
 
 // create a component
-const Otp = ({route}) => {
+const Otp = ({ route }) => {
   const Navigation = useNavigation();
   const windowWidth = Dimensions.get('window').width;
-  const {phone, user = null} = route.params;
-  const {axiosConfig, authContext} = useContext(AuthContext);
+  const { phone, user = null } = route.params;
+  const { axiosConfig, authContext } = useContext(AuthContext);
   const [buffer, setBuffer] = useState(false);
   const [error, setError] = useState(null);
 
@@ -98,7 +98,7 @@ const Otp = ({route}) => {
             </Text>
 
             <OTPInputView
-              style={{width: '100%', height: 70}}
+              style={{ width: '100%', height: 70 }}
               pinCount={6}
               // code={this.state.code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
               // onCodeChanged = {code => { this.setState({code})}}
@@ -110,7 +110,7 @@ const Otp = ({route}) => {
               }}
             />
 
-            <Text style={{color: 'red', textAlign: 'center'}}>{error}</Text>
+            <Text style={{ color: 'red', textAlign: 'center' }}>{error}</Text>
             <Text style={styles.text}>Time left {counter} sec</Text>
             <View style={styles.btn_container}>
               <TouchableOpacity
@@ -120,8 +120,8 @@ const Otp = ({route}) => {
                 <Text
                   style={
                     counter == 0
-                      ? {color: '#ffff'}
-                      : {color: 'rgba(255, 255, 255, 0.295)'}
+                      ? { color: '#ffff' }
+                      : { color: 'rgba(255, 255, 255, 0.295)' }
                   }>
                   RESENT
                 </Text>
