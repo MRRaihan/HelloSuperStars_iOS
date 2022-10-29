@@ -1,13 +1,13 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
-import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import bannerImage from '../../Assets/Images/starBanner.png';
 import HeaderComp from '../../Components/HeaderComp';
 import navigationStrings from '../../Constants/navigationStrings';
 import LiveChat from '../StarProfile/LiveChat/LiveChat';
 import LiveChatDetails from './../StarProfile/LiveChat/LiveChatDetails';
 import profileNavigatr from './../StarProfile/Profile/profileNavigatr';
-import {styles} from './styles.js';
+import { styles } from './styles.js';
 
 const Greetings = () => {
   const navigation = useNavigation();
@@ -17,7 +17,7 @@ const Greetings = () => {
   }
 
   return (
-    <>
+    <SafeAreaView>
       <HeaderComp />
       <ScrollView>
         <View style={styles.topContainer}>
@@ -27,7 +27,7 @@ const Greetings = () => {
 
           <View style={styles.profileImageContainer}>
             <Image source={bannerImage} style={styles.proImage} />
-            <View style={{marginLeft: 10}}>
+            <View style={{ marginLeft: 10 }}>
               <Text style={styles.title}> Sakib Al Hasan </Text>
               <Text style={styles.active}>@sakibalhasan</Text>
             </View>
@@ -40,16 +40,16 @@ const Greetings = () => {
                 style={
                   profileNavigate == profileNavigatr.POST
                     ? styles.active
-                    : {color: 'white'}
+                    : { color: 'white' }
                 }>
                 Posts
               </Text>
             </TouchableOpacity>
             <TouchableOpacity>
-              <Text style={{color: 'white'}}>Photos</Text>
+              <Text style={{ color: 'white' }}>Photos</Text>
             </TouchableOpacity>
             <TouchableOpacity>
-              <Text style={{color: 'white'}}>Videos</Text>
+              <Text style={{ color: 'white' }}>Videos</Text>
             </TouchableOpacity>
           </View>
           {/* second navigator    */}
@@ -61,7 +61,7 @@ const Greetings = () => {
             <TouchableOpacity
               style={
                 profileNavigate == profileNavigatr.LIVECHAT ||
-                profileNavigate == profileNavigatr.LIVECHATDETAILS
+                  profileNavigate == profileNavigatr.LIVECHATDETAILS
                   ? styles.ProfileItemActive
                   : styles.ProfileItem
               }
@@ -70,7 +70,7 @@ const Greetings = () => {
               <Text
                 style={
                   profileNavigate == profileNavigatr.LIVECHAT ||
-                  profileNavigate == profileNavigatr.LIVECHATDETAILS
+                    profileNavigate == profileNavigatr.LIVECHATDETAILS
                     ? styles.ProfileItemTextActive
                     : styles.ProfileItemText
                 }>
@@ -101,7 +101,7 @@ const Greetings = () => {
           )}
         </View>
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
 };
 

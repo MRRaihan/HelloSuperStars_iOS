@@ -1,6 +1,11 @@
 //import liraries
-import React, {useState} from 'react';
-import {ScrollView, useWindowDimensions, TouchableOpacity} from 'react-native';
+import React, {useContext, useState} from 'react';
+import {
+  ScrollView,
+  useWindowDimensions,
+  TouchableOpacity,
+  Linking,
+} from 'react-native';
 import {Image, Modal, Pressable, StyleSheet, Text, View} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import StepIndicator from 'react-native-step-indicator';
@@ -9,6 +14,9 @@ import RenderHtml from 'react-native-render-html';
 import AppUrl from '../../../RestApi/AppUrl';
 import moment from 'moment';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import HeaderComp from '../../HeaderComp';
+import axios from 'axios';
+import {AuthContext} from '../../../Constants/context';
 
 // const labels = ['Applied', 'Approved', 'Processing', 'Delivered', 'Son'];
 const labels = ['Ordered', 'Received', 'Out for Delivery', 'Delivered'];
@@ -38,10 +46,11 @@ const customStyles = {
 };
 
 // create a component
-const OrderStatus = ({route}) => {
+const OrderStatus = ({route, navigation}) => {
   const {width} = useWindowDimensions();
   const {event} = route.params;
 
+  const {axiosConfig} = useContext(AuthContext);
   console.log(event);
   const ownerName =
     event?.marketplace?.superstar?.first_name +
@@ -54,15 +63,43 @@ const OrderStatus = ({route}) => {
   };
   const progress = event?.status;
   const imageURl = event?.marketplace?.image;
-  const downloadInvoice = e => {
-    console.log('wait');
+
+  const downloadInvoice = () => {
+    const data = {
+      productName: event?.marketplace?.title,
+      SuperStar: event?.star?.first_name + ' ' + event?.star?.last_name,
+      qty: 1,
+      unitPrice: event?.marketplace?.unit_price,
+      total: event?.marketplace?.unit_price,
+      subTotal: event?.marketplace?.unit_price,
+      deliveryCharge: event?.marketplace?.delivery_charge,
+      tax: event?.marketplace?.tax,
+      grandTotal:
+        parseInt(event?.marketplace?.unit_price) +
+        parseInt(event?.marketplace?.delivery_charge) +
+        parseInt(event?.marketplace?.tax),
+      orderID: event?.order_no,
+      orderDate: event?.payment_date,
+      name: event?.card_holder_name,
+      termCondition: event?.description,
+    };
+    axios
+      .post(AppUrl.getPDF, data, axiosConfig)
+      .then(res => {
+        console.log(res.data);
+        Linking.openURL(`${AppUrl.MediaBaseUrl}/${res.data}`);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   return (
-    <ScrollView style={{backgroundColor: '#000', flex: 1, paddingVertical: 40}}>
+    <ScrollView style={{backgroundColor: '#000', flex: 1, paddingBottom: 40}}>
+      <HeaderComp backFunc={() => navigation.goBack()} />
       <View style={styles.centered_view}>
         <View style={styles.warning_modal}>
-          <View style={{margin: 8}}>
+          <View style={{marginTop: 5}}>
             <View style={styles.showcaseStatus}>
               <Text style={{color: '#ff0'}}>Delivery Status</Text>
             </View>
@@ -81,7 +118,7 @@ const OrderStatus = ({route}) => {
                 source={{
                   uri: `${AppUrl.MediaBaseUrl + '/' + imageURl}`,
                 }}
-                style={{width: '100%', height: 200}}
+                style={{width: '100%', height: 200, borderRadius: 5}}
                 resizeMode="stretch"
               />
 
@@ -92,10 +129,14 @@ const OrderStatus = ({route}) => {
                   style={{
                     display: 'flex',
                     flexDirection: 'row',
-                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}>
-                  <Text style={styles.desc}>Description </Text>
-                  <RenderHtml contentWidth={width} source={descriptionHTML} />
+                  <View>
+                    <Text style={styles.desc}>Description </Text>
+                  </View>
+                  <View style={{width: '80%'}}>
+                    <RenderHtml contentWidth={width} source={descriptionHTML} />
+                  </View>
                 </View>
 
                 <Text style={styles.price}>Price {totalPrice}</Text>
@@ -154,7 +195,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#00000099',
   },
   warning_modal: {
-    width: 360,
+    width: '98%',
     backgroundColor: '#000',
     borderWidth: 1,
     borderColor: '#000',
@@ -195,6 +236,8 @@ const styles = StyleSheet.create({
   showcaseForm: {
     backgroundColor: '#343333',
     padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
   },
   inputBorder: {
     backgroundColor: '#343333',

@@ -23,7 +23,11 @@ const styles = StyleSheet.create({
   postImageX: {
     width: '100%',
     height: '100%',
-    margin: '15%',
+    position: 'absolute',
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: '#343434',
+    resizeMode: 'stretch',
   },
 
   linearGradient: {

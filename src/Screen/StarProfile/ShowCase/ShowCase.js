@@ -17,6 +17,7 @@ import styles from './styles';
 
 const ShowCase = data => {
   const [view, setView] = useState(showcaseNavigator.HOME);
+  const [product, setProduct] = useState([]);
   const [star, setStar] = useState(data.data);
   const [modalStartFrom, setModalStartFrom] = useState('Default');
   const [buffer, setBuffer] = useState(false);
@@ -192,11 +193,19 @@ const ShowCase = data => {
             <></>
           )}
           {view == showcaseNavigator.AUCTION ? (
-            <AuctionTab setView={setView} />
+            <AuctionTab
+              setView={setView}
+              starId={star?.id}
+              setProduct={setProduct}
+            />
           ) : (
             <></>
           )}
-          {view == showcaseNavigator.PARTICIPATE ? <Participate /> : <></>}
+          {view == showcaseNavigator.PARTICIPATE ? (
+            <Participate starId={star?.id} product={product} />
+          ) : (
+            <></>
+          )}
           {/* {view == showcaseNavigator.BUYNOW ? <BuyNowShowcase /> : <></>} */}
           {view == showcaseNavigator.BUYNOW ? <BuyNowShowcase /> : <></>}
           {view == showcaseNavigator.MARKETPLACE ? (

@@ -1,6 +1,6 @@
-import { useNavigation } from '@react-navigation/native';
-import React from 'react';
-import { useState } from 'react';
+import {useNavigation} from '@react-navigation/native';
+import React, {useEffect} from 'react';
+import {useState} from 'react';
 import {
   Image,
   ImageBackground,
@@ -18,21 +18,25 @@ import HeaderComp from '../../HeaderComp';
 import RenderHtml from 'react-native-render-html';
 import AppUrl from '../../../RestApi/AppUrl';
 import CountDown from 'react-native-countdown-component';
-
-const LearningSessionNav = ({ route }) => {
-  const { event } = route.params;
+import moment from 'moment';
+const LearningSessionNav = ({route}) => {
+  const {event} = route.params;
   const Navigation = useNavigation();
   const [showInstruction, setShowInstruction] = useState(false);
   const nowDate = new Date().getTime();
-  const countDownDate = new Date(event.assignment_reg_end_date).getTime();
-  const TotalMilisecond = 2000 - 0;
-  const totalSecond = TotalMilisecond / 1000
+  // const countDownDate = new Date(event.assignment_reg_end_date).getTime();
+
+  const countDownDate = new Date(
+    moment(event.assignment_reg_end_date).format('LL') + ' ' + '23:59:59',
+  ).getTime();
+  const TotalMillisecondRemaining = countDownDate - nowDate;
+  const totalSecond = TotalMillisecondRemaining / 1000;
 
   const eventInstruction = {
-    html: `<div style='color:#e6e6e6;'>${event?.assignment_instruction ? event.assignment_instruction : ''
-      }</div>`,
+    html: `<div style='color:#e6e6e6;'>${
+      event?.assignment_instruction ? event.assignment_instruction : ''
+    }</div>`,
   };
-
 
   return (
     <ScrollView style={styles.container}>
@@ -40,16 +44,25 @@ const LearningSessionNav = ({ route }) => {
       <View style={styles.bannerTitle}>
         <ImageBackground
           style={styles.background}
-          source={{ uri: `${AppUrl.MediaBaseUrl + event.banner}` }}>
-          <View style={{ backgroundColor: '#ffffffa2', padding: 5, borderRadius: 10 }}>
+          source={{uri: `${AppUrl.MediaBaseUrl + event.banner}`}}>
+          <View
+            style={{
+              backgroundColor: '#ffffffa2',
+              padding: 5,
+              borderRadius: 10,
+            }}>
             <CountDown
               until={totalSecond}
               // onFinish={() => setTimeDone(false)}
               // onPress={() => alert('hello')}
-              digitStyle={{ backgroundColor: 'black', borderWidth: 2, borderColor: '#FFAD00', borderRadius: 20 }}
-              digitTxtStyle={{ color: '#FFAD00' }}
-              timeLabelStyle={{ color: 'black', fontWeight: 'bold' }}
-
+              digitStyle={{
+                backgroundColor: 'black',
+                borderWidth: 2,
+                borderColor: '#FFAD00',
+                borderRadius: 20,
+              }}
+              digitTxtStyle={{color: '#FFAD00'}}
+              timeLabelStyle={{color: 'black', fontWeight: 'bold'}}
               size={20}
             />
           </View>
@@ -68,7 +81,7 @@ const LearningSessionNav = ({ route }) => {
                 fontWeight: 'bold',
                 flex: 1,
                 textAlign: 'center',
-                padding: 5
+                padding: 5,
               }}>
               {event.title}
             </Text>
@@ -81,7 +94,6 @@ const LearningSessionNav = ({ route }) => {
           onPress={() =>
             Navigation.navigate(navigationStrings.VIDEOUPLOADLEARNINGSESSION, {
               event: event,
-
             })
           }
           style={styles.listParent}>
@@ -100,7 +112,9 @@ const LearningSessionNav = ({ route }) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.listParent} onPress={() => setShowInstruction(!showInstruction)}>
+        <TouchableOpacity
+          style={styles.listParent}
+          onPress={() => setShowInstruction(!showInstruction)}>
           <View style={styles.onLeft}>
             <Image
               style={styles.resizeImage}
@@ -112,15 +126,13 @@ const LearningSessionNav = ({ route }) => {
             <Text style={styles.participationText}>Instruction</Text>
           </View>
           {showInstruction ? (
-            <View
-              style={styles.onRight}>
+            <View style={styles.onRight}>
               <View>
                 <AntDesign name="caretdown" color="#ff0" size={20} />
               </View>
             </View>
           ) : (
-            <View
-              style={styles.onRight}>
+            <View style={styles.onRight}>
               <View>
                 <AntDesign name="caretright" color="#ff0" size={20} />
               </View>
@@ -137,7 +149,7 @@ const LearningSessionNav = ({ route }) => {
         <TouchableOpacity
           onPress={() =>
             Navigation.navigate(navigationStrings.RESULTLEARNINGSESSION, {
-              event: event
+              event: event,
             })
           }
           style={styles.listParent}>
@@ -216,7 +228,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 10,
     paddingHorizontal: 10,
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   listParentCopy: {
     // flexDirection: 'row',

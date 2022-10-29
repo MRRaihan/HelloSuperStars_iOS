@@ -24,7 +24,7 @@ import LoaderComp from '../../LoaderComp';
 import AlertModal from '../../MODAL/AlertModal';
 import imagePath from '../../../Constants/imagePath';
 import UnderlineImage from '../Reuseable/UnderlineImage';
-
+import Toast from 'react-native-root-toast';
 const PaymentComp = ({ eventType, eventId, modelName, type = null, setPaymentView, PackegeId = null, buyFor }) => {
   const { axiosConfig, setWaletInfo } = useContext(AuthContext);
   const Navigation = useNavigation()
@@ -58,11 +58,13 @@ const PaymentComp = ({ eventType, eventId, modelName, type = null, setPaymentVie
       if (res.data.status === 200) {
         setWaletInfo(res.data.waletInfo)
         setModal(true)
-        setModalObj({
-          modalType: 'success',
-          buttonTitle: 'Download Ticket',
-          message: 'Registration completed successfully !'
-        })
+        Toast.show('Package purchase done !', Toast.durations.SHORT);
+        // setModalObj({
+        //   modalType: 'success',
+        //   buttonTitle: 'Download Ticket',
+        //   message: 'Registration completed successfully !'
+        // })
+
         setPaymentView(false)
       }
     }).catch((err) => {

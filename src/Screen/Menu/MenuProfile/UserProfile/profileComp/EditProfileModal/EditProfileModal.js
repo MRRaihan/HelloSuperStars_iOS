@@ -1,9 +1,9 @@
 //import liraries
-import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from '@react-navigation/native';
+import {Picker} from '@react-native-picker/picker';
+import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import moment from 'moment';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Dimensions,
   Modal,
@@ -21,7 +21,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import AppUrl from '../../../../../../RestApi/AppUrl';
 
 // create a component
-const EditProfileModal = ({ editProfile, setEditProfile }) => {
+const EditProfileModal = ({editProfile, setEditProfile}) => {
   const Navigation = useNavigation();
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
@@ -124,7 +124,7 @@ const EditProfileModal = ({ editProfile, setEditProfile }) => {
                   borderRadius: 15,
                 }}>
                 <View
-                  style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                  style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
                   <Pressable onPress={() => setEditProfile(false)}>
                     <Text
                       style={{
@@ -177,7 +177,7 @@ const EditProfileModal = ({ editProfile, setEditProfile }) => {
                         edu: itemValue,
                       })
                     }>
-                    <Picker.Item label="Slect Education Level" value="null" />
+                    <Picker.Item label="Select Education Level" value="null" />
                     <Picker.Item label="PSC" value="PSC" />
                     <Picker.Item label="JSC" value="JSC" />
                     <Picker.Item label="SSC/A Level" value="SSC/A Level" />
@@ -192,11 +192,10 @@ const EditProfileModal = ({ editProfile, setEditProfile }) => {
                 <TouchableOpacity
                   style={styles.input_textInput}
                   onPress={() => setOpen(true)}>
-                  <Text style={{ color: '#ffffff' }}>
+                  <Text style={{color: '#ffffff'}}>
                     {moment(date).format('YYYY-MM-DD')}
                   </Text>
                   <AntDesign name={'calendar'} size={20} color={'#ddd'} />
-
                 </TouchableOpacity>
 
                 <DatePicker
@@ -230,7 +229,7 @@ const EditProfileModal = ({ editProfile, setEditProfile }) => {
                         country: itemValue,
                       })
                     }>
-                    <Picker.Item label="Slect Country" value="null" />
+                    <Picker.Item label="Select Country" value="null" />
                     <Picker.Item label="BanglaDesh" value="BanglaDesh" />
                     <Picker.Item label="India" value="india" />
                     <Picker.Item label="Malaysia" value="Malaysia" />
@@ -244,8 +243,8 @@ const EditProfileModal = ({ editProfile, setEditProfile }) => {
 
                 <View style={styles.btn_container}>
                   <LinearGradient
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}
                     colors={['#ffa825', '#ffce48', '#ab6616']}
                     style={styles.login_btn}>
                     <TouchableOpacity
@@ -285,9 +284,9 @@ const styles = StyleSheet.create({
   lineImg: {
     marginVertical: 3,
   },
-  bannerRow: { alignItems: 'center', position: 'relative', paddingBottom: 15 },
-  imgRow: { marginVertical: 2, width: '90%' },
-  imgRow2: { marginVertical: 2, position: 'absolute', top: '45%', left: '50%' },
+  bannerRow: {alignItems: 'center', position: 'relative', paddingBottom: 15},
+  imgRow: {marginVertical: 2, width: '90%'},
+  imgRow2: {marginVertical: 2, position: 'absolute', top: '45%', left: '50%'},
   infoView: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -428,7 +427,6 @@ const styles = StyleSheet.create({
 
   input_title: {
     color: '#ddd',
-
   },
   updateTxt: {
     width: 150,

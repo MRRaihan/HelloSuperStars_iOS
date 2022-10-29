@@ -4,7 +4,6 @@ import {
   Text,
   SafeAreaView,
   Dimensions,
-  Clipboard,
 } from "react-native";
 import Toast from 'react-native-root-toast';
 import { Colors } from "../../styles";

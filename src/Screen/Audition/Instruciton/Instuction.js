@@ -37,7 +37,6 @@ const Instuction = ({navigation, route}) => {
   return (
     <View style={styles.container}>
       <HeaderComp backFunc={() => navigation.goBack()} />
-
       <ScrollView>
         <RoundTopBanner
           title={`AUDITION ${roundName} ROUND ENDING TIME`}
@@ -49,77 +48,114 @@ const Instuction = ({navigation, route}) => {
         <View style={styles.auditionDescriptionRound}>
           <Heading heading="Instructions" />
           <UnderlineImage />
-
-          <View style={{margin: 5}}>
-            <View style={{padding: 10}}>
-              <View
-                style={{flexDirection: 'row', marginTop: 10, marginBottom: 10}}>
-                <Image
+          {instruction !== null ? (
+            <>
+              <View style={{marginLeft: 0, marginRight: 15}}>
+                <View style={{padding: 0}}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      marginTop: -20,
+                      marginBottom: 10,
+                    }}>
+                    {/* <Image
                   style={styles.imageWidth}
                   source={imagePath.AuditionInstruction}
                   resizeMode="stretch"
-                />
-                <View style={{marginLeft: -20}}>
-                  <Text style={{color: '#fff'}}>
-                    {/* {instruction.instruction} */}
-                  </Text>
-                  <RenderHtml contentWidth={width} source={instructionHTML} />
+                /> */}
+                    <View style={{marginLeft: 5, marginRight: 15}}>
+                      <Text style={{color: '#fff'}}>
+                        {/* {instruction.instruction} */}
+                      </Text>
+                      <RenderHtml
+                        contentWidth={width}
+                        source={instructionHTML}
+                      />
+                    </View>
+                  </View>
                 </View>
               </View>
-            </View>
-          </View>
 
-          <View style={{margin: 10, position: 'relative'}}>
-            {/* <Image
+              <View style={{margin: 10, position: 'relative'}}>
+                {/* <Image
               source={imagePath.AuditionInstructionVideo}
               style={styles.video}
               resizeMode="stretch"
             />
             <Image source={imagePath.PauseIcon} style={styles.pauseImg} /> */}
 
-            <VideoPlayer
-              style={styles.video}
-              video={{
-                uri: `${AppUrl.MediaBaseUrl}${instruction?.video}`,
-              }}
-              videoWidth={1600}
-              videoHeight={900}
-              thumbnail={{
-                uri: `${AppUrl.MediaBaseUrl}${instruction?.image}`,
-              }}
-              blurRadius={10}
-            />
-          </View>
+                <VideoPlayer
+                  style={styles.video}
+                  video={{
+                    uri: `${AppUrl.MediaBaseUrl}${instruction?.video}`,
+                  }}
+                  videoWidth={1600}
+                  videoHeight={900}
+                  thumbnail={{
+                    uri: `${AppUrl.MediaBaseUrl}${instruction?.image}`,
+                  }}
+                  blurRadius={10}
+                />
+              </View>
 
-          <View style={styles.rowStyle}>
-            <View style={styles.startBg}>
-              <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                <Image source={imagePath.Flags} style={styles.flagImg} />
+              <View style={styles.rowStyle}>
+                <View style={styles.startBg}>
+                  <View
+                    style={{justifyContent: 'center', alignItems: 'center'}}>
+                    <Image source={imagePath.Flags} style={styles.flagImg} />
+                  </View>
+                  <View>
+                    <Text style={styles.starts}>Starts</Text>
+                    <Text style={styles.aprilTxt}>{startDate}</Text>
+                  </View>
+                </View>
+                <View style={styles.endBg}>
+                  <View
+                    style={{justifyContent: 'center', alignItems: 'center'}}>
+                    <Image source={imagePath.Flags} style={styles.flagImg} />
+                  </View>
+                  <View>
+                    <Text style={styles.starts}>End</Text>
+                    <Text style={styles.aprilTxt}>{endDate}</Text>
+                  </View>
+                </View>
+                <View style={styles.startBg}>
+                  <View
+                    style={{justifyContent: 'center', alignItems: 'center'}}>
+                    <Image source={imagePath.Flags} style={styles.flagImg} />
+                  </View>
+                  <View>
+                    <Text style={styles.starts}>Starts</Text>
+                    <Text style={styles.aprilTxt}>{startDate}</Text>
+                  </View>
+                </View>
               </View>
-              <View>
-                <Text style={styles.starts}>Starts</Text>
-                <Text style={styles.aprilTxt}>{startDate}</Text>
+            </>
+          ) : (
+            <View style={{margin: 2}}>
+              <View style={{padding: 5}}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    marginTop: -20,
+                    marginBottom: 10,
+                  }}>
+                  <View
+                    style={{
+                      marginLeft: 10,
+                      marginRight: 10,
+                      flex: 1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <Text style={{color: '#fff', marginTop: 20}}>
+                      No instruction yet
+                    </Text>
+                  </View>
+                </View>
               </View>
             </View>
-            <View style={styles.endBg}>
-              <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                <Image source={imagePath.Flags} style={styles.flagImg} />
-              </View>
-              <View>
-                <Text style={styles.starts}>End</Text>
-                <Text style={styles.aprilTxt}>{endDate}</Text>
-              </View>
-            </View>
-            <View style={styles.startBg}>
-              <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                <Image source={imagePath.Flags} style={styles.flagImg} />
-              </View>
-              <View>
-                <Text style={styles.starts}>Starts</Text>
-                <Text style={styles.aprilTxt}>{startDate}</Text>
-              </View>
-            </View>
-          </View>
+          )}
         </View>
       </ScrollView>
     </View>

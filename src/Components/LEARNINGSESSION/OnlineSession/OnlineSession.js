@@ -27,15 +27,16 @@ const data = [
 ]
 const OnlineSession = (props) => {
     return (
-        <KeyboardAwareScrollView>
-            <View style={styles.mainContainer}>
-                <HeaderComp />
-                <SafeAreaView>
+        <SafeAreaView>
+            <KeyboardAwareScrollView>
+                <View style={styles.mainContainer}>
+                    <HeaderComp />
+                    <SafeAreaView>
 
-                    <View style={{ position: 'relative' }}>
+                        <View style={{ position: 'relative' }}>
 
-                        <Image source={props.image} />
-                        {/* <View style={styles.firstRow}>
+                            <Image source={props.image} />
+                            {/* <View style={styles.firstRow}>
                     <View style={{ justifyContent: 'center', marginLeft: 10 }}>
                         <Icon name="clock-o" size={18} color="#FFAD00" />
                     </View>
@@ -43,46 +44,47 @@ const OnlineSession = (props) => {
                         {props.time}
                     </Text>
                 </View> */}
-                    </View>
+                        </View>
 
-                    <View style={{ marginVertical: 10, flexDirection: 'row', marginHorizontal: 10 }}>
-                        <Image source={props.image_pro} />
-                        <View style={{ justifyContent: 'center', alignItems: 'center', marginLeft: 5 }}>
-                            <View>
-                                <Text style={{ color: 'white', fontSize: 20 }}>{props.name}</Text>
-                                <Text style={{ color: 'white', color: '#FFAD00', fontSize: 18 }}>{props.date}</Text>
+                        <View style={{ marginVertical: 10, flexDirection: 'row', marginHorizontal: 10 }}>
+                            <Image source={props.image_pro} />
+                            <View style={{ justifyContent: 'center', alignItems: 'center', marginLeft: 5 }}>
+                                <View>
+                                    <Text style={{ color: 'white', fontSize: 20 }}>{props.name}</Text>
+                                    <Text style={{ color: 'white', color: '#FFAD00', fontSize: 18 }}>{props.date}</Text>
+                                </View>
                             </View>
                         </View>
-                    </View>
 
-                    <ScrollView>
-                        {data.map((item, index) => {
-                            return <View key={index} style={{ flexDirection: 'row', marginHorizontal: 10, marginVertical: 15 }}>
-                                <View style={{ width: '20%', }}>
-                                    <Image source={imagePath.chatPerson} style={styles.commentImg} />
-                                </View>
-                                <View style={{ width: '80%', }}>
-                                    <Text style={styles.commentMsg}>{item.msg}</Text>
-                                    <View style={styles.keyDirection}>
-                                        <Text style={styles.msgText}>Like</Text>
-                                        <Text style={styles.msgText}>Replay</Text>
-                                        <Text style={styles.msgGold}>3d</Text>
-                                        <Text style={styles.msgText}>
-                                            <Icon name='thumbs-o-up' />102</Text>
+                        <ScrollView>
+                            {data.map((item, index) => {
+                                return <View key={index} style={{ flexDirection: 'row', marginHorizontal: 10, marginVertical: 15 }}>
+                                    <View style={{ width: '20%', }}>
+                                        <Image source={imagePath.chatPerson} style={styles.commentImg} />
+                                    </View>
+                                    <View style={{ width: '80%', }}>
+                                        <Text style={styles.commentMsg}>{item.msg}</Text>
+                                        <View style={styles.keyDirection}>
+                                            <Text style={styles.msgText}>Like</Text>
+                                            <Text style={styles.msgText}>Replay</Text>
+                                            <Text style={styles.msgGold}>3d</Text>
+                                            <Text style={styles.msgText}>
+                                                <Icon name='thumbs-o-up' />102</Text>
+                                        </View>
                                     </View>
                                 </View>
-                            </View>
-                        })}
+                            })}
 
-                    </ScrollView>
+                        </ScrollView>
 
-                    <View>
-                        <TextInput placeholder='Enter your comments....' placeholderTextColor={'gray'}
-                            style={styles.commentInput} />
-                    </View>
-                </SafeAreaView>
-            </View>
-        </KeyboardAwareScrollView>
+                        <View>
+                            <TextInput placeholder='Enter your comments....' placeholderTextColor={'gray'}
+                                style={styles.commentInput} />
+                        </View>
+                    </SafeAreaView>
+                </View>
+            </KeyboardAwareScrollView>
+        </SafeAreaView>
     )
 }
 

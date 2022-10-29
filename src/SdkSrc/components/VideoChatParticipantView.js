@@ -105,6 +105,8 @@ export default function ParticipantView({
   const animationProps = AnimatableManager.presets.slideInUp;
 
   return (
+    <>
+ 
     <View style={isLocal ? styles.ownVideo : styles.remoteVideo}>
 
       <Animatable.View
@@ -120,9 +122,9 @@ export default function ParticipantView({
       >
         <TouchableOpacity
           onPress={isLocal?()=>{
-            alert('local')
+           console.log('local video ')
           }:()=>{
-            alert('remote')
+         console.log('remote video')
           }}
           activeOpacity={1}
           style={{
@@ -224,9 +226,10 @@ export default function ParticipantView({
       </Animatable.View>
     </View>
 
-
+</>
 
   );
+  
 }
 
 const windowWidth = Dimensions.get('window').width;

@@ -1,5 +1,4 @@
-import { StyleSheet } from 'react-native'
-
+import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
   greetingsBody: {
@@ -13,7 +12,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#282828',
     margin: 10,
     borderRadius: 5,
-    // height: 280,
+    fontSize: 20,
+    height: 210,
   },
   greetingsRequestHeader: {
     textAlign: 'center',
@@ -86,7 +86,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
   },
-})
+});
 
-
-export default styles
+export default styles;

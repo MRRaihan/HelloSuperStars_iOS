@@ -9,7 +9,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import Toast from 'react-native-root-toast';
 import * as Animatable from 'react-native-animatable';
@@ -101,16 +101,9 @@ const Login = () => {
           </View>
 
           <Animatable.View style={styles.footer} animation="slideInUp">
-            {/* <LinearTextGradient
-              style={styles.title}
-              locations={[0, 1]}
-              colors={['#ffaa00', '#fcfab6']}
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 0}}> */}
-            <Text style={styles.title}>LOGIN</Text>
-            {/* </LinearTextGradient> */}
 
-            {/* email input  */}
+            <Text style={styles.title}>LOGIN</Text>
+
             <Text style={styles.inputText}>Email</Text>
             <View style={styles.input}>
               <Icon
@@ -191,7 +184,7 @@ const styles = StyleSheet.create({
   },
   password: {
     marginTop: 8,
-    marginLeft: '5%',
+    marginLeft: '8%',
   },
   containerWideScreen: {
     flex: 1,

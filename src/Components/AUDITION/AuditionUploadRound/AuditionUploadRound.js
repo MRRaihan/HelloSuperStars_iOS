@@ -10,10 +10,10 @@ import {
 import ImagePicker from 'react-native-image-picker';
 import LinearGradient from 'react-native-linear-gradient';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import navigationStrings from '../../../Constants/navigationStrings';
 
-const AuditionUploadRound = ({participation, setParticipation}) => {
+const AuditionUploadRound = ({ participation, setParticipation }) => {
   const navigation = useNavigation();
   const [pick, setPick] = React.useState('');
 
@@ -36,7 +36,7 @@ const AuditionUploadRound = ({participation, setParticipation}) => {
       } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
       } else {
-        const source = {uri: response.uri};
+        const source = { uri: response.uri };
         console.log(source);
         setPick(source);
 
@@ -47,52 +47,53 @@ const AuditionUploadRound = ({participation, setParticipation}) => {
   };
 
   return (
-    <ScrollView style={{backgroundColor: '#000000'}}>
-      {/* <HeaderComp /> */}
-      {/* <AuditionRoundTitleTime /> */}
-      {/* <AuditionRoundSideNav /> */}
-      {/* <AuditionTitleRoundBar /> */}
-      {/* <AuditionTitleBannerRound /> */}
-      {/* <UploadedVideoRound /> */}
-      {/* <AuditionRoundComp /> */}
-      {/* <AuditionUploadRound />  */}
-      {/* <AuditionUploadRound /> */}
-      <View
-        style={{backgroundColor: '#272727', borderRadius: 10, marginTop: 10}}>
-        <View ><Text style={[styles.textColor,{textAlign:'center',paddingVertical:10,fontSize:18}]}>
-        Video Details
-        </Text></View>
-        <View style={{borderWidth:0.5,borderBottomColor:'black'}} />
-        <View style={styles.uploadStyle}>
-          <View>
-            <Text style={styles.textColor}>Video Submission Date</Text>
-            <Text style={styles.textColor}>Video Submission Time</Text>
-            <Text style={styles.textColor}>Fee</Text>
-          </View>
-          <View>
-            <Text style={{color: '#ddd'}}>15-062022</Text>
-            <Text style={{color: '#ddd'}}>10:45 PM</Text>
-            <Text style={{color: '#ddd'}}>250 BDT</Text>
+    <SafeAreaView>
+      <ScrollView style={{ backgroundColor: '#000000' }}>
+        {/* <HeaderComp /> */}
+        {/* <AuditionRoundTitleTime /> */}
+        {/* <AuditionRoundSideNav /> */}
+        {/* <AuditionTitleRoundBar /> */}
+        {/* <AuditionTitleBannerRound /> */}
+        {/* <UploadedVideoRound /> */}
+        {/* <AuditionRoundComp /> */}
+        {/* <AuditionUploadRound />  */}
+        {/* <AuditionUploadRound /> */}
+        <View
+          style={{ backgroundColor: '#272727', borderRadius: 10, marginTop: 10 }}>
+          <View ><Text style={[styles.textColor, { textAlign: 'center', paddingVertical: 10, fontSize: 18 }]}>
+            Video Details
+          </Text></View>
+          <View style={{ borderWidth: 0.5, borderBottomColor: 'black' }} />
+          <View style={styles.uploadStyle}>
+            <View>
+              <Text style={styles.textColor}>Video Submission Date</Text>
+              <Text style={styles.textColor}>Video Submission Time</Text>
+              <Text style={styles.textColor}>Fee</Text>
+            </View>
+            <View>
+              <Text style={{ color: '#ddd' }}>15-062022</Text>
+              <Text style={{ color: '#ddd' }}>10:45 PM</Text>
+              <Text style={{ color: '#ddd' }}>250 BDT</Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      <View
-        style={{
-          backgroundColor: '#272727',
-          marginVertical: 10,
-          borderRadius: 10,
-        }}>
-        <View style={styles.uploadVideoStyle}>
-          <View style={styles.pickVideo}>
-            <TouchableOpacity onPress={openPicker} style={styles.uploadBtn}>
-              <View style={styles.browse}>
-                <AntDesign name="upload" color="#FFAD00" size={20} />
-                <Text style={{color: '#FFAD00'}}>Browse</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          {/* <View style={styles.pickVideo}>
+        <View
+          style={{
+            backgroundColor: '#272727',
+            marginVertical: 10,
+            borderRadius: 10,
+          }}>
+          <View style={styles.uploadVideoStyle}>
+            <View style={styles.pickVideo}>
+              <TouchableOpacity onPress={openPicker} style={styles.uploadBtn}>
+                <View style={styles.browse}>
+                  <AntDesign name="upload" color="#FFAD00" size={20} />
+                  <Text style={{ color: '#FFAD00' }}>Browse</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            {/* <View style={styles.pickVideo}>
             <TouchableOpacity style={styles.uploadBtn}>
               <View style={styles.browse}>
                 <AntDesign name="upload" color="#FFAD00" size={20} />
@@ -116,13 +117,13 @@ const AuditionUploadRound = ({participation, setParticipation}) => {
               </View>
             </TouchableOpacity>
           </View> */}
-        </View>
-        {pick ? (
-          <View style={styles.uploadVideoStyle}>
-            <View style={styles.pickVideo}>
-              <Image style={{height: '100%'}} source={pick} />
-            </View>
-            {/* <View style={styles.pickVideo}>
+          </View>
+          {pick ? (
+            <View style={styles.uploadVideoStyle}>
+              <View style={styles.pickVideo}>
+                <Image style={{ height: '100%' }} source={pick} />
+              </View>
+              {/* <View style={styles.pickVideo}>
               <Image style={{height: '100%'}} source={pick} />
             </View>
             <View style={styles.pickVideo}>
@@ -131,34 +132,35 @@ const AuditionUploadRound = ({participation, setParticipation}) => {
             <View style={styles.pickVideo}>
               <Image style={{height: '100%'}} source={pick} />
             </View> */}
-          </View>
-        ) : null}
+            </View>
+          ) : null}
 
-        <View>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate(navigationStrings.UPLOADVIDEOROUND)
-            }
-            style={styles.btnStyle}>
-            <LinearGradient
-              colors={['#343434', '#343434']}
-              style={styles.uploadMainBtn}>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginHorizontal: 10,
-                }}>
-                <AntDesign name="cloudupload" size={25} color={'#FFAD00'} />
-              </View>
-              <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={styles.uploadTxt}>Upload Video</Text>
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate(navigationStrings.UPLOADVIDEOROUND)
+              }
+              style={styles.btnStyle}>
+              <LinearGradient
+                colors={['#343434', '#343434']}
+                style={styles.uploadMainBtn}>
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginHorizontal: 10,
+                  }}>
+                  <AntDesign name="cloudupload" size={25} color={'#FFAD00'} />
+                </View>
+                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                  <Text style={styles.uploadTxt}>Upload Video</Text>
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

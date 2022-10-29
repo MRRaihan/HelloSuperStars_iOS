@@ -145,9 +145,11 @@ const styles = StyleSheet.create({
   TextWTS: {
     fontSize: 25,
     fontWeight: 'bold',
-    color: 'gold',
+    color: '#ffaa00',
     paddingTop: 5,
   },
+  menuTab:{flexDirection:'row',paddingVertical:10,borderWidth:1,borderTopColor:'gray',borderBottomColor:'gray',marginVertical:8},
+  menuSubTab:{marginLeft:10,justifyContent:'center',alignItems:'center'},
 
 });
 

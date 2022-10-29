@@ -23,11 +23,13 @@ import * as Animatable from 'react-native-animatable';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import { readFile } from "react-native-fs";
 
+import CountDown from 'react-native-countdown-component';
 import MatarialIcon from 'react-native-vector-icons/MaterialIcons';
 LogBox.ignoreLogs(['EventEmitter.removeListener']);
 
 import axios from 'axios';
 import QnaSingleMessage from './QnaSingleMessage';
+import { timecoundFunc } from '../../CustomHelper/timecoundFunc';
 const data = [1, 2, 3, 4, 5, 6];
 // var room_id = 12;
 // var group_id = 134;
@@ -43,8 +45,10 @@ const QnaMessages = ({ route }) => {
     const [sendType, setSendType] = React.useState(false);
     const [visable, setvisible] = React.useState(false);
     const [text, setText] = useState();
+    const [sessionEnd, setSessionEnd] = useState(true)
+    const [leftTiem, setLeftTiem] = useState(data ? timecoundFunc(data?.qna_date.split(" ")[0] + " " + data?.qna_end_time) / 1000 : 0)
 
-
+    console.log('message inforamtion', data.qna)
 
     const [audio, setAudio] = useState({
         type: null,
@@ -53,8 +57,7 @@ const QnaMessages = ({ route }) => {
 
     const scrollViewRef = useRef();
 
-    let time =
-        new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes();
+    let time = new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes();
     let messageData = {
         sender_id: useInfo.id,
         room_id: room_id,
@@ -242,11 +245,11 @@ const QnaMessages = ({ route }) => {
                         flexDirection: 'row',
                         justifyContent: 'space-between',
                     }}>
-                     <TouchableOpacity onPress={() => navigation.goBack()}>
-            {/* <Image source={imagePath.logo} style={{ height: 30, width: 30 }} /> */}
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        {/* <Image source={imagePath.logo} style={{ height: 30, width: 30 }} /> */}
 
-            <MatarialIcon name='arrow-back' size={25} color='#fff'/>
-          </TouchableOpacity>
+                        <MatarialIcon name='arrow-back' size={25} color='#fff' />
+                    </TouchableOpacity>
                     <TouchableOpacity
                         style={{
                             backgroundColor: 'white',
@@ -294,6 +297,31 @@ const QnaMessages = ({ route }) => {
                             {/* <TextInput  */}
                         </TouchableOpacity>
                     </View>
+                </View>
+                <View style={{ paddingVertical: 5, backgroundColor: 'gray', justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                    {sessionEnd ?
+                        <CountDown
+                            // until={totalSecond}
+                            until={leftTiem}
+                            onFinish={() => setSessionEnd(false)}
+                            // onPress={() => alert('hello')}
+                            digitStyle={{
+                                backgroundColor: 'black',
+                                borderWidth: 2,
+                                borderColor: '#FFAD00',
+                                borderRadius: 10,
+                            }}
+                            digitTxtStyle={{ color: '#FFAD00' }}
+                            timeLabelStyle={{
+                                color: '#FFAD00',
+                                fontWeight: 'bold',
+                            }}
+                            size={10}
+                        />
+                        :
+                        <Text style={{ color: '#FFAD00', marginRight: 12, backgroundColor: 'black', paddingHorizontal: 10, borderColor: '#FFAD00', borderWidth: 1, padding: 5, borderRadius: 50 }}>Your session is Ended</Text>
+                    }
+
                 </View>
                 {messageLoad ?
                     <View style={{ justifyContent: 'center', alignItems: 'center', height: 300 }}>
@@ -366,24 +394,27 @@ const QnaMessages = ({ route }) => {
                             style={styles.inputTxt}
                         />
                     </View>
-
-                    {sendType ? (
-                        <View style={{ justifyContent: 'center' }}>
-                            <TouchableOpacity
-                                style={styles.sendBtn}
-                                onPress={handelSendMessage}>
-                                <Icon name="send" color={'white'} size={15} />
-                            </TouchableOpacity>
-                        </View>
-                    ) : (
-                        <View style={{ justifyContent: 'center' }}>
-                            <TouchableOpacity
-                                style={styles.sendBtn}
-                                onPress={() => setvisible(true)}>
-                                <Icon name="microphone" color={'white'} size={15} />
-                            </TouchableOpacity>
-                        </View>
-                    )}
+                    {sessionEnd &&
+                        <>
+                            {sendType ? (
+                                <View style={{ justifyContent: 'center' }}>
+                                    <TouchableOpacity
+                                        style={styles.sendBtn}
+                                        onPress={handelSendMessage}>
+                                        <Icon name="send" color={'white'} size={15} />
+                                    </TouchableOpacity>
+                                </View>
+                            ) : (
+                                <View style={{ justifyContent: 'center' }}>
+                                    <TouchableOpacity
+                                        style={styles.sendBtn}
+                                        onPress={() => setvisible(true)}>
+                                        <Icon name="microphone" color={'white'} size={15} />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        </>
+                    }
                 </View>
             </View>
             {/*<================ Bottom modal start here ============> */}
@@ -440,7 +471,7 @@ const QnaMessages = ({ route }) => {
                             </View>
                             <Text
                                 style={{ textAlign: 'center', fontSize: 15, color: '#ffaa00' }}>
-                                Time: 10s
+                                {/* Time: 10s */}
                             </Text>
                         </View>
                     );

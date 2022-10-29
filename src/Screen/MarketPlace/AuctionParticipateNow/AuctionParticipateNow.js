@@ -1,8 +1,8 @@
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import moment from 'moment';
-import React, {useContext, useEffect, useState} from 'react';
-import {Controller, useForm} from 'react-hook-form';
+import React, { useContext, useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import {
   Image,
   ImageBackground,
@@ -16,23 +16,24 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import RenderHtml from 'react-native-render-html';
-import {SwiperFlatList} from 'react-native-swiper-flatlist';
+import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import noImage from '../../../Assets/Images/no-image.png';
 import HeaderComp from '../../../Components/HeaderComp';
 import AlertModal from '../../../Components/MODAL/AlertModal';
 import BidCongratulationModal from '../../../Components/MODAL/BidCongratulationModal';
 import ProductProcessModal from '../../../Components/MODAL/ProductProcessModal';
 import RegisPaymentModal from '../../../Components/MODAL/RegisPaymentModal';
-import {AuthContext} from '../../../Constants/context';
+import { AuthContext } from '../../../Constants/context';
 import imagePath from '../../../Constants/imagePath';
 import AppUrl from '../../../RestApi/AppUrl';
 import LoaderComp from '../../LoaderComp/LoaderComp';
 import styles from '../AuctionProductCard/AuctionProductCardStyle';
 
-const AuctionParticipateNow = ({route}) => {
+const AuctionParticipateNow = ({ route }) => {
   const navigation = useNavigation();
-  const {socketData, axiosConfig} = useContext(AuthContext);
-  const {product} = route.params;
+  const { socketData, axiosConfig } = useContext(AuthContext);
+  const { product } = route.params;
+  console.log(product);
   const [isShowPaymentComp, setIsShowPaymentComp] = useState(false);
   const [isShowResult, setIsShowResult] = useState(false);
   const [winner, setWinner] = useState([]);
@@ -40,12 +41,12 @@ const AuctionParticipateNow = ({route}) => {
   const [bidHistory, setBidHistory] = useState([]);
   const [instruction, setInstruction] = useState([]);
   const [auctionApply, setAuctionApply] = useState();
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const {
     control,
     handleSubmit,
     reset,
-    formState: {errors},
+    formState: { errors },
   } = useForm();
   const source = {
     html: `<div style='color:#e6e6e6'>${product ? product?.details : ''}</div>`,
@@ -107,24 +108,24 @@ const AuctionParticipateNow = ({route}) => {
     setSecond(seconds);
   }, 1000);
 
-  const randerProductImageFlatListItem = ({index}) => {
+  const randerProductImageFlatListItem = ({ index }) => {
     return (
       <Image
-        style={{height: 200, width: width - 20}}
+        style={{ height: 200, width: width - 20 }}
         source={
           product?.product_image == null
             ? imagePath.Foot
             : {
-                uri: `${AppUrl.MediaBaseUrl + product?.product_image}`,
-              }
+              uri: `${AppUrl.MediaBaseUrl + product?.product_image}`,
+            }
         }
         key={index}
       />
     );
   };
-  const randerLiveBidFlatListItem = ({item, index}) => {
+  const randerLiveBidFlatListItem = ({ item, index }) => {
     return (
-      <View style={{marginRight: 8}}>
+      <View style={{ marginRight: 8 }}>
         <View style={styles.LiveBCarB}>
           <View style={styles.PriceLive}>
             <Image
@@ -132,8 +133,8 @@ const AuctionParticipateNow = ({route}) => {
                 item?.user?.image == null
                   ? noImage
                   : {
-                      uri: `${AppUrl.MediaBaseUrl + item?.user?.image}`,
-                    }
+                    uri: `${AppUrl.MediaBaseUrl + item?.user?.image}`,
+                  }
               }
               style={styles.BidUser}
             />
@@ -252,7 +253,7 @@ const AuctionParticipateNow = ({route}) => {
         .then(res => {
           if (res.data.status === 200) {
             reset(data);
-            socketData.emit('joinBiddingRoom', {room: product?.id});
+            socketData.emit('joinBiddingRoom', { room: product?.id });
             socketData.emit('sendLiveBidding', product?.id);
             socketData.on('getLiveBidding', sdata => {
               // console.log("data from socket", sdata);
@@ -284,7 +285,7 @@ const AuctionParticipateNow = ({route}) => {
   };
 
   useEffect(() => {
-    socketData.emit('joinBiddingRoom', {room: product?.id});
+    socketData.emit('joinBiddingRoom', { room: product?.id });
     socketData.emit('sendLiveBidding', product?.id);
     socketData.on('getLiveBidding', sdata => {
       // console.log("data from socket", sdata);
@@ -297,25 +298,25 @@ const AuctionParticipateNow = ({route}) => {
   }, [product?.id]);
 
   return (
-    <>
+    <SafeAreaView>
       <AlertModal
         modalObj={modalObj}
         modal={modal}
         setModal={setModal}
         buttoPress={modalOkBtn}
       />
-      <HeaderComp />
+      <HeaderComp backFunc={() => navigation.goBack()} />
       <ScrollView style={styles.container}>
         <SafeAreaView>
           {buffer ? (
             <LoaderComp />
           ) : (
             <>
-              <View style={{marginHorizontal: 8}}>
+              <View style={{ marginHorizontal: 8 }}>
                 <View style={styles.rowX}>
                   <LinearGradient
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0}}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
                     colors={[
                       '#FFAD00',
                       '#FFD273',
@@ -324,7 +325,7 @@ const AuctionParticipateNow = ({route}) => {
                       '#E7A725',
                       '#FFAD00',
                     ]}
-                    style={{borderRadius: 50}}>
+                    style={{ borderRadius: 50 }}>
                     <Text style={styles.AuctionT}>Auction</Text>
                   </LinearGradient>
                 </View>
@@ -332,8 +333,8 @@ const AuctionParticipateNow = ({route}) => {
                 <View style={styles.MaiN}>
                   <Text style={styles.PText}>Bidding End Time</Text>
                   <LinearGradient
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0}}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
                     colors={[
                       '#FFAD00',
                       '#FFD273',
@@ -415,7 +416,7 @@ const AuctionParticipateNow = ({route}) => {
                     Auction at{' '}
                     {moment(product?.created_at).format('DD MMMM YYYY')}
                   </Text>
-                  <View style={{width: '100%'}}>
+                  <View style={{ width: '100%' }}>
                     <RenderHtml contentWidth={width} source={source} />
                   </View>
                   <View style={styles.BtnBox}>
@@ -471,14 +472,14 @@ const AuctionParticipateNow = ({route}) => {
                   <>
                     <View style={styles.MaiN}>
                       <Text style={styles.LiveBidding}>Bid Now</Text>
-                      <View style={{marginHorizontal: 12, marginTop: 8}}>
+                      <View style={{ marginHorizontal: 12, marginTop: 8 }}>
                         <Text style={styles.LiveBiddingP}>Price Your Bid</Text>
                         <Controller
                           control={control}
                           rules={{
                             required: true,
                           }}
-                          render={({field: {onChange, onBlur, value}}) => (
+                          render={({ field: { onChange, onBlur, value } }) => (
                             <TextInput
                               onBlur={onBlur}
                               onChangeText={onChange}
@@ -506,7 +507,7 @@ const AuctionParticipateNow = ({route}) => {
                           rules={{
                             required: true,
                           }}
-                          render={({field: {onChange, onBlur, value}}) => (
+                          render={({ field: { onChange, onBlur, value } }) => (
                             <TextInput
                               onBlur={onBlur}
                               onChangeText={onChange}
@@ -533,8 +534,8 @@ const AuctionParticipateNow = ({route}) => {
                         )}
                         <TouchableOpacity onPress={handleSubmit(onSubmit)}>
                           <LinearGradient
-                            start={{x: 0, y: 0}}
-                            end={{x: 1, y: 0}}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
                             colors={[
                               '#FFAD00',
                               '#FFD273',
@@ -635,11 +636,10 @@ const AuctionParticipateNow = ({route}) => {
                                           source={
                                             winner?.user?.image !== null
                                               ? {
-                                                  uri: `${
-                                                    AppUrl.MediaBaseUrl +
-                                                    winner?.user?.image
+                                                uri: `${AppUrl.MediaBaseUrl +
+                                                  winner?.user?.image
                                                   }`,
-                                                }
+                                              }
                                               : noImage
                                           }
                                           style={
@@ -737,19 +737,19 @@ const AuctionParticipateNow = ({route}) => {
                               }
                               onPress={() => setIsShowResult(true)}>
                               <LinearGradient
-                                start={{x: 0, y: 0}}
-                                end={{x: 1, y: 0}}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 0 }}
                                 colors={
                                   nowDate < resultPublishDate
                                     ? ['#343333', '#343333']
                                     : [
-                                        '#FFAD00',
-                                        '#FFD273',
-                                        '#E19A04',
-                                        '#FACF75',
-                                        '#E7A725',
-                                        '#FFAD00',
-                                      ]
+                                      '#FFAD00',
+                                      '#FFD273',
+                                      '#E19A04',
+                                      '#FACF75',
+                                      '#E7A725',
+                                      '#FFAD00',
+                                    ]
                                 }
                                 style={styles.LinerBGA}>
                                 <Text
@@ -769,12 +769,12 @@ const AuctionParticipateNow = ({route}) => {
                     ) : (
                       <>
                         <View style={styles.MaiN}>
-                          <View style={{flexDirection: 'row'}}>
-                            <View style={{width: '50%'}}>
+                          <View style={{ flexDirection: 'row' }}>
+                            <View style={{ width: '50%' }}>
                               <TouchableOpacity onPress={handleApplyButton}>
                                 <LinearGradient
-                                  start={{x: 0, y: 0}}
-                                  end={{x: 1, y: 0}}
+                                  start={{ x: 0, y: 0 }}
+                                  end={{ x: 1, y: 0 }}
                                   colors={[
                                     '#FFAD00',
                                     '#FFD273',
@@ -791,12 +791,12 @@ const AuctionParticipateNow = ({route}) => {
                               </TouchableOpacity>
                             </View>
 
-                            <View style={{width: '50%'}}>
+                            <View style={{ width: '50%' }}>
                               <TouchableOpacity
                                 onPress={() => navigation.navigate('Home')}>
                                 <LinearGradient
-                                  start={{x: 0, y: 0}}
-                                  end={{x: 1, y: 0}}
+                                  start={{ x: 0, y: 0 }}
+                                  end={{ x: 1, y: 0 }}
                                   colors={[
                                     '#FFAD00',
                                     '#FFD273',
@@ -902,7 +902,7 @@ const AuctionParticipateNow = ({route}) => {
           )}
         </SafeAreaView>
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
 };
 

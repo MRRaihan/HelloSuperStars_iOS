@@ -1,5 +1,5 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useContext, useEffect, useState} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   RefreshControl,
   SafeAreaView,
@@ -13,15 +13,15 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import HeaderComp from '../../../Components/HeaderComp';
 import LoaderComp from '../../../Components/LoaderComp';
 import AlertModal from '../../../Components/MODAL/AlertModal';
-import {AuthContext} from '../../../Constants/context';
+import { AuthContext } from '../../../Constants/context';
 import AppUrl from '../../../RestApi/AppUrl';
 import AuctionProductContainer from '../AuctionProductContainer/AuctionProductContainer';
 import MarketProductContainer from '../MarketProductContainer/MarketProductContainer';
 import marketPlaceNavigatr from './marketPlaceNavigatr';
 import styles from './styles';
 
-function MarketPlace({route = null}) {
-  const {axiosConfig} = useContext(AuthContext);
+function MarketPlace({ route = null }) {
+  const { axiosConfig } = useContext(AuthContext);
   const navigation = useNavigation();
   const [loder, setLoder] = React.useState(true);
   const [auction, setAuction] = useState();
@@ -38,7 +38,7 @@ function MarketPlace({route = null}) {
     available: '',
   });
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -56,7 +56,7 @@ function MarketPlace({route = null}) {
   };
 
   return (
-    <>
+    <SafeAreaView>
       <AlertModal
         modalObj={modalObj}
         modal={modal}
@@ -64,9 +64,10 @@ function MarketPlace({route = null}) {
         buttoPress={modalOkBtn}
       />
       {buffer ? <LoaderComp /> : <></>}
-      <HeaderComp backFunc={()=>navigation.goBack()} />
+
+      <HeaderComp backFunc={() => navigation.goBack()} />
       <ScrollView
-        style={{backgroundColor: 'black'}}
+        style={{ backgroundColor: 'black' }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -94,11 +95,11 @@ function MarketPlace({route = null}) {
                   onPress={() =>
                     setMarketPlaceNavigate(marketPlaceNavigatr.MARKETPLACE)
                   }>
-                  <View style={{flexDirection: 'row'}}>
+                  <View style={{ flexDirection: 'row' }}>
                     <Icon
                       name="shopping-basket"
                       size={15}
-                      style={{marginRight: 10}}
+                      style={{ marginRight: 10 }}
                       color={
                         marketPlaceNavigate === marketPlaceNavigatr.MARKETPLACE
                           ? 'black'
@@ -132,11 +133,11 @@ function MarketPlace({route = null}) {
                   onPress={() =>
                     setMarketPlaceNavigate(marketPlaceNavigatr.AUCTION)
                   }>
-                  <View style={{flexDirection: 'row'}}>
+                  <View style={{ flexDirection: 'row' }}>
                     <Icon
                       name="gavel"
                       size={15}
-                      style={{marginRight: 10}}
+                      style={{ marginRight: 10 }}
                       color={
                         marketPlaceNavigate === marketPlaceNavigatr.AUCTION
                           ? 'black'
@@ -155,35 +156,6 @@ function MarketPlace({route = null}) {
                 </TouchableOpacity>
               </LinearGradient>
             </View>
-            {/* <View style={styles.row1}>
-            <LinearGradient
-              colors={
-                marketPlaceNavigate === marketPlaceNavigatr.SOUVENIR
-                  ? ['#FFAD00', '#FFD273', '#FACF75', '#E7A725', '#FFAD00']
-                  : ['#272727', '#272727']
-              }
-              style={marketPlaceNavigate === marketPlaceNavigatr.SOUVENIR
-                ? styles.marketBtn
-                : styles.marketBtn2}>
-              <TouchableOpacity onPress={() =>setMarketPlaceNavigate(marketPlaceNavigatr.SOUVENIR)}>
-                <View style={{ flexDirection: 'row' }}>
-                  <Icon
-                    name="star"
-                    size={15}
-                    style={{ marginRight: 10 }}
-                    color={marketPlaceNavigate === marketPlaceNavigatr.SOUVENIR
-                      ? 'black'
-                      : 'white'}
-                  />
-                  <Text style={marketPlaceNavigate === marketPlaceNavigatr.SOUVENIR ? styles.Fonts : styles.Fonts2}>
-                    Souvenir
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </LinearGradient>
-          </View> */}
-            {/* Top bar buttons start */}
-            {/* marketPlace component */}
             <ScrollView>
               {marketPlaceNavigate === marketPlaceNavigatr.MARKETPLACE ? (
                 <MarketProductContainer
@@ -201,7 +173,7 @@ function MarketPlace({route = null}) {
           </SafeAreaView>
         </View>
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
 }
 

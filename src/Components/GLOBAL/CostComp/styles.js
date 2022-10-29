@@ -23,6 +23,15 @@ export const styles = StyleSheet.create({
   twoFiftySix: {
     fontSize: 25,
   },
+  starCardImg: {
+    paddingTop: 15,
+    width: 50,
+    height: 50,
+    borderRadius: 100,
+    borderWidth: 2,
+    borderColor: '#dadada27',
+    marginHorizontal: 5,
+  },
 });
 
 export default styles;

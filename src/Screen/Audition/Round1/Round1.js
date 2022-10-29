@@ -29,18 +29,17 @@ const Round1 = ({route}) => {
     juries,
   } = route.params;
   console.log('--------------------round information', auditionInfo);
-  const remainingTime = (start, end) => {
-    const startTime = new Date().getTime();
-    const endTime = new Date(end.concat(' 23:59:59')).getTime();
-    if (endTime > startTime) {
-      setRemainTime((endTime - startTime) / 1000);
-      setIsStarted(false);
-      return;
+  const remainingTime = time => {
+    const startTime = new Date(time.concat(' 00:00:00')).getTime();
+    const currentTime = new Date().getTime();
+    if (startTime >= currentTime) {
+      setRemainTime((startTime - currentTime) / 1000);
+      return (startTime - currentTime) / 1000;
     }
-    setRemainTime((endTime - startTime) / 1000);
+    return 0;
   };
   useEffect(() => {
-    remainingTime(auditionInfo.round_start_date, auditionInfo.round_end_date);
+    remainingTime(auditionInfo.round_start_date);
   }, []);
 
   return (
@@ -160,7 +159,7 @@ const Round1 = ({route}) => {
             style={styles.listParent}
             onPress={() =>
               Navigation.navigate(navigationStrings.MARKDISTIBUTION, {
-                userMarks: auditionInfo.has_user_vote_mark,
+                userMarks: auditionInfo.user_vote_mark,
                 juryOrJudge: auditionInfo.jury_or_judge_mark,
                 title: `AUDITION ${auditionInfo.round_num} ROUND ENDING TIME`,
                 roundName: auditionInfo.round_num,

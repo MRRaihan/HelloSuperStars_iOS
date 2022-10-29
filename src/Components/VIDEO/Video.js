@@ -1,47 +1,48 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {StyleSheet, Text, View, Image} from 'react-native';
 // import {LinearTextGradient} from 'react-native-text-gradient';
 import VideoPlayer from 'react-native-video-player';
+import imagePath from '../../Constants/imagePath';
+import AppUrl from '../../RestApi/AppUrl';
 
-function Video({ title, image }) {
+function Video({title, image, videoSrc = null}) {
+  console.log('image path', image);
+
   return (
     <View style={styles.topCard}>
-      {/* <LinearTextGradient
-        style={styles.fonts}
-        locations={[0, 1]}
-        colors={['#ffaa00', '#fcfab6']}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 0}}> */}
       <Text style={styles.fonts}>{title}</Text>
-      {/* </LinearTextGradient> */}
-      {/* <UnderlineImage /> */}
-      <View
-        style={{ borderWidth: 0.3, borderColor: 'black', marginVertical: 10 }}
-      />
-      {/* <View style={styles.bannerRow}>
-        <Image
-          style={styles.imgRow}
-          source={{
-            uri: image,
-          }}
-        />
-        <Image style={styles.imgRow2} source={imagePath.meetupvideoIcon} />
-      </View> */}
 
       <View
-        style={{ height: 180, backgroundColor: 'lightblue', marginBottom: 18 }}>
-        <VideoPlayer
-          video={{
-            uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-          }}
-          resizeMode={'cover'}
-          videoWidth={1200}
-          videoHeight={600}
-          thumbnail={{
-            uri: 'https://www.newagebd.com/files/records/news/202103/132871_199.jpg',
-          }}
+        style={{borderWidth: 0.3, borderColor: 'black', marginVertical: 10}}
+      />
+
+      {videoSrc !== null ? (
+        <View style={{marginHorizontal: 20, marginVertical: 10}}>
+          <VideoPlayer
+            style={{height: 300}}
+            video={{
+              uri: `${AppUrl.MediaBaseUrl}${videoSrc}`,
+            }}
+            resizeMode={'stretch'}
+            thumbnail={imagePath.greetingStar}
+          />
+        </View>
+      ) : (
+        <Image
+          source={{uri: image}}
+          style={{height: 150, resizeMode: 'cover'}}
         />
-      </View>
+      )}
+      {/* <VideoPlayer
+        style={{ height: 300 }}
+        video={{
+          uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        }}
+        resizeMode={'stretch'}
+        thumbnail={{
+          uri: 'https://www.newagebd.com/files/records/news/202103/132871_199.jpg',
+        }}
+      /> */}
     </View>
   );
 }
@@ -55,10 +56,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   fonts: {
-    // color: '#ffaa00',
+    color: '#ffaa00',
     textAlign: 'center',
     marginTop: 10,
-    // fontSize: 18,
+    fontSize: 18,
   },
   bannerRow: {
     alignItems: 'center',

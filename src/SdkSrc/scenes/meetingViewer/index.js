@@ -270,7 +270,16 @@ export default function MeetingViewer({ videoOn }) {
                 exitMeeting={exitMeeting}
               />
               :
-              <></>
+              <>
+              <HeaderMeetingViewer
+              type={type}
+                setCurrentTabModes={setCurrentTabModes}
+                animeVal={animeVal}
+                exitMeeting={exitMeeting}
+              />
+
+
+              </>
             }
           </>
         )}

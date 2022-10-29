@@ -1,6 +1,6 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import axios from 'axios';
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -37,11 +37,20 @@ const Tab = createBottomTabNavigator();
 // }
 
 const TabRoutes = () => {
-  const {notification, setNotification, axiosConfig} = useContext(AuthContext);
+  const {
+    notification,
+    setNotification,
+    axiosConfig,
+    totalNotification,
+    updateNotification,
+  } = useContext(AuthContext);
+  updateNotification();
+  console.log('total Notification', totalNotification);
 
   useEffect(() => {
     checkNotification();
-  }, []);
+    updateNotification();
+  }, [totalNotification]);
 
   let checkNotification = async () => {
     let res = await axios
@@ -109,7 +118,7 @@ const TabRoutes = () => {
         name={navigationStrings.NOTIFICATIONSTACK}
         component={NotificationStackScreen}
         options={{
-          tabBarBadge: notification?.length > 0 ? notification?.length : null,
+          tabBarBadge: totalNotification > 0 ? totalNotification : null,
           tabBarIcon: ({focused}) => {
             return (
               <>

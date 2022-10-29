@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Image, Text, TouchableOpacity, View, useWindowDimensions} from 'react-native';
+import { Image, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import Toast from 'react-native-root-toast';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';

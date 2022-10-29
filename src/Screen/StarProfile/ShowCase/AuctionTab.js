@@ -1,43 +1,26 @@
+import axios from 'axios';
 import * as React from 'react';
 import {SafeAreaView, ScrollView, Text, View} from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
+import {AuthContext} from '../../../Constants/context';
 import imagePath from '../../../Constants/imagePath';
+import AppUrl from '../../../RestApi/AppUrl';
 import AuctionProductCard from './AuctionPorductCard';
 import styles from './styles';
 
-const Data = [
-  {
-    key: 1,
-    name: 'Bangladeshi Jersey',
-    details: 'The product was designed for 2020 Ban vs Ind series !',
-    price: '$9.99',
-    ownerImg: imagePath.mash,
-    productImg: imagePath.product1,
-    owerName: 'Mashrafee Mortaza',
-  },
-  {
-    key: 2,
-    name: 'Football',
-    details: 'The product was designed for 2020 Ban vs Ind series !',
-    price: '$19.99',
-    ownerImg: imagePath.putin,
-    productImg: imagePath.product2,
-    owerName: 'Putin',
-  },
-
-  {
-    key: 3,
-    name: 'Acoustic Football',
-    details: 'The product was designed for 2020 Ban vs Ind series !',
-    price: '$7.99',
-    ownerImg: imagePath.bal,
-    productImg: imagePath.product3,
-    owerName: 'Shakib Al Hasan',
-  },
-];
-
 function AuctionTab(props) {
+  const {axiosConfig} = React.useContext(AuthContext);
+  const {setProduct} = props.setProduct;
+  const [productInfo, setProductInfo] = React.useState([]);
+  React.useEffect(() => {
+    axios.get(`${AppUrl.AuctionStar}${props.starId}`, axiosConfig).then(res => {
+      console.log(res.data);
+      if (res.data.status === 200) {
+        setProductInfo(res.data.product);
+      }
+    });
+  }, []);
   return (
     <View style={styles.container}>
       <SafeAreaView>
@@ -52,17 +35,20 @@ function AuctionTab(props) {
         </View>
 
         <ScrollView>
-          {Data.map(item => {
+          {productInfo.map(item => {
+            console.log(item);
             return (
               <AuctionProductCard
                 setView={props.setView}
-                name={item.name}
-                productImg={item.productImg}
-                price={item.price}
-                ownerImg={item.ownerImg}
-                owerName={item.owerName}
-                key={item.key}
+                name={item.title}
+                productImg={item.product_image}
+                price={item.base_price}
+                ownerImg={item.star.image}
+                owerName={item.star.first_name + ' ' + item.star.last_name}
+                key={item.id}
+                productDetails={item}
                 buttonText="Participate"
+                setProduct={props.setProduct}
               />
             );
           })}

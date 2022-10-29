@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import moment from 'moment';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import imagePath from '../../../Constants/imagePath';
 import navigationStrings from '../../../Constants/navigationStrings';
@@ -22,23 +22,19 @@ const MenuActivities = ({
 
   const [check, setCheck] = React.useState(false);
   console.log('menuActivitList------------', menuActivitList);
-
-  // ###############back handler not added due to some bug here ################
-
-  //============back handler==================
-  // function handleBackButtonClick() {
-  // setMenuNavigator(MenuNavigator.MENUHOME);
-  // setMenuChange(0);
-  // return true;
-
-  // }
-
-  // React.useEffect(() => {
-  //   BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
-  //   return () => {
-  //     BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
-  //   };
-  // }, []);
+  const [greetingActivities, setGreetingActivities] = useState(0);
+  const filteredActivities = menuActivitList.greeting_activities.filter(
+    item => {
+      return item.type === 'greeting'
+        ? item.greeting_registration.status > 2
+          ? () => {
+              item.greeting;
+              setGreetingActivities(greetingActivities + 1);
+            }
+          : null
+        : item;
+    },
+  );
 
   //============back handler==================
   return (
@@ -230,8 +226,8 @@ const MenuActivities = ({
               <View style={styles.ContentItems2}>
                 <Text style={styles.contentText}>Meetup Events</Text>
                 <Text style={styles.contentText2}>
-                  {menuActivitList?.meetup_activities?.length > 0
-                    ? menuActivitList?.meetup_activities?.length
+                  {menuActivitList?.meetup_activities.length > 0
+                    ? menuActivitList?.meetup_activities.length
                     : 'No'}{' '}
                   activities available now
                 </Text>
@@ -261,6 +257,41 @@ const MenuActivities = ({
         />
       </TouchableOpacity>
 
+      {/* Greetings  */}
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate(navigationStrings.GREETINGS, {
+            activeGreetings: menuActivitList?.greeting_activities,
+          });
+        }}>
+        <View style={styles.Touch}>
+          <View style={styles.content}>
+            <View style={styles.ContentItems}>
+              <Text style={styles.Bar}></Text>
+              <Image source={imagePath.activities1} />
+              <Text style={styles.NotifyText}>{filteredActivities.length}</Text>
+              <View style={styles.ContentItems2}>
+                <Text style={styles.contentText}>Greetings</Text>
+                <Text style={styles.contentText2}>
+                  {filteredActivities.length > 0
+                    ? filteredActivities.length
+                    : 'No'}{' '}
+                  activities available now
+                </Text>
+              </View>
+            </View>
+            <View style={{justifyContent: 'center'}}></View>
+          </View>
+        </View>
+        <View
+          style={{
+            height: 1,
+            backgroundColor: '#4B4B4B',
+            alignSelf: 'stretch',
+          }}
+        />
+      </TouchableOpacity>
+
       {/* Upcoming Auditions  */}
       <TouchableOpacity
         onPress={() => {
@@ -276,13 +307,13 @@ const MenuActivities = ({
               <Text style={styles.Bar}></Text>
               <Image source={imagePath.activities4} />
               <Text style={styles.NotifyText}>
-                {menuActivitList?.audition_activities?.length}
+                {menuActivitList?.audition_activities.length}
               </Text>
               <View style={styles.ContentItems2}>
                 <Text style={styles.contentText}>Auditions</Text>
                 <Text style={styles.contentText2}>
-                  {menuActivitList?.audition_activities?.length > 0
-                    ? menuActivitList?.audition_activities?.length
+                  {menuActivitList?.audition_activities.length > 0
+                    ? menuActivitList?.audition_activities.length
                     : 'No'}{' '}
                   audition available now
                 </Text>
@@ -290,10 +321,9 @@ const MenuActivities = ({
             </View>
             <View style={{justifyContent: 'center'}}>
               <Text style={styles.contentText2}>
-  
-                {/* {moment(
+                {moment(
                   menuActivitList?.audition_activities[0]?.created_at,
-                ).fromNow()} */}
+                ).fromNow()}
               </Text>
             </View>
           </View>
@@ -320,13 +350,13 @@ const MenuActivities = ({
               <Text style={styles.Bar}></Text>
               <Image source={imagePath.activities5} />
               <Text style={styles.NotifyText}>
-                {menuActivitList?.marketplace_activities?.length}
+                {menuActivitList?.marketplace_activities.length}
               </Text>
               <View style={styles.ContentItems2}>
                 <Text style={styles.contentText}>MarketPlace</Text>
                 <Text style={styles.contentText2}>
-                  {menuActivitList?.marketplace_activities?.length > 0
-                    ? menuActivitList?.marketplace_activities?.length
+                  {menuActivitList?.marketplace_activities.length > 0
+                    ? menuActivitList?.marketplace_activities.length
                     : 'No'}{' '}
                   activities available now
                 </Text>
@@ -368,13 +398,13 @@ const MenuActivities = ({
               <Text style={styles.Bar}></Text>
               <Image source={imagePath.activities5} />
               <Text style={styles.NotifyText}>
-                {menuActivitList?.auction_activities?.length}
+                {menuActivitList?.auction_activities.length}
               </Text>
               <View style={styles.ContentItems2}>
                 <Text style={styles.contentText}>Auction</Text>
                 <Text style={styles.contentText2}>
-                  {menuActivitList?.auction_activities?.length > 0
-                    ? menuActivitList?.auction_activities?.length
+                  {menuActivitList?.auction_activities.length > 0
+                    ? menuActivitList?.auction_activities.length
                     : 'No'}{' '}
                   activities available now
                 </Text>
@@ -416,13 +446,13 @@ const MenuActivities = ({
               <Text style={styles.Bar}></Text>
               <Image source={imagePath.activities5} />
               <Text style={styles.NotifyText}>
-                {menuActivitList?.souviner_activities?.length}
+                {menuActivitList?.souviner_activities.length}
               </Text>
               <View style={styles.ContentItems2}>
                 <Text style={styles.contentText}>Souvenir</Text>
                 <Text style={styles.contentText2}>
-                  {menuActivitList?.souviner_activities?.length > 0
-                    ? menuActivitList?.souviner_activities?.length
+                  {menuActivitList?.souviner_activities.length > 0
+                    ? menuActivitList?.souviner_activities.length
                     : 'No'}{' '}
                   activities available now
                 </Text>

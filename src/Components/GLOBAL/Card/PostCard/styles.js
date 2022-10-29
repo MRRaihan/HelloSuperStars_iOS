@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   CardRow: {
     // margin: 10,
@@ -162,6 +162,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
     paddingHorizontal: 10,
+    minHeight: 20
   },
   mainMeetUpViewlearningSession: {
     flexDirection: 'row',
@@ -172,6 +173,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#00000065',
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
+    minHeight: 40
   },
   meetupBtn: {
     backgroundColor: '#FFAD00',
@@ -275,6 +277,7 @@ const styles = StyleSheet.create({
     color: '#F6EA45',
     fontWeight: 'bold',
     paddingVertical: 3,
+    height: 30
   },
 
   BannerCs: {

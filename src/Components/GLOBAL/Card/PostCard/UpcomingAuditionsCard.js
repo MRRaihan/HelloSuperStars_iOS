@@ -30,25 +30,6 @@ export default function UpcomingAuditionsCard(props) {
   const [like, setlike] = useState(0);
   const [likeCount, setLikeCount] = useState(0);
   const [postShare, setPostShare] = useState(0);
-  const handelLike = () => {
-    setlike(!like);
-    if (like) {
-      setLikeCount(prev => {
-        handelLikeUnlike(likeId.slice(0, likeId.length), 'Unlike');
-
-        return prev - 1;
-      });
-    }
-    if (!like) {
-      setLikeCount(prev => {
-        handelLikeUnlike([...likeId, useInfo.id], 'Like');
-
-        return prev + 1;
-      });
-    }
-
-    // console.log('fdjkgdg', userLikeIds + post?.id)
-  };
   const onShare = async () => {
     axios
       .get(AppUrl.PostShare + post.id, axiosConfig)
@@ -114,7 +95,7 @@ export default function UpcomingAuditionsCard(props) {
                   <RenderHtml
                     contentWidth={width}
                     source={{
-                      html: `<div style='color:#F6EA45; display: inline; font-size: 18px; font-weight: 'bold'>${item.audition.description}</div>`,
+                      html: `<div style='color:#F6EA45; display: inline; font-size: 18px; font-weight: 'bold'>${item?.audition?.title}</div>`,
                     }}
                     style={{color: 'red'}}
                   />
@@ -123,12 +104,12 @@ export default function UpcomingAuditionsCard(props) {
               <VideoPlayer
                 style={styles.BannerCardImg}
                 video={{
-                  uri: `${AppUrl.MediaBaseUrl}${item.audition.video}`,
+                  uri: `${AppUrl.MediaBaseUrl}${item?.audition?.video}`,
                 }}
                 videoWidth={1600}
                 videoHeight={900}
                 thumbnail={{
-                  uri: `${AppUrl.MediaBaseUrl}${item.audition.banner}`,
+                  uri: `${AppUrl.MediaBaseUrl}${item?.audition?.banner}`,
                 }}
                 blurRadius={10}
               />
@@ -151,8 +132,8 @@ export default function UpcomingAuditionsCard(props) {
                           paddingHorizontal: 3,
                           paddingTop: 2,
                         }}>
-                        FROM {dateMonthConverter(item.audition.start_date)} -{' '}
-                        {dateMonthConverter(item.audition.end_date)}
+                        FROM {dateMonthConverter(item.audition?.start_date)} -{' '}
+                        {dateMonthConverter(item.audition?.end_date)}
                       </Text>
                     </View>
                   </Text>
@@ -197,10 +178,11 @@ export default function UpcomingAuditionsCard(props) {
                 return (
                   <>
                     <View style={styles.SText}>
-                      {/* <Text style={{ color: 'white' }}>AppUrl.MediaBaseUrl + judge?.user?.image</Text> */}
                       <Image
                         style={styles.starCardImg}
-                        source={AppUrl.MediaBaseUrl + judge?.user?.image}
+                        source={{
+                          uri: `${AppUrl.MediaBaseUrl + judge?.user?.image}`,
+                        }}
                       />
                     </View>
                   </>
@@ -225,52 +207,6 @@ export default function UpcomingAuditionsCard(props) {
                   <Text style={styles.infoText}>{postShare} Share</Text>
                 </View>
               </View>
-            </View>
-            <View style={styles.cardButtons}>
-              <TouchableOpacity style={styles.likeBtn} onPress={handelLike}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}>
-                  <View>
-                    {like ? (
-                      <Icon name="heart" color={'red'} size={22} />
-                    ) : (
-                      <AntDesign name="hearto" color={'red'} size={22} />
-                    )}
-                  </View>
-                  <Text style={{marginLeft: 8, marginTop: 1, color: '#d9d9d9'}}>
-                    Like
-                  </Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.likeBtn}
-                onPress={() => {
-                  setShare(!share);
-                  onShare();
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}>
-                  <View>
-                    {share ? (
-                      <Icon name="paper-plane" color={'#03a5fc'} size={21} />
-                    ) : (
-                      <Icon name="paper-plane-o" color={'#03a5fc'} size={21} />
-                    )}
-                  </View>
-                  <Text style={{marginLeft: 8, marginTop: 1, color: '#d9d9d9'}}>
-                    Share
-                  </Text>
-                </View>
-              </TouchableOpacity>
             </View>
           </View>
         </View>

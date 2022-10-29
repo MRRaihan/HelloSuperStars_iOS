@@ -1,75 +1,92 @@
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { FlatGrid } from 'react-native-super-grid';
+import {useEffect} from 'react';
+import {useState} from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {FlatGrid} from 'react-native-super-grid';
 import noImage from '../../../../../../Assets/Images/no-image.png';
 import navigationStrings from '../../../../../../Constants/navigationStrings';
 import AppUrl from '../../../../../../RestApi/AppUrl';
 import VideoPlayer from 'react-native-video-player';
+import imagePath from '../../../../../../Constants/imagePath';
 
-const ProfileVideos = ({ userActivites }) => {
+const ProfileVideos = ({userActivites}) => {
   const Navigation = useNavigation();
-  const [videoList, setVideoList] = useState([])
-
+  const [videoList, setVideoList] = useState([]);
+  console.log(userActivites);
 
   useEffect(() => {
-    setVideoList(userActivites.filter(item => item.type === "greeting"))
-  }, [])
-
-
-
+    setVideoList(
+      userActivites.filter(
+        item =>
+          item.type === 'greeting' && item.greeting_registration.status > 2,
+      ),
+    );
+  }, []);
 
   const renderVideo = (data, index) => {
-    console.log("itejekaj", data.item?.greeting.video)
     return (
-
-      <View key={index} style={{ margin: 7 }}>
+      <View key={index} style={{margin: 7}}>
         <View
           style={{
             height: 120,
-            width: "100%",
+            width: '100%',
             borderRadius: 5,
             borderWidth: 1,
             borderColor: 'gold',
-            overflow: 'hidden'
-          }}
-        >
-
-          <View style={{ borderRadius: 10, overflow: 'hidden', justifyContent: 'center' }}>
-            <VideoPlayer
-              video={{
-                uri: `${AppUrl.MediaBaseUrl + data.item?.greeting.video}`,
-              }}
-              pauseOnPress
-              fullScreenOnLongPress
-              videoWidth={1600}
-              videoHeight={1000}
-              thumbnail={{
-                uri: `${AppUrl.MediaBaseUrl + data.item?.greeting.banner}`,
-              }}
-              blurRadius={1}
-            />
-          </View>
+            overflow: 'hidden',
+          }}>
+          <VideoPlayer
+            video={{
+              uri: `${
+                AppUrl.MediaBaseUrl + data.item.greeting_registration.video
+              }`,
+            }}
+            pauseOnPress
+            fullScreenOnLongPress
+            videoWidth={1600}
+            videoHeight={1000}
+            thumbnail={{
+              uri: `${AppUrl.MediaBaseUrl + data.item?.greeting.banner}`,
+            }}
+            blurRadius={1}
+          />
+          <View
+            style={{
+              borderRadius: 10,
+              overflow: 'hidden',
+              justifyContent: 'center',
+            }}></View>
         </View>
-
-
       </View>
-    )
-
-
-
-  }
+    );
+  };
 
   return (
     <>
-      <View style={{ margin: 7 }}>
-        <FlatGrid
-          itemDimension={160}
-          data={videoList}
-          renderItem={renderVideo}
-        />
+      <View style={{margin: 7}}>
+        {videoList.length > 0 ? (
+          <FlatGrid
+            itemDimension={160}
+            data={videoList}
+            renderItem={renderVideo}
+          />
+        ) : (
+          <View style={{height: 300, justifyContent: 'center'}}>
+            <View>
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <Image
+                  source={imagePath.lazyDog}
+                  style={{height: 100, width: 100}}
+                />
+              </View>
+
+              <Text style={{color: 'white', textAlign: 'center'}}>
+                Sorry No Data Available !
+              </Text>
+            </View>
+          </View>
+        )}
       </View>
     </>
   );

@@ -15,7 +15,7 @@ import { ROBOTO_FONTS } from "../styles/fonts";
 import { convertRFValue } from "../styles/spacing";
 import { useMeeting } from "@videosdk.live/react-native-sdk";
 import { TAB_COMPONENT_MODES } from "../scenes/meetingViewer";
-const HeaderMeetingViewer = ({ setCurrentTabModes, animeVal, exitMeeting }) => {
+const HeaderMeetingViewer = ({ type, setCurrentTabModes, animeVal, exitMeeting }) => {
   const { changeWebcam, meetingId, participants, localWebcamOn } = useMeeting(
     {}
   );
@@ -87,7 +87,7 @@ const HeaderMeetingViewer = ({ setCurrentTabModes, animeVal, exitMeeting }) => {
             }}
             backgroundColor={Colors.DARK_BACKGROUND}
           >
-            <CameraSwitch height={22} width={22} fill={Colors.WHITE} />
+            <CameraSwitch height={22} width={22} fill={Colors.RED} />
           </Button>
 
           <TouchableOpacity
@@ -110,6 +110,7 @@ const HeaderMeetingViewer = ({ setCurrentTabModes, animeVal, exitMeeting }) => {
                 fontFamily: ROBOTO_FONTS.RobotoMedium,
               }}
             >
+
               {participantsArrId && participantsArrId.length
                 ? participantsArrId.length
                 : 1}

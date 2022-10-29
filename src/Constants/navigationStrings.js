@@ -67,6 +67,9 @@ export default {
   // qna
   QNA: 'Qna',
 
+  // Greetings
+  GREETINGS: 'Greeting',
+
   //Voice message
   VOICEMESSAGE: 'voiceMessage',
 
@@ -85,4 +88,12 @@ export default {
   SHOWPDF: 'showPDF',
   //Register audition
   AUDITIONREGISTER: 'RegisterUpCoAudition',
+
+  //privacy policy
+  ABOUTPOLICY: 'About',
+  PRIVACYPOLICY: 'Policy',
+  PRODUCTPOLICY: 'Product',
+  CONDITIONPOLICY: 'Condition',
+  REFUNDPOLICY: 'Refund',
+  FAQPOLICY: 'FaQ',
 };

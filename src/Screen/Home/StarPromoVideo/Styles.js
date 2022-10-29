@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     },
     item: {
         width: 100,
-        height: 160,
+        height: 150,
         position: 'relative',
         backgroundColor: '#FFAD00',
         overflow: 'hidden',
@@ -32,14 +32,17 @@ const styles = StyleSheet.create({
         flex: 1,
         marginBottom: Platform.select({ ios: 0, android: 1 }), // Prevent a random Android rendering issue
         backgroundColor: 'white',
-        // borderRadius: 8,
+        borderRadius: 8,
         width: "100%",
         height: 50
 
     },
     image: {
         ...StyleSheet.absoluteFillObject,
-        resizeMode: 'cover',
+        resizeMode: 'stretch',
+       
+       width:'100%',
+       
 
     },
     profileImage: {
@@ -47,6 +50,7 @@ const styles = StyleSheet.create({
         width: 50,
         position: 'absolute',
         right: 0,
+        // left:0,
         justifyContent: 'center',
         alignItems: 'center'
 

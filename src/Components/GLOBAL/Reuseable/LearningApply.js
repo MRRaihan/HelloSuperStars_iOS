@@ -1,5 +1,5 @@
 //import liraries
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -17,7 +17,7 @@ import imagePath from '../../Constants/imagePath';
 import HeaderComp from '../HeaderComp';
 import BidCongratulationModal from '../Modal/BidCongratulationModal';
 
-const LearningApply = ({show, setShow}) => {
+const LearningApply = ({ show, setShow }) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleDone = () => {
@@ -25,7 +25,7 @@ const LearningApply = ({show, setShow}) => {
   };
 
   return (
-    <>
+    <SafeAreaView>
       <View style={styles.container}>
         <HeaderComp />
         <View style={styles.centered_view}>
@@ -43,7 +43,7 @@ const LearningApply = ({show, setShow}) => {
               </View> */}
 
               <View style={styles.LearningApply}>
-                <View style={{marginVertical: 10}}>
+                <View style={{ marginVertical: 10 }}>
                   <TextInput
                     placeholder="Enter your name..."
                     placeholderTextColor={'white'}
@@ -55,7 +55,7 @@ const LearningApply = ({show, setShow}) => {
                     }}
                   />
                 </View>
-                <View style={{marginVertical: 10}}>
+                <View style={{ marginVertical: 10 }}>
                   <TextInput
                     placeholder=" Father name..."
                     placeholderTextColor={'white'}
@@ -68,7 +68,7 @@ const LearningApply = ({show, setShow}) => {
                   />
                 </View>
 
-                <View style={{marginVertical: 10}}>
+                <View style={{ marginVertical: 10 }}>
                   <TextInput
                     placeholder="Password..."
                     placeholderTextColor={'white'}
@@ -81,7 +81,7 @@ const LearningApply = ({show, setShow}) => {
                   />
                 </View>
                 <TouchableOpacity style={styles.DoneS} onPress={() => handleDone()}>
-                  <Text style={ {textAlign: 'center', fontWeight: 'bold', color: '#000'}}>
+                  <Text style={{ textAlign: 'center', fontWeight: 'bold', color: '#000' }}>
                     Apply
                   </Text>
                 </TouchableOpacity>
@@ -95,7 +95,7 @@ const LearningApply = ({show, setShow}) => {
         showModal={showModal}
         setShowModal={setShowModal}
       />
-    </>
+    </SafeAreaView>
   );
 };
 
@@ -120,9 +120,9 @@ const styles = StyleSheet.create({
   lineImg: {
     marginVertical: 3,
   },
-  bannerRow: {alignItems: 'center', position: 'relative', paddingBottom: 15},
-  imgRow: {marginVertical: 2, width: '90%'},
-  imgRow2: {marginVertical: 2, position: 'absolute', top: '45%', left: '50%'},
+  bannerRow: { alignItems: 'center', position: 'relative', paddingBottom: 15 },
+  imgRow: { marginVertical: 2, width: '90%' },
+  imgRow2: { marginVertical: 2, position: 'absolute', top: '45%', left: '50%' },
   infoView: {
     flexDirection: 'row',
     justifyContent: 'center',

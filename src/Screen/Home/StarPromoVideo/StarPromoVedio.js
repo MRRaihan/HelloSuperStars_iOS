@@ -56,6 +56,16 @@ const ENTRIES1 = [
     proImage: 'https://pbs.twimg.com/media/ExvL-TLVoAQ8L3Q.jpg',
     videoURl: 'http:///backend.hellosuperstars.com/assets/video/thasan.mp4',
   },
+  {
+    key: 4,
+    title: 'Mahajib',
+
+    illustration:
+      'https://cdn.sharechat.com/mehjabinchowdhury_1e18298a_1628074025216_sc_cmprsd_40.jpg',
+    proImage:
+      'https://muchfeed.com/wp-content/uploads/2018/03/Mehazabien-Chowdhury-1.jpg',
+    videoURl: 'http:///backend.hellosuperstars.com/assets/video/mahajib.mp4',
+  },
 ];
 
 const StarPromoVedio = props => {
@@ -110,6 +120,7 @@ const StarPromoVedio = props => {
           style={styles.item}>
           <Image
             source={{uri: `${AppUrl.MediaBaseUrl + item.thumbnail}`}}
+            // source={{uri:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvqQp7Mnj-5Sl3GujKwmjwK6iMzZTjqnP1CA&usqp=CAU'}}
             containerStyle={styles.imageContainer}
             style={styles.image}
           />
@@ -118,6 +129,7 @@ const StarPromoVedio = props => {
             style={styles.profileImage}>
             <Image
               source={{uri: `${AppUrl.MediaBaseUrl + item.star?.image}`}}
+              // source={{uri: `https://dailyeventnews.com/wp-content/uploads/2020/10/Screenshot_1.png`}}
               style={{height: 35, width: 35, borderRadius: 50}}
             />
           </ImageBackground>

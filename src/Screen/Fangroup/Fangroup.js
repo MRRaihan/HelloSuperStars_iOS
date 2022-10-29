@@ -1,18 +1,26 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import moment from 'moment';
+import React, { useContext, useState } from 'react';
 import {
   Image,
   Modal,
   ScrollView,
   Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  useWindowDimensions
+  TextInput, TouchableOpacity, useWindowDimensions, View
 } from 'react-native';
 import Toast from 'react-native-root-toast';
+import RNFS from 'react-native-fs';
+import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MatarialIcon from 'react-native-vector-icons/MaterialIcons';
+import VideoPlayer from 'react-native-video-player';
 import HeaderComp from '../../Components/HeaderComp';
+import CardSkeleton from '../../Components/Skeleton/CardSkeleton/CardSkeleton';
+import { AuthContext } from '../../Constants/context';
+import imagePath from '../../Constants/imagePath';
+import { useAxiosGet } from '../../CustomHooks/useAxiosGet';
+import { useMediaPicker } from '../../CustomHooks/useMediaPicker';
 import AppUrl from '../../RestApi/AppUrl';
 import Analytics from './Analytics/Analytics';
 import FanbaseModal from './FanbaseModal/FanbaseModal';
@@ -20,17 +28,6 @@ import FangroupCard from './FangroupCard/FangroupCard';
 import Media from './Media/Media';
 import Members from './Members/Members';
 import styles from './Styles';
-import moment from 'moment';
-import imagePath from '../../Constants/imagePath';
-import { useAxiosGet } from '../../CustomHooks/useAxiosGet';
-import CardSkeleton from '../../Components/Skeleton/CardSkeleton/CardSkeleton';
-import { useMediaPicker } from '../../CustomHooks/useMediaPicker';
-import axios from 'axios';
-import { AuthContext } from '../../Constants/context';
-import LoaderComp from '../../Components/LoaderComp';
-import { launchImageLibrary } from 'react-native-image-picker';
-import RNFS from 'react-native-fs';
-import VideoPlayer from 'react-native-video-player';
 
 const Fangroup = ({ route }) => {
   const { data } = route.params;
@@ -57,6 +54,7 @@ const Fangroup = ({ route }) => {
   })
   const [submitType, setSubmitType] = useState()
 
+  const Navigation = useNavigation()
   const HandelJoin = () => {
     setDropDown(!dropDown)
   }
@@ -243,7 +241,7 @@ const Fangroup = ({ route }) => {
 
           />
         </Modal>
-        <HeaderComp FanGroup={'fangroup'} />
+        <HeaderComp backFunc={() => Navigation.goBack()} FanGroup={'fangroup'} />
         <View style={styles.row1}>
           <View style={{ alignItems: 'center' }}>
             <Image

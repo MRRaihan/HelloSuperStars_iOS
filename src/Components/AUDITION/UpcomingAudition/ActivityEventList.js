@@ -1,5 +1,5 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState, useEffect, useContext } from 'react';
+import {useNavigation} from '@react-navigation/native';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Image,
   ScrollView,
@@ -13,8 +13,11 @@ import imagePath from '../../../Constants/imagePath';
 
 import ActivitiesCard from '../../GLOBAL/Reuseable/ActivitiesCard';
 
-
-const ActivityEventList = ({ childActivityEventList, childActivityEventType }) => {
+const ActivityEventList = ({
+  childActivityEventList,
+  childActivityEventType,
+}) => {
+  console.log(childActivityEventType);
   const navigation = useNavigation();
   return (
     <ScrollView>

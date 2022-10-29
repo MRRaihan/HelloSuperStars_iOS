@@ -1,14 +1,15 @@
 import axios from 'axios';
 import React, {useContext, useEffect, useState} from 'react';
-import {RefreshControl, ScrollView, View} from 'react-native';
+import {RefreshControl, ScrollView, View, Image, Text} from 'react-native';
 import MarketPlaceSkeleton from '../../../Components/Skeleton/MarketSkeleton/MarketPlaceSkeleton';
 import {AuthContext} from '../../../Constants/context';
+import imagePath from '../../../Constants/imagePath';
 import AuctionProductCard from '../AuctionProductCard/AuctionProductCard';
 
 const AuctionProductContainer = ({apiInPoint}) => {
   const {axiosConfig} = useContext(AuthContext);
 
-  const [auctionData, setAuctionData] = useState();
+  const [auctionData, setAuctionData] = useState([]);
   const [loder, setLoder] = useState(true);
 
   const [Refreshing, setRefreshing] = useState(false);
@@ -21,7 +22,7 @@ const AuctionProductContainer = ({apiInPoint}) => {
 
   useEffect(() => {
     getAllAuctionPost();
-  }, []);
+  }, [apiInPoint]);
 
   const getAllAuctionPost = async () => {
     setLoder(true);
@@ -54,10 +55,26 @@ const AuctionProductContainer = ({apiInPoint}) => {
         {loder &&
           [1, 2, 3, 4].map(index => <MarketPlaceSkeleton key={index} />)}
 
-        {auctionData &&
+        {auctionData.length > 0 ? (
           auctionData.map((data, index) => (
             <AuctionProductCard data={data} key={index} />
-          ))}
+          ))
+        ) : (
+          <View style={{height: 600, justifyContent: 'center'}}>
+            <View>
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <Image
+                  source={imagePath.lazyDog}
+                  style={{height: 100, width: 100}}
+                />
+              </View>
+
+              <Text style={{color: 'white', textAlign: 'center'}}>
+                Sorry No Data Available !
+              </Text>
+            </View>
+          </View>
+        )}
       </ScrollView>
     </View>
   );

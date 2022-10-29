@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -6,23 +6,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
   topBannerImg: {
-
     height: 150,
     width: '100%',
     backgroundColor: '#343434',
     borderRadius: 10,
     padding: 10,
     position: 'relative',
-
   },
   topBannerTxt: {
     color: 'white',
     position: 'absolute',
     width: '100%',
     textAlign: 'center',
-    top: '49%',
+    top: '70%',
     fontSize: 20,
     fontWeight: 'bold',
+    zIndex: 1,
+    elevation: 1,
   },
   roundImage: {
     flexDirection: 'row',
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     justifyContent: 'space-between',
   },
-  roundImg: { height: '100%', width: '100%' },
+  roundImg: {height: '100%', width: '100%'},
   roundTxt: {
     color: 'white',
     position: 'absolute',

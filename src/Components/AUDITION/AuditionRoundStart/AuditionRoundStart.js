@@ -7,13 +7,15 @@ import AuditionTitleRoundBar from '../AuditionTitleRoundBar/AuditionTitleRoundBa
 
 const AuditionRoundStart = () => {
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#000' }}>
-      <HeaderComp />
-      <AuditionRoundTitleTime />
-      <AuditionTitleRoundBar />
-      {/* <AuditionRoundComp />   */}
-      <AuditionRoundCompBackup />
-    </ScrollView>
+    <SafeAreaView>
+      <ScrollView style={{ flex: 1, backgroundColor: '#000' }}>
+        <HeaderComp />
+        <AuditionRoundTitleTime />
+        <AuditionTitleRoundBar />
+        {/* <AuditionRoundComp />   */}
+        <AuditionRoundCompBackup />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

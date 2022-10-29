@@ -1,12 +1,15 @@
 class AppUrl {
-  // static BaseUrl = 'http://backend.hellosuperstars.com/api/';
-  // static MediaBaseUrl = 'http://backend.hellosuperstars.com/';
+  static BaseUrl = 'https://backend.hellosuperstars.com/api/';
+  static MediaBaseUrl = 'https://backend.hellosuperstars.com/';
 
-  // static SoketUrl = 'http://192.168.0.106:3005/';
+  // static SoketUrl = 'http://192.168.0.104:3005/';
+  // static SoketUrl = 'http://localhost:3005';
   static SoketUrl = 'https://socket.hellosuperstars.com/';
 
-  static BaseUrl = 'http://192.168.0.101/HelloSuperStars_Backend/public/api/';
-  static MediaBaseUrl = 'http://192.168.0.101/HelloSuperStars_Backend/public/';
+  // static BaseUrl =
+  //   'http://192.168.0.104/TFP-Projects-2/HelloSuperStarsBackend-2/public/api/';
+  // static MediaBaseUrl =
+  //   'http://192.168.0.104/TFP-Projects-2/HelloSuperStarsBackend-2/public/';
 
   // static demo instruction = 'http://your pc ip/project name on www-htdocs folder/public/';
 
@@ -41,6 +44,10 @@ class AppUrl {
   static GetFanGoupDetails = this.BaseUrl + 'user/fan/group/post/show/'; //slug
 
   static GetPromoVideos = this.BaseUrl + 'user/PromoVideos';
+  //learning session video uplaod
+  static walletQnaLearningRegister = this.BaseUrl + 'user/wallet/qna-register';
+  static LearningSessionVideoUplaod =
+    this.BaseUrl + 'learning-assinment-upload';
 
   //star profile
   static LiveChatEventByStarId =
@@ -60,6 +67,7 @@ class AppUrl {
   static ViewCity = this.BaseUrl + 'user/marketplace/city/';
   static MarketplaceOrderUpdate =
     this.BaseUrl + 'user/mobile-app/marketplace-update/';
+  static getPDF = this.BaseUrl + 'mobile/getInvoice/data';
   // Auction
   static AuctionBiddingProduct = this.BaseUrl + 'user/bidding/auction/product';
   static AuctionAllPost = this.BaseUrl + 'auction-product/all';
@@ -67,9 +75,11 @@ class AppUrl {
   static AuctionMyBiddingHistory = this.BaseUrl + 'user/liveBidding/history/';
   static AuctionMyApply = this.BaseUrl + 'user/auctionApply/auction/';
   static AuctionGetInstruction = this.BaseUrl + 'auction-product/';
+  static AuctionStar = this.BaseUrl + 'user/getStarAuction/'; // star ID
   // Get Souvenir
   static GetStarSouvenir = this.BaseUrl + 'user/souviner/view/';
   static SouvenirStore = this.BaseUrl + 'user/souvenir/apply/store/';
+  static SouvenirPayment = this.BaseUrl + 'user/souviner/payment/store';
 
   //
   static LearningSessionResult = this.BaseUrl + 'learning-session/result/';
@@ -91,6 +101,10 @@ class AppUrl {
 
   // Notification
   static CheckNotification = this.BaseUrl + 'user/check_notification/';
+  static totalNotificationCount =
+    this.BaseUrl + 'user/total_notification_count';
+  static updateNotification =
+    this.BaseUrl + 'user/notification/view_status/update/'; //Notification id
 
   static GreetingStatus = this.BaseUrl + 'user/mobile-app/greeting-status/';
   // static GreetingRegistration = this.BaseUrl + 'user/greetings/register';
@@ -129,10 +143,20 @@ class AppUrl {
   //inforamtion page info get
   static infoUpdateInforamtion = this.BaseUrl + 'user/create-user-info';
 
-  static allStarListForSearch = this.BaseUrl + 'all-star-list';
+  static allStarListForSearch = this.BaseUrl + 'mobile/all-star-list';
   static postSearch = this.BaseUrl + 'search-post/'; //search
 
+  // static postSearch = this.BaseUrl + 'search-post/'; //search
+  static fanGroupMemeberList = this.BaseUrl + 'user/fangroup-member/'; //fangroup_id
+  //all star
+  static allStarList = this.BaseUrl + 'user/selected/starcategory';
+  static followStor = this.BaseUrl + 'user/selected/starcategory/store';
+
   //Audition
+  static auditionDetails = this.BaseUrl + 'user/audition/details/';
+  static auditionRegistrationWallet = this.BaseUrl + 'user/wallet/details';
+  static auditionRegisterCheck =
+    this.BaseUrl + 'user/registration_checker/audition/';
   static enrolledAudition = this.BaseUrl + 'user/audition/enrolled';
   static activeRounds = this.BaseUrl + 'user/audition/current_round_info/';
   static isAppealRound = this.BaseUrl + 'user/audition/is_appeal/round/';
@@ -143,8 +167,25 @@ class AppUrl {
   static auditionVideoUpload =
     this.BaseUrl + 'user/upload-audition-round-videos';
 
+  static videoFeed = this.BaseUrl + 'user/audition/videofeed/videos';
+  static hitLoveReact = this.BaseUrl + 'user/audition/videos/loveReact';
+  static paymentLoveReact =
+    this.BaseUrl + 'user/audition/videos/loveReact/payment';
+
+  static downloadAuditionCertificate =
+    this.BaseUrl + 'mobile/audition/getAuditionCertificate/'; //auditionId/roundInfoId
+
+  static downloadLearningCertificate =
+    this.BaseUrl + 'mobile/audition/getLearningSessionCertificate/'; //{slug}
+
   static postSearch = this.BaseUrl + 'search-post/'; //search
   static fanGroupMemeberList = this.BaseUrl + 'user/fangroup-member/'; //fangroup_id
+  static isGreetingRegistered = this.BaseUrl + 'user/isGreetingRegistered/'; //greetingId
+  // static postSearch = this.BaseUrl + 'search-post/'; //search
+  static fanGroupMemeberList = this.BaseUrl + 'user/fangroup-member/'; //fangroup_id
+
+  //downlod ticket
+  static DownlodMeetUpTicket = this.BaseUrl + 'offlineMeetup/ticketDownload/'; //event id
 }
 
 export default AppUrl;

@@ -3,7 +3,7 @@ import moment from 'moment';
 import React, {useContext, useEffect, useState} from 'react';
 import {Image, Linking, Text, TouchableOpacity, View} from 'react-native';
 import {FlatGrid} from 'react-native-super-grid';
-import {AuthContext} from '../../Constants/context';
+
 // import AppUrl from '../../RestApi/AppUrl';
 import styles from './ActivitiesCardStyle';
 import {BackHandler} from 'react-native';
@@ -11,6 +11,10 @@ import imagePath from '../../../Constants/imagePath';
 import navigationStrings from '../../../Constants/navigationStrings';
 import AppUrl from '../../../RestApi/AppUrl';
 import MenuNavigator from '../../../Screen/Menu/MenuNavigator';
+import PushNotification from 'react-native-push-notification';
+import axios from 'axios';
+import {AuthContext} from '../../../Constants/context';
+import Toast from 'react-native-root-toast';
 
 const ActivitiesCard = ({
   childActivityEventList,
@@ -21,8 +25,9 @@ const ActivitiesCard = ({
 }) => {
   // console.log('menu data', childActivityEventList);
   // console.log('menu event type', childActivityEventType);
-
+  const [roomId, setRoomId] = useState();
   const navigation = useNavigation();
+  const {axiosConfig} = useContext(AuthContext);
 
   //============back handler==================
   function handleBackButtonClick() {
@@ -70,6 +75,7 @@ const ActivitiesCard = ({
       title = 'Question & Answer';
       break;
   }
+
   // const width = Dimensions.get('window').width;
   const renderEventItem = ({item}) => {
     // console.log('market place', item.market_place);
@@ -90,6 +96,7 @@ const ActivitiesCard = ({
         event = item.meetup;
         break;
       case 'liveChat':
+        setRoomId(item.room_id);
         event = item.livechat;
         eventRegistration = item.livechat_registration;
         break;
@@ -161,16 +168,21 @@ const ActivitiesCard = ({
 
       if (childActivityEventType == 'liveChat') {
         navigation.navigate('VideoSdk', {
-          meetingId: `a3en-kih1-ls2r`,
+          meetingId: roomId,
           type: 'videoChat',
         });
       } else if (childActivityEventType == 'qna') {
-        alert('under devolpment');
+        // alert('under devolpment');
+        navigation.navigate('Message');
       } else if (childActivityEventType == 'meetup') {
-        navigation.navigate('VideoSdk', {
-          meetingId: event.room_id,
-          type: 'meetup',
-        });
+        if (event.meetup_type == 'Offline') {
+          alert('offline');
+        } else {
+          navigation.navigate('VideoSdk', {
+            meetingId: event.event_link,
+            type: 'meetup',
+          });
+        }
       } else if (childActivityEventType == 'learningSession') {
         navigation.navigate('VideoSdk', {
           meetingId: event.room_id,
@@ -182,6 +194,7 @@ const ActivitiesCard = ({
 
     //video upload
     const videoUpload = () => {
+      console.log('i hit');
       return navigation.navigate(navigationStrings.LEARNINGSESSIONNAV, {
         event: event,
       });
@@ -195,6 +208,22 @@ const ActivitiesCard = ({
       return navigation.navigate(navigationStrings.SOUVENIRSTATUS, {
         event: event,
       });
+    };
+
+    const downlodeTicket = () => {
+      Toast.show('Please wait downloading...', Toast.durations.SHORT);
+
+      axios
+        .get(AppUrl.DownlodMeetUpTicket + event.id, axiosConfig)
+        .then(res => {
+          return Linking.openURL(
+            `${AppUrl.MediaBaseUrl}${res.data.certificateURL}`,
+          );
+        })
+        .catch(err => {
+          console.log(err);
+          setError(err);
+        });
     };
 
     return (
@@ -334,11 +363,74 @@ const ActivitiesCard = ({
                   </>
                 )}
 
-                {EventDateWithEndTime.getTime() <
-                CurrentDateWithTime.getTime() ? (
+                {event.assignment === 1 && event.status === 5 ? (
                   <View style={styles.Join}>
-                    <TouchableOpacity onPress={videoUpload}>
-                      <Text style={styles.JoinText}>Completed</Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        console.log('wait');
+                        videoUpload();
+                      }}>
+                      <Text style={styles.JoinText}>Assignment</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : event.assignment === 1 && event.status === 9 ? (
+                  <View style={styles.Join}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        return navigation.navigate(
+                          navigationStrings.RESULTLEARNINGSESSION,
+                          {
+                            event: event,
+                          },
+                        );
+                      }}>
+                      <Text style={styles.JoinText}>Show Result</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : event.assignment === 1 &&
+                  event.status > 1 &&
+                  event.status < 5 ? (
+                  <View style={styles.Join}>
+                    <TouchableOpacity>
+                      <Text style={styles.JoinText}>Assignment Pending</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : EventDateWithStartTime.getTime() <
+                    CurrentDateWithTime.getTime() ||
+                  EventDateWithEndTime.getTime() >
+                    CurrentDateWithTime.getTime() ? (
+                  EventDateWithEndTime.getTime() <
+                  CurrentDateWithTime.getTime() ? (
+                    <View style={styles.Join}>
+                      <TouchableOpacity>
+                        <Text style={styles.JoinText}>Expired</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <View style={styles.Join}>
+                      <TouchableOpacity>
+                        <Text style={styles.JoinText}>Running...</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )
+                ) : EventDateWithStartTime.getTime() >
+                  CurrentDateWithTime.getTime() ? (
+                  <View style={styles.Join}>
+                    <TouchableOpacity>
+                      <Text style={styles.JoinText}>Upcomming</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : event.assignment === 1 && event.status === 2 ? (
+                  <View style={styles.Join}>
+                    <TouchableOpacity>
+                      <Text style={styles.JoinText}>Waiting</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : EventDateWithEndTime.getTime() <
+                  CurrentDateWithTime.getTime() ? (
+                  <View style={styles.Join}>
+                    <TouchableOpacity>
+                      <Text style={styles.JoinText}>Expired</Text>
                     </TouchableOpacity>
                   </View>
                 ) : (
@@ -346,9 +438,16 @@ const ActivitiesCard = ({
                     {EventDateWithStartTime.getTime() >
                     CurrentDateWithTime.getTime() ? (
                       <View style={styles.Join}>
-                        <TouchableOpacity>
-                          <Text style={styles.JoinText}>Upcomming</Text>
-                        </TouchableOpacity>
+                        {childActivityEventType == 'meetup' &&
+                        event.meetup_type == 'Offline' ? (
+                          <TouchableOpacity onPress={() => downlodeTicket()}>
+                            <Text style={styles.JoinText}>Download Ticket</Text>
+                          </TouchableOpacity>
+                        ) : (
+                          <TouchableOpacity>
+                            <Text style={styles.JoinText}>Upcomming</Text>
+                          </TouchableOpacity>
+                        )}
                       </View>
                     ) : (
                       <>

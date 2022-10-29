@@ -13,8 +13,8 @@ const styles = StyleSheet.create({
   row: {
     marginVertical: 2,
     backgroundColor: '#343434',
-    borderRadius:10,
-    marginVertical:4
+    borderRadius: 10,
+    marginVertical: 4,
   },
   content: {
     padding: 5,
@@ -32,8 +32,7 @@ const styles = StyleSheet.create({
     marginLeft: 7,
     height: 40,
     marginTop: 5,
-    borderRadius:2,
-   
+    borderRadius: 2,
   },
   ContentItems2: {
     marginLeft: 5,
@@ -48,23 +47,33 @@ const styles = StyleSheet.create({
     color: 'gray',
     width: 250,
   },
-  starCardImg:{
-    height:40,
-    width:40,
+  contentText3: {
+    fontSize: 12,
+    color: 'gray',
+    width: 250,
+    marginLeft: -40,
+  },
+  starCardImg: {
+    height: 40,
+    width: 40,
     // borderRadius:100,
     // borderWidth:2,
     // borderColor:'gold',
-    
-
   },
-  imgBorder:{
-    borderRadius:100,
-    borderWidth:2,
-    borderColor:'#ECB033',
-    padding:4,
-    marginLeft:7
-  }
-
+  imgBorder: {
+    borderRadius: 100,
+    borderWidth: 2,
+    borderColor: '#ECB033',
+    padding: 4,
+    marginLeft: 7,
+  },
+  imgBorderInactive: {
+    borderRadius: 100,
+    borderWidth: 2,
+    borderColor: '#343434',
+    padding: 4,
+    marginLeft: 15,
+  },
 });
 
 export default styles;

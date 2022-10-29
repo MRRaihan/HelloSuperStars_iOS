@@ -73,7 +73,7 @@ const SearchPage = ({ navigation }) => {
   */
   const handleFilterData = (value, ...props) => {
 
-    let array = resData.star?.filter(item => {
+    let array = resData.stars?.filter(item => {
       let state = false;
 
       props.forEach(property => {
@@ -84,6 +84,8 @@ const SearchPage = ({ navigation }) => {
 
       return state;
     });
+
+
     if (value.length > 0) {
 
       setStarList(array)
@@ -95,75 +97,78 @@ const SearchPage = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.Header}>
-        <TouchableOpacity
-          style={styles.backArrow}
-          onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={25} color="#fff" />
-        </TouchableOpacity>
+      <SafeAreaView>
+        <View style={styles.Header}>
+          <TouchableOpacity
+            style={styles.backArrow}
+            onPress={() => navigation.goBack()}>
+            <Icon name="arrow-back" size={25} color="#fff" />
+          </TouchableOpacity>
 
-        <View style={styles.searchBar}>
-          <TextInput
-            style={styles.searchField}
-            placeholder="Search"
-            placeholderTextColor={'#fff'}
-            onChangeText={(text) => handelSearch(text)}
-          />
+          <View style={styles.searchBar}>
+            <TextInput
+              style={styles.searchField}
+              placeholder="Search"
+              placeholderTextColor={'#fff'}
+              onChangeText={(text) => handelSearch(text)}
+            />
+          </View>
+
         </View>
-      </View>
 
 
-      <ScrollView style={styles.subContent}>
+        <ScrollView style={styles.subContent}>
 
 
-        {buffer && <Image source={imagePath.loadingGif} style={{ height: 20, width: 30, marginLeft: 5 }} />}
+          {buffer && <Image source={imagePath.loadingGif} style={{ height: 20, width: 30, marginLeft: 5 }} />}
 
-        {starList?.length > 0 &&
-          <>
-            <View style={styles.subContent}>
-              <Text style={[styles.font, styles.topTitle]}>Star</Text>
-            </View>
-            {starList.map((item, index) =>
-              <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 5, backgroundColor: '#343434', paddingHorizontal: 10, paddingVertical: 10, borderRadius: 10 }} key={index} onPress={() => handleStarProfile(item)}>
+          {starList?.length > 0 &&
+            <>
+              <View style={styles.subContent}>
+                <Text style={[styles.font, styles.topTitle]}>Star</Text>
+              </View>
+              {starList.map((item, index) =>
+                <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 5, backgroundColor: '#343434', paddingHorizontal: 10, paddingVertical: 10, borderRadius: 10 }} key={index} onPress={() => handleStarProfile(item)}>
 
-                <View style={{ flexDirection: 'row' }}>
-                  <View style={{ marginRight: 10 }}>
-                    <View >
-                      <Image source={{ uri: AppUrl.MediaBaseUrl + item?.image }} style={styles.profileImg} />
+                  <View style={{ flexDirection: 'row' }}>
+                    <View style={{ marginRight: 10 }}>
+                      <View >
+                        <Image source={{ uri: AppUrl.MediaBaseUrl + item?.image }} style={styles.profileImg} />
+                      </View>
+                    </View>
+                    <View>
+                      <Text style={[styles.font]}>{item?.first_name + " " + item?.last_name}</Text>
+                      <Text style={[styles.font, styles.follow]}>{item?.user_type}</Text>
                     </View>
                   </View>
-                  <View>
-                    <Text style={[styles.font]}>{item?.first_name + " " + item?.last_name}</Text>
-                    <Text style={[styles.font, styles.follow]}>{item?.user_type}</Text>
-                  </View>
-                </View>
 
-                {/* <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}>
+                  {/* <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}>
               <Icon name="close" size={25} color="gray" />
             </TouchableOpacity> */}
-              </TouchableOpacity>
-            )}
-          </>
-        }
+                </TouchableOpacity>
+              )}
+            </>
+          }
 
 
-        {postBuffer &&
-          <Image source={imagePath.loadingGif} style={{ height: 20, width: 30, marginLeft: 5, marginTop: 10 }} />
-        }
-        {filterPost?.length > 0 &&
-          <>
-            <View style={styles.subContent}>
-              <Text style={[styles.font, styles.topTitle]}>Post</Text>
-            </View>
-            {filterPost.map((item, index) =>
+          {postBuffer &&
+            <Image source={imagePath.loadingGif} style={{ height: 20, width: 30, marginLeft: 5, marginTop: 10 }} />
+          }
+          {filterPost?.length > 0 &&
+            <>
+              <View style={styles.subContent}>
+                <Text style={[styles.font, styles.topTitle]}>Post</Text>
+              </View>
+              {filterPost.map((item, index) =>
 
-              <PostCard key={index} post={item} />
-            )}
-          </>
-        }
+                <PostCard key={index} post={item} />
+              )}
+            </>
+          }
 
 
-      </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
     </View>
   );
 };

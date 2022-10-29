@@ -1,27 +1,29 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Image,
   ImageBackground,
   RefreshControl,
+  SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import Toast from 'react-native-root-toast';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import LinearGradient from 'react-native-linear-gradient';
 // import {LinearTextGradient} from 'react-native-text-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import noImage from '../../Assets/Images/no-image.png';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import noImage from '../../Assets/Images/defult_image_profile.png';
 import HeaderComp from '../../Components/HeaderComp';
 import ActivitiesCard from '../../Components/GLOBAL/Reuseable/ActivitiesCard';
 import AuctionActivityCard from '../../Components/GLOBAL/Reuseable/AuctionActivityCard';
 import ActivityListSkeleton from '../../Components/Skeleton/ActivityListSkeleton/ActivityListSkeleton';
 import MenuCardSkeleton from '../../Components/Skeleton/MenuCardSkeleton/MenuCardSkeleton';
-import { AuthContext } from '../../Constants/context';
+import {AuthContext} from '../../Constants/context';
 import imagePath from '../../Constants/imagePath';
 import navigationStrings from '../../Constants/navigationStrings';
 import AppUrl from '../../RestApi/AppUrl';
@@ -33,6 +35,64 @@ import MenuFollowers from './Content/MenuFollowers';
 import StarCarousel from './Content/StarCarousel';
 import MenuNavigator from './MenuNavigator';
 import styles from './styles';
+import {useAxiosGet} from '../../CustomHooks/useAxiosGet';
+import DropDown from '../../Components/DropDown/DropDown';
+
+// thats for privacy policy drop down don't remove
+let menuData = [
+  {
+    id: 1,
+    icon: <MaterialIcons name="person" size={18} color="#ffaa00" />,
+    title: 'About Us',
+    routeName: 'about',
+  },
+  {
+    id: 2,
+    icon: <MaterialIcons name="privacy-tip" size={18} color="#ffaa00" />,
+    title: 'Privacy Policy',
+    routeName: 'privacy',
+  },
+  {
+    id: 3,
+    icon: <MaterialIcons name="add-shopping-cart" size={18} color="#ffaa00" />,
+    title: 'Product purchase flow',
+    routeName: 'product',
+  },
+  {
+    id: 4,
+    icon: (
+      <MaterialCommunityIcons
+        name="file-document-edit"
+        size={18}
+        color="#ffaa00"
+      />
+    ),
+    title: 'Terms and Condition',
+    routeName: 't&c',
+  },
+  {
+    id: 5,
+    icon: (
+      <MaterialCommunityIcons name="cash-refund" size={18} color="#ffaa00" />
+    ),
+    title: 'Refund, return, & policy',
+    routeName: 'refund',
+  },
+  {
+    id: 6,
+    icon: <MaterialIcons name="child-care" size={18} color="#ffaa00" />,
+    title: 'Kids Terms And Condition',
+    routeName: 'kids',
+  },
+  {
+    id: 7,
+    icon: (
+      <MaterialIcons name="chat-bubble-outline" size={18} color="#ffaa00" />
+    ),
+    title: 'FaQ',
+    routeName: 'faq',
+  },
+];
 
 const Menu = () => {
   const Navigation = useNavigation();
@@ -45,20 +105,31 @@ const Menu = () => {
   const [childActivityEventList, setChildActivityEventList] = useState({});
 
   const [childActivityEventType, setChildActivityEventType] = useState('');
-  const { useInfo, authContext, waletInfo } = useContext(AuthContext);
-  const { axiosConfig, posts, setPosts } = useContext(AuthContext);
+  const {
+    useInfo,
+    authContext,
+    waletInfo,
+    activities,
+    getActivity,
+    updateNotification,
+  } = useContext(AuthContext);
+  const {axiosConfig, posts, setPosts} = useContext(AuthContext);
   const [loder, setLoder] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [allCategoty, setAllCategory] = useState(null);
+
+  const {resData, buffer, HandelGetData} = useAxiosGet(AppUrl.allStarList);
+
+  const [followerArrayId, setFollowerArrayId] = useState([]);
   const [upCommingEvents, setUpCommingEvents] = useState({
     learningSessions: '',
     liveChats: '',
     auditions: '',
     meetups: '',
-    qna: ''
-
+    qna: '',
   });
 
+  const [menuSelectedItem, setMenuselectedItem] = useState({});
   const handleChange = () => {
     setMenuNavigator(MenuNavigator.MENUACTIVITIES), setMenuChange(0);
   };
@@ -80,33 +151,45 @@ const Menu = () => {
     setMenuChange(0);
   };
   const onRefresh = () => {
+    setLoder(true);
     setRefreshing(true);
-    getMenuList();
+    // getMenuList();
+    getActivity();
     setRefreshing(false);
     getAllUpCommingEvents();
     getAllCategory();
+    updateNotification();
   };
 
   useEffect(() => {
     getAllCategory();
-    getMenuList();
+    getActivity();
+    updateNotification();
+    // getMenuList();
     getAllUpCommingEvents();
   }, []);
 
-  const getMenuList = () => {
-    setLoder(true);
-    axios
-      .get(AppUrl.Menu, axiosConfig)
-      .then(res => {
-        setLoder(false);
-        setActivityLength(res.data.activity_length);
-        setMenuActivitList(res.data);
-        // console.log('res.data---------', res.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
+  //activity from route.js contex
+  useEffect(() => {
+    setLoder(false);
+    setActivityLength(activities.activity_length);
+    setMenuActivitList(activities);
+  }, [activities]);
+
+  // const getMenuList = () => {
+  //   setLoder(true);
+  //   axios
+  //     .get(AppUrl.Menu, axiosConfig)
+  //     .then(res => {
+  //       setLoder(false);
+  //       setActivityLength(res.data.activity_length);
+  //       setMenuActivitList(res.data);
+  //       console.log('res.data---------', res.data);
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     });
+  // };
 
   /**
    * get up comming all events
@@ -122,7 +205,7 @@ const Menu = () => {
           liveChats: res.data.LiveChat,
           auditions: res.data.audition,
           meetups: res.data.meetup,
-          qna: res.data.qna
+          qna: res.data.qna,
         });
       })
       .catch(err => {
@@ -147,7 +230,7 @@ const Menu = () => {
           } else {
             item.isSelected = false;
           }
-          return { ...item };
+          return {...item};
         });
 
         setAllCategory(categoryArry);
@@ -162,7 +245,7 @@ const Menu = () => {
   const makeCatrgoryArry = data => {
     let categoryArry = data.map((item, index) => {
       item.isSelected = false;
-      return { ...item };
+      return {...item};
     });
 
     setAllCategory(categoryArry);
@@ -178,7 +261,7 @@ const Menu = () => {
       if (valu == index) {
         item.isSelected = !item.isSelected;
       }
-      return { ...item };
+      return {...item};
     });
 
     setAllCategory(categoryArry);
@@ -224,40 +307,44 @@ const Menu = () => {
    * select category
    */
 
-
-
-
-
-
-
+  useEffect(() => {
+    setFollowerArrayId(resData.followingStarCategory?.split(','));
+  }, [resData]);
 
   function MenuBackRoute(parmas) {
-
-    if ((menuChange === 1 && childActivityEventType !== 'auction') || (menuChange === 1 && childActivityEventType === 'auction')) {
+    if (
+      (menuChange === 1 && childActivityEventType !== 'auction') ||
+      (menuChange === 1 && childActivityEventType === 'auction')
+    ) {
       setMenuNavigator(MenuNavigator.MENUACTIVITIES);
       setMenuChange(0);
-    }
-
-    else if (menuNavigator === MenuNavigator.MENUACTIVITIES || menuNavigator === MenuNavigator.MENUFOLLOWERS) {
+    } else if (
+      menuNavigator === MenuNavigator.MENUACTIVITIES ||
+      menuNavigator === MenuNavigator.MENUFOLLOWERS
+    ) {
       setMenuNavigator(MenuNavigator.MENUHOME);
       setMenuChange(0);
-    }
-
-
-    else {
+    } else {
       Navigation.goBack();
     }
   }
 
-
-
-
-
-
-
-
-
-  const selectCategory = () => { };
+  //terms and condition function
+  const onSelect = item => {
+    if (item.routeName === 'about') {
+      return Navigation.navigate(navigationStrings.ABOUTPOLICY);
+    } else if (item.routeName === 'privacy') {
+      return Navigation.navigate(navigationStrings.PRIVACYPOLICY);
+    } else if (item.routeName === 'product') {
+      return Navigation.navigate(navigationStrings.PRODUCTPOLICY);
+    } else if (item.routeName === 't&c') {
+      return Navigation.navigate(navigationStrings.CONDITIONPOLICY);
+    } else if (item.routeName === 'refund') {
+      return Navigation.navigate(navigationStrings.REFUNDPOLICY);
+    } else if (item.routeName === 'faq') {
+      return Navigation.navigate(navigationStrings.FAQPOLICY);
+    }
+  };
 
   return (
     <>
@@ -296,8 +383,8 @@ const Menu = () => {
               source={
                 useInfo?.image !== null
                   ? {
-                    uri: `${AppUrl.MediaBaseUrl + useInfo?.image}`,
-                  }
+                      uri: `${AppUrl.MediaBaseUrl + useInfo?.image}`,
+                    }
                   : noImage
               }
               // source={{
@@ -321,11 +408,11 @@ const Menu = () => {
               justifyContent: 'space-between',
               width: '75%',
             }}>
-            <View style={{ marginLeft: 7 }}>
-              <Text style={{ color: 'white', fontSize: 18 }}>
+            <View style={{marginLeft: 7}}>
+              <Text style={{color: 'white', fontSize: 18}}>
                 {useInfo?.first_name} {useInfo?.last_name}
               </Text>
-              <Text style={{ color: 'gray' }}>See your profile</Text>
+              <Text style={{color: 'gray'}}>See your profile</Text>
             </View>
 
             {/* {menuNavigator != MenuNavigator.MENUHOME ? (
@@ -348,8 +435,8 @@ const Menu = () => {
 
         <ImageBackground
           source={imagePath.MenuCover}
-          style={{ width: '100%', alignItems: 'center', paddingVertical: 20 }}>
-          <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+          style={{width: '100%', alignItems: 'center', paddingVertical: 20}}>
+          <View style={{alignItems: 'center', flexDirection: 'row'}}>
             <TouchableOpacity
               style={
                 menuNavigator == MenuNavigator.MENUACTIVITIES
@@ -360,13 +447,13 @@ const Menu = () => {
                 activityLength > 0
                   ? handleChange
                   : () => {
-                    Toast.show(
-                      "Pleace wait or you don't have any activity",
-                      Toast.durations.SHORT,
-                    );
-                  }
+                      Toast.show(
+                        "Pleace wait or you don't have any activity",
+                        Toast.durations.SHORT,
+                      );
+                    }
               }>
-              <View style={{ alignItems: 'center', marginTop: 5 }}>
+              <View style={{alignItems: 'center', marginTop: 5}}>
                 <Image source={imagePath.menuIconActivity} />
               </View>
               <View>
@@ -389,7 +476,7 @@ const Menu = () => {
                   : styles.mainRow
               }
               onPress={handleFollower}>
-              <View style={{ alignItems: 'center', marginTop: 5 }}>
+              <View style={{alignItems: 'center', marginTop: 5}}>
                 <Image source={imagePath.menuIconStar} />
               </View>
               <View>
@@ -401,7 +488,9 @@ const Menu = () => {
                   }>
                   Followers
                 </Text>
-                <Text style={styles.fonts2}>20 followers</Text>
+                <Text style={styles.fonts2}>
+                  {followerArrayId?.length} Following
+                </Text>
               </View>
             </TouchableOpacity>
 
@@ -422,11 +511,11 @@ const Menu = () => {
             <TouchableOpacity
               style={styles.mainRow}
               onPress={() => Navigation.navigate(navigationStrings.WALLET)}>
-              <View style={{ alignItems: 'center', marginTop: 5 }}>
+              <View style={{alignItems: 'center', marginTop: 5}}>
                 <Image source={imagePath.Wallet1} />
               </View>
               <View>
-                <Text style={styles.fonts}>Wallet</Text>
+                <Text style={styles.fonts}>Packages</Text>
                 <Text style={styles.fonts2}>
                   {waletInfo?.club_points} credit
                 </Text>
@@ -440,7 +529,7 @@ const Menu = () => {
   <LoaderComp /> */}
         {menuNavigator == MenuNavigator.MENUHOME ? (
           <>
-            <ScrollView style={{ backgroundColor: 'black' }}>
+            <ScrollView style={{backgroundColor: 'black'}}>
               {loder === true ? (
                 [0, 1, 2, 3].map(item => {
                   if (item === 0) {
@@ -459,22 +548,22 @@ const Menu = () => {
                     />
                   </View>
 
-                  <View style={{ paddingBottom: 5 }}>
+                  <View style={{paddingBottom: 5}}>
                     {/* Learning Seassion Carusel Iteam start */}
-                    {upCommingEvents.learningSessions.length > 0 &&
+                    {upCommingEvents.learningSessions.length > 0 && (
                       <View style={styles.menuCrosalItem}>
                         <View>
-
-                          <Text style={styles.titelText}>Learning Seassion</Text>
-
+                          <Text style={styles.titelText}>
+                            Learning Seassion
+                          </Text>
                         </View>
                         <View style={styles.carouselContainer_gray}>
-                          <View style={{ width: '85%' }}>
+                          <View style={{width: '85%'}}>
                             <StarCarousel
                               eventData={upCommingEvents.learningSessions}
                             />
                           </View>
-                          <View style={{ width: '15%' }}>
+                          <View style={{width: '15%'}}>
                             <LinearGradient
                               colors={[
                                 '#F1A817',
@@ -482,9 +571,9 @@ const Menu = () => {
                                 '#FCB706',
                                 '#DFC65C',
                               ]}
-                              start={{ x: 0, y: 1 }}
-                              end={{ x: 1, y: 0 }}
-                              style={{ borderRadius: 5 }}>
+                              start={{x: 0, y: 1}}
+                              end={{x: 1, y: 0}}
+                              style={{borderRadius: 5}}>
                               <TouchableOpacity
                                 style={{
                                   justifyContent: 'center',
@@ -492,16 +581,19 @@ const Menu = () => {
                                   height: 100,
                                 }}
                                 onPress={() =>
-                                  Navigation.navigate(navigationStrings.POSTSHOWBYTYPE, {
-                                    type: 'learningSession'
-                                  })
+                                  Navigation.navigate(
+                                    navigationStrings.POSTSHOWBYTYPE,
+                                    {
+                                      type: 'learningSession',
+                                    },
+                                  )
                                 }>
                                 <Text
-                                  style={{ color: 'black', fontWeight: 'bold' }}>
+                                  style={{color: 'black', fontWeight: 'bold'}}>
                                   View
                                 </Text>
                                 <Text
-                                  style={{ color: 'black', fontWeight: 'bold' }}>
+                                  style={{color: 'black', fontWeight: 'bold'}}>
                                   All
                                 </Text>
                               </TouchableOpacity>
@@ -509,21 +601,23 @@ const Menu = () => {
                           </View>
                         </View>
                       </View>
-                    }
+                    )}
 
                     {/* Learning Seassion Carusel Iteam end */}
 
                     {/* Live chat Carusel Iteam start */}
-                    {upCommingEvents.liveChats.length > 0 &&
+                    {upCommingEvents.liveChats.length > 0 && (
                       <View style={styles.menuCrosalItem}>
                         <View>
                           <Text style={styles.titelText}>Live Chat</Text>
                         </View>
                         <View style={styles.carouselContainer_gray}>
-                          <View style={{ width: '85%' }}>
-                            <StarCarousel eventData={upCommingEvents.liveChats} />
+                          <View style={{width: '85%'}}>
+                            <StarCarousel
+                              eventData={upCommingEvents.liveChats}
+                            />
                           </View>
-                          <View style={{ width: '15%' }}>
+                          <View style={{width: '15%'}}>
                             <LinearGradient
                               colors={[
                                 '#F1A817',
@@ -531,9 +625,9 @@ const Menu = () => {
                                 '#FCB706',
                                 '#DFC65C',
                               ]}
-                              start={{ x: 0, y: 1 }}
-                              end={{ x: 1, y: 0 }}
-                              style={{ borderRadius: 5 }}>
+                              start={{x: 0, y: 1}}
+                              end={{x: 1, y: 0}}
+                              style={{borderRadius: 5}}>
                               <TouchableOpacity
                                 style={{
                                   justifyContent: 'center',
@@ -541,16 +635,19 @@ const Menu = () => {
                                   height: 100,
                                 }}
                                 onPress={() =>
-                                  Navigation.navigate(navigationStrings.POSTSHOWBYTYPE, {
-                                    type: 'livechat'
-                                  })
+                                  Navigation.navigate(
+                                    navigationStrings.POSTSHOWBYTYPE,
+                                    {
+                                      type: 'livechat',
+                                    },
+                                  )
                                 }>
                                 <Text
-                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  style={{fontWeight: 'bold', color: 'black'}}>
                                   View
                                 </Text>
                                 <Text
-                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  style={{fontWeight: 'bold', color: 'black'}}>
                                   All
                                 </Text>
                               </TouchableOpacity>
@@ -558,20 +655,22 @@ const Menu = () => {
                           </View>
                         </View>
                       </View>
-                    }
+                    )}
                     {/* Live chat Carusel Iteam end */}
 
                     {/* Upcoming Auditions Carusel Iteam start */}
-                    {upCommingEvents.auditions.length > 0 &&
+                    {upCommingEvents.auditions.length > 0 && (
                       <View style={styles.menuCrosalItem}>
                         <View>
                           <Text style={styles.titelText}>Auditions</Text>
                         </View>
                         <View style={styles.carouselContainer_gray}>
-                          <View style={{ width: '85%' }}>
-                            <StarCarousel eventData={upCommingEvents.auditions} />
+                          <View style={{width: '85%'}}>
+                            <StarCarousel
+                              eventData={upCommingEvents.auditions}
+                            />
                           </View>
-                          <View style={{ width: '15%' }}>
+                          <View style={{width: '15%'}}>
                             <LinearGradient
                               colors={[
                                 '#F1A817',
@@ -579,9 +678,9 @@ const Menu = () => {
                                 '#FCB706',
                                 '#DFC65C',
                               ]}
-                              start={{ x: 0, y: 1 }}
-                              end={{ x: 1, y: 0 }}
-                              style={{ borderRadius: 5 }}>
+                              start={{x: 0, y: 1}}
+                              end={{x: 1, y: 0}}
+                              style={{borderRadius: 5}}>
                               <TouchableOpacity
                                 style={{
                                   justifyContent: 'center',
@@ -589,16 +688,19 @@ const Menu = () => {
                                   height: 100,
                                 }}
                                 onPress={() =>
-                                  Navigation.navigate(navigationStrings.POSTSHOWBYTYPE, {
-                                    type: 'audition'
-                                  })
+                                  Navigation.navigate(
+                                    navigationStrings.POSTSHOWBYTYPE,
+                                    {
+                                      type: 'audition',
+                                    },
+                                  )
                                 }>
                                 <Text
-                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  style={{fontWeight: 'bold', color: 'black'}}>
                                   View
                                 </Text>
                                 <Text
-                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  style={{fontWeight: 'bold', color: 'black'}}>
                                   All
                                 </Text>
                               </TouchableOpacity>
@@ -606,21 +708,21 @@ const Menu = () => {
                           </View>
                         </View>
                       </View>
-                    }
+                    )}
 
                     {/* Upcoming Auditions Carusel Iteam end */}
 
                     {/* Meetup Events Carusel Iteam start */}
-                    {upCommingEvents.meetups.length > 0 &&
+                    {upCommingEvents.meetups.length > 0 && (
                       <View style={styles.menuCrosalItem}>
                         <View>
                           <Text style={styles.titelText}>Meet up Events</Text>
                         </View>
                         <View style={styles.carouselContainer_gray}>
-                          <View style={{ width: '85%' }}>
+                          <View style={{width: '85%'}}>
                             <StarCarousel eventData={upCommingEvents.meetups} />
                           </View>
-                          <View style={{ width: '15%' }}>
+                          <View style={{width: '15%'}}>
                             <LinearGradient
                               colors={[
                                 '#F1A817',
@@ -628,9 +730,9 @@ const Menu = () => {
                                 '#FCB706',
                                 '#DFC65C',
                               ]}
-                              start={{ x: 0, y: 1 }}
-                              end={{ x: 1, y: 0 }}
-                              style={{ borderRadius: 5 }}>
+                              start={{x: 0, y: 1}}
+                              end={{x: 1, y: 0}}
+                              style={{borderRadius: 5}}>
                               <TouchableOpacity
                                 style={{
                                   justifyContent: 'center',
@@ -638,16 +740,19 @@ const Menu = () => {
                                   height: 100,
                                 }}
                                 onPress={() =>
-                                  Navigation.navigate(navigationStrings.POSTSHOWBYTYPE, {
-                                    type: 'meetup'
-                                  })
+                                  Navigation.navigate(
+                                    navigationStrings.POSTSHOWBYTYPE,
+                                    {
+                                      type: 'meetup',
+                                    },
+                                  )
                                 }>
                                 <Text
-                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  style={{fontWeight: 'bold', color: 'black'}}>
                                   View
                                 </Text>
                                 <Text
-                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  style={{fontWeight: 'bold', color: 'black'}}>
                                   All
                                 </Text>
                               </TouchableOpacity>
@@ -655,20 +760,22 @@ const Menu = () => {
                           </View>
                         </View>
                       </View>
-                    }
+                    )}
                     {/* Meetup Events Carusel Iteam end */}
 
                     {/* Meetup qna Carusel Iteam start */}
-                    {upCommingEvents.qna.length > 0 &&
+                    {upCommingEvents.qna.length > 0 && (
                       <View style={styles.menuCrosalItem}>
                         <View>
-                          <Text style={styles.titelText}>Question & Answer</Text>
+                          <Text style={styles.titelText}>
+                            Question & Answer
+                          </Text>
                         </View>
                         <View style={styles.carouselContainer_gray}>
-                          <View style={{ width: '85%' }}>
+                          <View style={{width: '85%'}}>
                             <StarCarousel eventData={upCommingEvents.qna} />
                           </View>
-                          <View style={{ width: '15%' }}>
+                          <View style={{width: '15%'}}>
                             <LinearGradient
                               colors={[
                                 '#F1A817',
@@ -676,9 +783,9 @@ const Menu = () => {
                                 '#FCB706',
                                 '#DFC65C',
                               ]}
-                              start={{ x: 0, y: 1 }}
-                              end={{ x: 1, y: 0 }}
-                              style={{ borderRadius: 5 }}>
+                              start={{x: 0, y: 1}}
+                              end={{x: 1, y: 0}}
+                              style={{borderRadius: 5}}>
                               <TouchableOpacity
                                 style={{
                                   justifyContent: 'center',
@@ -686,16 +793,19 @@ const Menu = () => {
                                   height: 100,
                                 }}
                                 onPress={() =>
-                                  Navigation.navigate(navigationStrings.POSTSHOWBYTYPE, {
-                                    type: 'qna'
-                                  })
+                                  Navigation.navigate(
+                                    navigationStrings.POSTSHOWBYTYPE,
+                                    {
+                                      type: 'qna',
+                                    },
+                                  )
                                 }>
                                 <Text
-                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  style={{fontWeight: 'bold', color: 'black'}}>
                                   View
                                 </Text>
                                 <Text
-                                  style={{ fontWeight: 'bold', color: 'black' }}>
+                                  style={{fontWeight: 'bold', color: 'black'}}>
                                   All
                                 </Text>
                               </TouchableOpacity>
@@ -703,7 +813,7 @@ const Menu = () => {
                           </View>
                         </View>
                       </View>
-                    }
+                    )}
                     {/* Meetup Events Carusel Iteam end */}
 
                     {/* Wallet */}
@@ -733,20 +843,33 @@ const Menu = () => {
                 </>
               )}
 
-              <TouchableOpacity style={styles.Wallet1}>
-                <View style={{ flex: 2 }}>
-                  <Image source={imagePath.Setting1} />
+              {/* menu dropdown  */}
+              <View>
+                <DropDown menuData={menuData} onSelect={onSelect} />
+              </View>
+              {/* menu dropdown end  */}
+
+              <TouchableOpacity style={styles.menuTab}>
+                <View style={styles.menuSubTab}>
+                  <Text style>
+                    <MaterialIcons
+                      name="settings"
+                      color={'#ffaa00'}
+                      size={25}
+                    />
+                  </Text>
                 </View>
-                <View style={{ flex: 10 }}>
-                  <Text style={styles.TextWTS}>Setting</Text>
+
+                <View style={styles.menuSubTab}>
+                  <Text style={{fontSize: 15, color: '#ffaa00'}}>Settings</Text>
                 </View>
               </TouchableOpacity>
 
               <LinearGradient
                 colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}
-                start={{ x: 1, y: 0 }}
-                end={{ x: 0, y: 0 }}
-                style={{ marginVertical: 30 }}>
+                start={{x: 1, y: 0}}
+                end={{x: 0, y: 0}}
+                style={{marginVertical: 30}}>
                 <TouchableOpacity
                   style={{
                     flexDirection: 'row',
@@ -760,7 +883,7 @@ const Menu = () => {
                     color={'black'}
                     size={20}
                   />
-                  <Text style={{ color: 'black' }}>LOGOUT</Text>
+                  <Text style={{color: 'black'}}>LOGOUT</Text>
                 </TouchableOpacity>
               </LinearGradient>
             </ScrollView>
@@ -810,7 +933,6 @@ const Menu = () => {
             {childActivityEventType != 'auction' ? (
               <>
                 <ActivitiesCard
-
                   menuNavigator={menuNavigator}
                   menuChange={menuChange}
                   setMenuNavigator={setMenuNavigator}
@@ -824,12 +946,17 @@ const Menu = () => {
             )}
           </>
         ) : // <ActivityEventList childActivityEventList={childActivityEventList} childActivityEventType={childActivityEventType} />
-          null}
+        null}
         {menuNavigator == MenuNavigator.MENUFOLLOWERS ? (
-          <MenuFollowers setMenuNavigator={setMenuNavigator}
+          <MenuFollowers
+            setMenuNavigator={setMenuNavigator}
             menuNavigator={menuNavigator}
             menuChange={menuChange}
             setMenuChange={setMenuChange}
+            setFollowerArrayId={setFollowerArrayId}
+            resData={resData}
+            buffer={buffer}
+            HandelGetData={HandelGetData}
           />
         ) : (
           <></>

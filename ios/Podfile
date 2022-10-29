@@ -4,6 +4,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '11.0'
 install! 'cocoapods', :deterministic_uuids => false
 
+
 target 'HelloSuperStars_iOS' do
   config = use_native_modules!
 
@@ -18,6 +19,8 @@ target 'HelloSuperStars_iOS' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+  pod 'react-native-webrtc', :path => '../node_modules/@videosdk.live/react-native-webrtc'
+
 
   target 'HelloSuperStars_iOSTests' do
     inherit! :complete

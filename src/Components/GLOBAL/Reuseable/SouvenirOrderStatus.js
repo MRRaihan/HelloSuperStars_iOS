@@ -1,6 +1,11 @@
 //import liraries
-import React, {useState} from 'react';
-import {ScrollView, useWindowDimensions, TouchableOpacity} from 'react-native';
+import React, {useContext, useState} from 'react';
+import {
+  ScrollView,
+  useWindowDimensions,
+  TouchableOpacity,
+  Linking,
+} from 'react-native';
 import {Image, Modal, Pressable, StyleSheet, Text, View} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import StepIndicator from 'react-native-step-indicator';
@@ -9,6 +14,10 @@ import RenderHtml from 'react-native-render-html';
 import AppUrl from '../../../RestApi/AppUrl';
 import moment from 'moment';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import axios from 'axios';
+import {AuthContext} from '../../../Constants/context';
+import HeaderComp from '../../HeaderComp';
+import RegisPaymentModal from '../../MODAL/RegisPaymentModal';
 
 const labels = [
   'Applied',
@@ -46,10 +55,10 @@ const customStyles = {
 };
 
 // create a component
-const SouvenirOrderStatus = ({route}) => {
+const SouvenirOrderStatus = ({route, navigation}) => {
   const {width} = useWindowDimensions();
   const {event} = route.params;
-
+  const [isShowPaymentComp, setIsShowPaymentComp] = useState(false);
   console.log(event);
   const ownerName = event?.name;
   const ownerPhone = event?.mobile_no;
@@ -61,12 +70,44 @@ const SouvenirOrderStatus = ({route}) => {
   };
   const progress = event?.status;
   const imageURl = event?.image;
+  const {axiosConfig} = useContext(AuthContext);
+
   const downloadInvoice = e => {
-    console.log('wait');
+    const data = {
+      productName: event?.souvenir?.title,
+      SuperStar: event?.star?.first_name + ' ' + event?.star?.last_name,
+      qty: 1,
+      unitPrice: event?.souvenir?.price,
+      total: event?.souvenir?.price,
+      subTotal: event?.souvenir?.price,
+      deliveryCharge: event?.souvenir?.delivery_charge,
+      tax: event?.souvenir?.tax,
+      grandTotal:
+        parseInt(event?.souvenir?.price) +
+        parseInt(event?.souvenir?.delivery_charge) +
+        parseInt(event?.souvenir?.tax),
+      orderID: event?.invoice_no,
+      orderDate: event?.created_at,
+      name: event?.name,
+      termCondition: event?.description,
+    };
+    axios
+      .post(AppUrl.getPDF, data, axiosConfig)
+      .then(res => {
+        console.log(res.data);
+        Linking.openURL(`${AppUrl.MediaBaseUrl}/${res.data}`);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  const handlePayment = () => {
+    setIsShowPaymentComp(true);
   };
 
   return (
-    <ScrollView style={{backgroundColor: '#000', flex: 1, paddingVertical: 20}}>
+    <ScrollView style={{backgroundColor: '#000', flex: 1, paddingBottom: 20}}>
+      <HeaderComp backFunc={() => navigation.goBack()} />
       <View style={styles.centered_view}>
         <View style={styles.warning_modal}>
           <View style={{margin: 8}}>
@@ -88,7 +129,7 @@ const SouvenirOrderStatus = ({route}) => {
                 source={{
                   uri: `${AppUrl.MediaBaseUrl + '/' + imageURl}`,
                 }}
-                style={{width: '100%', height: 200}}
+                style={{width: '100%', height: 200, borderRadius: 10}}
                 resizeMode="stretch"
               />
 
@@ -102,10 +143,14 @@ const SouvenirOrderStatus = ({route}) => {
                   style={{
                     display: 'flex',
                     flexDirection: 'row',
-                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}>
-                  <Text style={styles.desc}>Description </Text>
-                  <RenderHtml contentWidth={width} source={descriptionHTML} />
+                  <View>
+                    <Text style={styles.desc}>Description </Text>
+                  </View>
+                  <View style={{width: '80%'}}>
+                    <RenderHtml contentWidth={width} source={descriptionHTML} />
+                  </View>
                 </View>
 
                 <Text style={styles.inputText}>
@@ -116,7 +161,7 @@ const SouvenirOrderStatus = ({route}) => {
                 <Text style={styles.inputText}>
                   Status
                   {event?.status == 0 ? (
-                    <> Pending</>
+                    <> Pending for Approval</>
                   ) : event?.status == 1 ? (
                     <> Approved for Payment</>
                   ) : event?.status == 2 ? (
@@ -137,7 +182,7 @@ const SouvenirOrderStatus = ({route}) => {
                 {event?.status == 1 ? (
                   <TouchableOpacity
                     style={styles.downloadContainer}
-                    onPress={downloadInvoice}>
+                    onPress={handlePayment}>
                     <Text style={{color: '#fe7013'}}>
                       <FontAwesome5
                         name={'credit-card'}
@@ -167,6 +212,19 @@ const SouvenirOrderStatus = ({route}) => {
           </View>
         </View>
       </View>
+      {isShowPaymentComp ? (
+        <RegisPaymentModal
+          eventType="souvenir"
+          modelName="souvenir"
+          isShowPaymentComp={isShowPaymentComp}
+          setIsShowPaymentComp={setIsShowPaymentComp}
+          souvenirId={event.souvenir_id}
+          id={event.id}
+          fee={event.total_amount}
+        />
+      ) : (
+        <></>
+      )}
     </ScrollView>
     // </Modal>
   );
@@ -189,11 +247,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#00000099',
   },
   warning_modal: {
-    width: 360,
     backgroundColor: '#000',
     borderWidth: 1,
     borderColor: '#000',
     borderRadius: 20,
+    width: '98%',
   },
   warning_title: {
     height: 50,
@@ -230,6 +288,8 @@ const styles = StyleSheet.create({
   showcaseForm: {
     backgroundColor: '#343333',
     padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
   },
   inputBorder: {
     backgroundColor: '#343333',

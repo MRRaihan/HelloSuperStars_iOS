@@ -103,6 +103,40 @@ const RegistrationComp = ({
             setModal(true);
             setBuffer(false);
           });
+      } else if (modelName === 'auditionRegistration') {
+        axios
+          .post(AppUrl.VerifyUser, data, axiosConfig)
+          .then(res => {
+            if (res.data.status === 401) {
+              setModalObj({
+                modalType: 'warning',
+                buttonTitle: 'OK',
+                message: res.data.message ? res.data.message : '',
+              });
+              setModal(true);
+              setBuffer(false);
+            } else if (res.data.status === 200) {
+              setBuffer(false);
+              setModalObj({
+                modalType: 'success',
+                buttonTitle: 'OK',
+                message: 'Password matched',
+              });
+              setModal(true);
+              setForParentIsShowPaymentModal(true);
+            }
+          })
+          .catch(err => {
+            console.log(err);
+            setModalObj({
+              modalType: 'warning',
+              buttonTitle: 'OK',
+              message: 'Something Went Wrong',
+            });
+            setModal(true);
+            setBuffer(false);
+          });
+      } else if (modelName === 'auditionRegistration') {
       } else {
         axios
           .post(AppUrl.VerifyToRegisterEvent, data, axiosConfig)

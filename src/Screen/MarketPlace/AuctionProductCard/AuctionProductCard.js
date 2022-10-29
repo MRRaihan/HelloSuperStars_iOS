@@ -17,10 +17,13 @@ import AppUrl from '../../../RestApi/AppUrl';
 import styles from './AuctionProductCardStyle';
 
 const AuctionProductCard = ({data}) => {
+  console.log(data);
   const Navigation = useNavigation();
   const {width} = useWindowDimensions();
   const source = {
-    html: `<div style='color:#e6e6e6'>${data ? data.details : ''}</div>`,
+    html: `<div style='color:#e6e6e6'>${
+      data ? data.details.slice(0, 100).concat(' ....') : ''
+    }</div>`,
   };
 
   function handleStarProfile(star = null) {
@@ -53,7 +56,7 @@ const AuctionProductCard = ({data}) => {
       <View style={styles.MaiN}>
         <View style={styles.mainView}>
           <View style={{flexDirection: 'row', margin: 10}}>
-            <View style={{width: '40%'}}>
+            <View style={{width: '40%', height: '100%'}}>
               <SwiperFlatList
                 autoplay
                 autoplayDelay={5}
@@ -110,22 +113,34 @@ const AuctionProductCard = ({data}) => {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleAuctionParticipate}>
-                <LinearGradient
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0}}
-                  colors={[
-                    '#FFAD00',
-                    '#FFD273',
-                    '#E19A04',
-                    '#FACF75',
-                    '#E7A725',
-                    '#FFAD00',
-                  ]}
-                  style={{borderRadius: 15}}>
-                  <Text style={styles.Btn}>Participate</Text>
-                </LinearGradient>
-              </TouchableOpacity>
+              {new Date(data.bid_to).getTime() < new Date().getTime() ? (
+                <TouchableOpacity disabled={true}>
+                  <LinearGradient
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}
+                    colors={['#AD850C', '#AD850C']}
+                    style={{borderRadius: 15}}>
+                    <Text style={styles.Btn}>Participate</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity onPress={handleAuctionParticipate}>
+                  <LinearGradient
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}
+                    colors={[
+                      '#FFAD00',
+                      '#FFD273',
+                      '#E19A04',
+                      '#FACF75',
+                      '#E7A725',
+                      '#FFAD00',
+                    ]}
+                    style={{borderRadius: 15}}>
+                    <Text style={styles.Btn}>Participate</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </View>

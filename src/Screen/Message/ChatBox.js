@@ -3,16 +3,20 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
-import React, { Component } from 'react'
+import Toast from 'react-native-root-toast';
+import React, { Component, useState } from 'react'
 import imagePath from '../../Constants/imagePath';
 import { useNavigation } from '@react-navigation/native';
 import AppUrl from '../../RestApi/AppUrl';
 import { checkPluginState } from 'react-native-reanimated/lib/reanimated2/core';
+import CountDown from 'react-native-countdown-component';
+import { timecoundFunc } from '../../CustomHelper/timecoundFunc';
 
 function ChatBox({ data }) {
-
+    const [qnaStarStatus, setQnaStarStatus] = useState(true)
+    const [timeCount, setTimeCount] = useState(data.type !== 'fan-group' ? timecoundFunc(data?.qna?.qna_date.split(" ")[0] + " " + data.qna.qna_start_time) / 1000 : 0)
     console.log(data)
     const navigation = useNavigation()
     let chatData
@@ -22,8 +26,11 @@ function ChatBox({ data }) {
         chatData = data.qna
     }
 
+
+
     const handelInsertChat = () => {
         let messageInfo
+
         if (data.type === 'fan-group') {
             messageInfo = {
                 room_id: chatData.room_id,
@@ -39,14 +46,44 @@ function ChatBox({ data }) {
         }
 
 
+        if (data.type === 'fan-group') {
+            navigation.navigate('MessageStar', {
+                messageInfo
+            })
 
-        navigation.navigate(`${data.type === 'fan-group' ? 'MessageStar' : 'QnaMessages'}`, {
-            messageInfo
-        })
+
+
+        } else {
+            if (!qnaStarStatus) {
+                navigation.navigate('QnaMessages', {
+                    messageInfo
+                })
+            } else {
+
+                Toast.show(
+                    'Your slot is not start yet',
+                    Toast.durations.SHORT,
+                );
+            }
+
+        }
+
+        // navigation.navigate(`${data.type === 'fan-group' ? 'MessageStar' : 'QnaMessages'}`, {
+        //     messageInfo
+        // })
     }
 
+    const remainingTime = time => {
+        const startTime = new Date(time.concat(' 00:00:00')).getTime();
+        const currentTime = new Date().getTime();
+        if (startTime >= currentTime) {
+            return (startTime - currentTime) / 1000;
+        }
+        return 0;
+    };
 
-    console.log(AppUrl.MediaBaseUrl + chatData.banner)
+
+    // console.log(AppUrl.MediaBaseUrl + chatData.banner)
     return (
         <TouchableOpacity
             style={styles.row}
@@ -71,8 +108,34 @@ function ChatBox({ data }) {
                     </View>
                 </View>
                 <View style={{ justifyContent: 'center' }}>
-                    <Text style={styles.contentText2}>Yesterday</Text>
-                    <Text style={styles.contentText2}>10 minute</Text>
+                    {data.type !== 'fan-group' &&
+                        <>
+                            {qnaStarStatus ?
+                                <CountDown
+                                    // until={totalSecond}
+                                    until={timeCount}
+                                    onFinish={() => setQnaStarStatus(false)}
+                                    // onPress={() => alert('hello')}
+                                    digitStyle={{
+                                        backgroundColor: 'black',
+                                        borderWidth: 1,
+                                        borderColor: '#FFAD00',
+                                        borderRadius: 10,
+                                    }}
+                                    digitTxtStyle={{ color: '#FFAD00' }}
+                                    timeLabelStyle={{
+                                        color: '#FFAD00',
+                                        fontWeight: 'bold',
+                                    }}
+                                    size={10}
+                                />
+                                :
+                                <Text style={{ color: '#FFAD00', marginRight: 12, borderColor: '#FFAD00', borderWidth: 1, padding: 5, borderRadius: 50 }}>Running</Text>
+                            }
+                        </>
+                    }
+                    {/* <Text style={styles.contentText2}>Yesterday</Text>
+                    <Text style={styles.contentText2}>10 minute</Text> */}
                 </View>
             </View>
         </TouchableOpacity>

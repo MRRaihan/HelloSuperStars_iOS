@@ -1,13 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import React, {useContext, useEffect, useState} from 'react';
-import {
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Toast from 'react-native-root-toast';
 import LinearGradient from 'react-native-linear-gradient';
 import {SwiperFlatList} from 'react-native-swiper-flatlist';
@@ -97,17 +91,7 @@ const StarProfile = ({route}) => {
           if (res.data.action) {
             setProfileNavigate(profileNavigatr.GREETINGS);
           } else {
-            setModalObj({
-              modalType: 'warning',
-              buttonTitle: 'Ok',
-              message:
-                data?.star?.first_name +
-                ' ' +
-                data?.star?.last_name +
-                " doesn't give any greeting",
-              available: res.data.available,
-            });
-            setModal(true);
+            setProfileNavigate(profileNavigatr.GREETINGS);
           }
         }
       })
@@ -146,7 +130,9 @@ const StarProfile = ({route}) => {
                 data.star.cover_photo == null
                   ? imagePath.coverNoImgae
                   : {
-                      uri: `https://backend.hellosuperstars.com/uploads/images/setting/cover.png`,
+                      uri: AppUrl.MediaBaseUrl + data.star.cover_photo,
+
+                      // uri: `https://backend.hellosuperstars.com/uploads/images/setting/cover.png`,
                     }
               }
               style={styles.bannerImage}
@@ -533,82 +519,9 @@ const StarProfile = ({route}) => {
               </LinearGradient>
             </TouchableOpacity>
           </SwiperFlatList>
-
-          {/* second navigator    */}
-
-          {/* <View style={styles.ProfileOption}>
-            <TouchableOpacity
-              style={styles.ProfileItem}
-              onPress={() => setProfileNavigate(profileNavigatr.STARSHOWCASE)}>
-              <Image source={bannerImage} style={styles.roundImage} />
-              <Text style={styles.ProfileItemText}>Star Show Case</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => greetingsCheck()}
-              style={
-                profileNavigate == profileNavigatr.GREETINGS
-                  ? styles.ProfileItemActive
-                  : styles.ProfileItem
-              }>
-              <Image source={bannerImage} style={styles.roundImage} />
-              <Text style={styles.ProfileItemText}>Greetings</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={
-                profileNavigate == profileNavigatr.LIVECHAT ||
-                  profileNavigate == profileNavigatr.LIVECHATDETAILS
-                  ? styles.ProfileItemActive
-                  : styles.ProfileItem
-              }
-          
-              onPress={() => setProfileNavigate(profileNavigatr.LIVECHAT)}>
-              <Image source={bannerImage} style={styles.roundImage} />
-              <Text
-                style={
-                  profileNavigate == profileNavigatr.LIVECHAT ||
-                    profileNavigate == profileNavigatr.LIVECHATDETAILS
-                    ? styles.ProfileItemTextActive
-                    : styles.ProfileItemText
-                }>
-                Live Chat
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={
-                profileNavigate == profileNavigatr.QNA ? styles.ProfileItemActive
-                  : styles.ProfileItem
-              }
-           
-              onPress={() => setProfileNavigate(profileNavigatr.QNA)}>
-              <Image source={bannerImage} style={styles.roundImage} />
-              <Text
-                style={
-                  profileNavigate == profileNavigatr.QNA ? styles.ProfileItemTextActive
-                    : styles.ProfileItemText
-                }>
-                QNA
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.ProfileItem}>
-              <Image source={bannerImage} style={styles.roundImage} />
-              <Text style={styles.ProfileItemText}>Audition</Text>
-            </TouchableOpacity>
-       
-          </View> */}
         </View>
         <View style={styles.postContainer}>
           {profileNavigate == profileNavigatr.POST ? (
-            // <PostContainer
-            //   position="star-profile"
-            //   path={
-            //     AppUrl.BaseUrl +
-            //     `user/getStarPost/${data?.star?.id}/all/with-paginate/5` + `?page=${postPage}`
-            //   }
-            //   postPage={postPage}
-            //   setPostPage={setPostPage}
-            //   setFilterPost={setFilterPost}
-            // />
             <>
               {postBuffer ? (
                 <CardSkeleton />

@@ -1,14 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 
 import MainStack from './MainStack';
 
 import AuthStack from './AuthStack';
 
 import io from 'socket.io-client';
-import { AuthContext } from '../Constants/context';
+import {AuthContext} from '../Constants/context';
 import AppUrl from '../RestApi/AppUrl';
 import Loader from '../Screen/Auth/Loader';
 import axios from 'axios';
@@ -26,6 +26,11 @@ const Routes = () => {
   const [loginStatus, setLoginStatus] = useState(null);
   const [socketData, setSocketData] = useState();
   const socket = useRef();
+
+  const [activities, setActivities] = useState([]);
+
+  const [totalNotification, setTotalNotification] = useState();
+  //socket connection
   useEffect(() => {
     //socket connection
     socket.current = io(AppUrl.SoketUrl);
@@ -62,11 +67,11 @@ const Routes = () => {
       const loginStatus = await AsyncStorage.getItem('loginStaus');
       if (loginStatus !== null) {
         let data = JSON.parse(loginStatus);
-        // console.log(data.userInfo)
+        console.log(data.userInfo);
         setUserInfo(data);
         setLoginStatus(data);
       }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   let axiosConfig = {
@@ -78,24 +83,56 @@ const Routes = () => {
     },
   };
 
-  const [waletInfo, setWaletInfo] = useState()
+  const [waletInfo, setWaletInfo] = useState();
   // walet information with token
   useEffect(() => {
-    getWaletInformation()
-  }, [userToken])
+    getWaletInformation();
+    getActivity();
+    updateNotification();
+  }, [userToken]);
 
-  //wallet information 
+  //wallet information
   const getWaletInformation = () => {
     axios
       .get(AppUrl.WaletInfo, axiosConfig)
       .then(res => {
-        setWaletInfo(res.data.userWallet)
-        console.log('wallet', res.data.userWallet)
+        setWaletInfo(res.data.userWallet);
+        console.log('wallet', res.data.userWallet);
       })
       .catch(err => {
         console.log(err);
       });
-  }
+  };
+
+  //activity information
+  const getActivity = () => {
+    axios
+      .get(AppUrl.Menu, axiosConfig)
+      .then(res => {
+        setActivities(res.data);
+        console.log('activity data', res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  //notification
+
+  const updateNotification = () => {
+    console.log('totalNotificationCount calling');
+    axios
+      .get(AppUrl.totalNotificationCount, axiosConfig)
+      .then(res => {
+        console.log('totalNotificationCount', res.data);
+        if (res.data.status === 200) {
+          setTotalNotification(res.data.totalNotification);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   const authContext = useMemo(() => ({
     signIn: (token, userInfo) => {
@@ -169,7 +206,7 @@ const Routes = () => {
           setLoading(false);
         }, 800);
       }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   if (loading) {
@@ -194,10 +231,15 @@ const Routes = () => {
         posts,
         setWaletInfo,
         waletInfo,
-        socket
+        socket,
+        activities,
+        getActivity,
+        totalNotification,
+        setTotalNotification,
+        updateNotification,
       }}>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator screenOptions={{headerShown: false}}>
           {/* !!loginStatus */}
           {!!loginStatus ? <>{MainStack(Stack)}</> : <>{AuthStack(Stack)}</>}
         </Stack.Navigator>

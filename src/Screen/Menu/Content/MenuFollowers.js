@@ -1,12 +1,16 @@
-import React, {useState} from 'react';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
-import {FlatGrid} from 'react-native-super-grid';
-import {SwiperFlatList} from 'react-native-swiper-flatlist';
+import React, { useEffect, useState, useContext } from 'react';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-root-toast';
+import { FlatGrid } from 'react-native-super-grid';
+import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import imagePath from '../../../Constants/imagePath';
 import { BackHandler } from "react-native";
 import styles from './FollowersStyle';
-
+import { useAxiosGet } from '../../../CustomHooks/useAxiosGet';
+import AppUrl from '../../../RestApi/AppUrl';
+import { AuthContext } from '../../../Constants/context';
+import axios from 'axios';
 const dummyData = [
   {
     name: 'Shakib All Hasan',
@@ -52,96 +56,171 @@ const suggetionDummy = [
 
 
 
-const MenuFollowers = ({setMenuNavigator,MenuNavigator,menuChange,setMenuChange}) => {
-  const Category = ['Bollywood', 'Tollywood', 'Hollywood', 'Kollywood'];
-  const [select, setSelect] = useState();
-  const [data, setData] = React.useState(dummyData);
-  const [data2, setData2] = React.useState(suggetionDummy);
-  const [userData, setUserData] = useState(false);
-  const [userData2, setUserData2] = useState(false);
+const MenuFollowers = ({ setMenuNavigator,
+  MenuNavigator,
+  menuChange,
+  setMenuChange,
+  setFollowerArrayId,
+  resData,
+  buffer,
+  HandelGetData
+}) => {
 
 
+  const [followingCat, setStarCategory] = useState([]);
+  const [followingStarCat, setFollowStarCategory] = useState([]);
+  const [followersIds, setFollowersIds] = useState([])
+  const { useInfo, axiosConfig } = useContext(AuthContext);
+
+  useEffect(() => {
+    setStarCategory(resData.allSuperstar);
+    setFollowStarCategory(resData.followStarCategory);
+    setFollowersIds(resData.followingStarCategory)
+    setFollowerArrayId(resData.followingStarCategory?.split(","))
+  }, [resData])
 
 
-//============back handler==================
-function handleBackButtonClick() {
-  setMenuNavigator('MenuHome');
-  setMenuChange(0);
-  return true;
-  
+  const handleFollowing = (id) => {
+    if (!followingStarCat.includes(id)) {
+
+      setFollowStarCategory([...followingStarCat, id]);
+      handleChange([...followingStarCat, id]);
+    }
+
+    if (followingStarCat.includes(id)) {
+
+      const checked_data = followingStarCat.filter((item) => item !== id);
+      setFollowStarCategory(checked_data);
+      handleChange(checked_data);
+    }
   }
-  
+
+
+  const handleChange = (data) => {
+    let followData = {
+      'star_id': JSON.stringify(data)
+    }
+    axios.post(AppUrl.followStor, followData, axiosConfig).then((res) => {
+      console.log(res.data)
+      if (res.data.status === 200) {
+        setFollowersIds(res.data.followers)
+        setFollowerArrayId(res.data.followers?.split(","))
+        Toast.show("Followers list updated", Toast.durations.SHORT);
+      }
+    }).catch((err) => {
+
+      console.log(err.message)
+    });
+  }
+  //============back handler==================
+  function handleBackButtonClick() {
+    setMenuNavigator('MenuHome');
+    setMenuChange(0);
+    return true;
+
+  }
+
   React.useEffect(() => {
+    HandelGetData()
     BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
     return () => {
       BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
     };
+
   }, []);
-  
-  
-  //============back handler==================
 
 
 
-  const updateObjectInArray = click_id => {
-    setData(current =>
-      current.map(obj => {
-        if (obj.id === click_id) {
-          return {
-            ...obj,
-            id: click_id,
-            imgUrl: data[click_id - 1].imgUrl,
-            type: userData ? 'Follow' : 'Unfollow',
-          };
-        }
-        return obj;
-      }),
-    );
-  };
-  const updateObjectInArray2 = click_id => {
-    // alert(click_id)
-    setData2(current =>
-      current.map(obj => {
-        if (obj.id === click_id) {
-          return {
-            ...obj,
-            id: click_id,
-            imgUrl: data2[click_id - 1].imgUrl,
-            type: userData2 ? 'Follow' : 'Unfollow',
-          };
-        }
-        return obj;
-      }),
-    );
-  };
+
+  const RenderStarsFollowList = ({ item }) => {
+    if (followersIds.includes(item.super_star.id)) {
+      return (
+        <View>
+          <View style={styles.followCard}>
+            <View style={styles.followContents}>
+              <Image style={styles.followImage} source={{ uri: AppUrl.MediaBaseUrl + item?.super_star?.image }} />
+              <Text style={styles.followText}>SuperStar</Text>
+              <Text
+                style={[styles.text, { marginVertical: 8, fontSize: 18 }]}>
+                {item.super_star.first_name + " " + item.super_star.last_name}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => {
+                handleFollowing(item?.super_star?.id);
+              }}
+              style={
+                item.type === 'Follow'
+                  ? styles.followButton
+                  : styles.unfollowButton
+              }>
+              <Text style={styles.followBtnText}>
+                <Icon
+                  name={
+                    followingStarCat.includes(item.super_star.id)
+                      ? 'plus-circle'
+                      : 'check-circle'
+                  }
+                  size={18}
+                />{' '}
+                {followingStarCat.includes(item.super_star.id) ? "Following" : "Follow"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )
+    }
+
+  }
+
+  const RenderStarsSugestedList = ({ item }) => {
+    if (!followersIds.includes(item.super_star.id)) {
+      return (
+        <View>
+          <View style={styles.followCard}>
+            <View style={styles.followContents}>
+              <Image style={styles.followImage} source={{ uri: AppUrl.MediaBaseUrl + item?.super_star?.image }} />
+              <Text style={styles.followText}>SuperStar</Text>
+              <Text
+                style={[styles.text, { marginVertical: 8, fontSize: 18 }]}>
+                {item.super_star.first_name + " " + item.super_star.last_name}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => {
+                handleFollowing(item?.super_star?.id);
+              }}
+              style={
+                item.type === 'Follow'
+                  ? styles.followButton
+                  : styles.unfollowButton
+              }>
+              <Text style={styles.followBtnText}>
+                <Icon
+                  name={
+                    followingStarCat.includes(item.super_star.id)
+                      ? 'plus-circle'
+                      : 'check-circle'
+                  }
+                  size={18}
+                />{' '}
+                {followingStarCat.includes(item.super_star.id) ? "Following" : "Follow"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )
+    }
+
+  }
 
 
-  // function handleBackButtonClick() {
-  //   setMenuNavigator('MenuHome');
-  //   return true
-     
-  //     }
-      
-  //     React.useEffect(() => {
-  //       BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
-  //       return () => {
-  //         BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
-  //       };
-  //     }, []);
 
   return (
     <View>
-      {/*===== line row start====  */}
-      {/* <View style={{flexDirection: 'row', marginVertical: 12}}>
-        <View style={styles.line} />
-        <View style={styles.lineText}>
-          <Text style={styles.text}>You Follows</Text>
-        </View>
 
-        <View style={styles.line} />
-      </View> */}
       {/* =====line row end ==== */}
-      <SwiperFlatList
+      {/* <SwiperFlatList
         style={{marginVertical: 10}}
         autoplay
         autoplayDelay={5}
@@ -196,204 +275,88 @@ function handleBackButtonClick() {
               </Text>
             </TouchableOpacity>
           );
-        }}></SwiperFlatList>
-      <View
-        style={{
-          backgroundColor: '#202020',
-          margin: 10,
-          borderRadius: 18,
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginTop: 20,
-        }}>
-        <Text
-          style={[
-            styles.text,
-            {
-              paddingVertical: 8,
-              fontWeight: 'bold',
-            },
-          ]}>
-          You Follows
-        </Text>
-      </View>
+        }}></SwiperFlatList> */}
+      {buffer &&
+        <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+          <Image source={imagePath.loadingGif} style={{ height: 20, width: 30, margin: 10 }} />
+        </View>
+      }
 
-      {/* category type start  */}
-      {/* <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{
-        backgroundColor:'#F29E00',
-        padding:5
-      }}>
-        <TouchableOpacity style={styles.category}>
-          <Text style={styles.text}>Hollywood</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.category}>
-          <Text style={styles.text}>Bollywood</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.category}>
-          <Text style={styles.text}>Dhallywood</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.category}>
-          <Text style={styles.text}>Kollywood</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.category}>
-          <Text style={styles.text}>Hollywood</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.category}>
-          <Text style={styles.text}>Bollywood</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.category}>
-          <Text style={styles.text}>Dhallywood</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.category}>
-          <Text style={styles.text}>Kollywood</Text>
-        </TouchableOpacity>
-      </ScrollView> */}
+      {!buffer &&
+        <View
+          style={{
+            backgroundColor: '#202020',
+            margin: 10,
+            borderRadius: 18,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: 20,
+            minHeight: 10
+          }}>
 
-      {/* category type end  */}
+          <Text
+            style={[
+              styles.text,
+              {
+                paddingVertical: 8,
+                fontWeight: 'bold',
+              },
+            ]}>
+            You Follows
+          </Text>
 
-      {/* follow list start  */}
+
+        </View>
+      }
+
+
       <View style={styles.followMainrow}>
-        {/* <View
-          style={styles.followCard}>
-          <View style={styles.followContents}>
-            <Image
-              style={styles.followImage}
-              source={imagePath.SakibBalHasan}
-            />
-            <Text style={styles.followText}>
-          SuperStar
-            </Text>
-            <Text style={[styles.text, {marginVertical: 8,fontSize:18}]}>
-              Sakib Al Hasan
-            </Text>
-          
-          </View>
-          <TouchableOpacity style={styles.followButton}>
-            <Text style={styles.followBtnText}>Unfollow </Text>
-          </TouchableOpacity>
-        </View> */}
-
         <>
+
           {/* here i used flat grid package if any problem in backend please use top commented code  */}
           <FlatGrid
             itemDimension={160}
-            data={data}
-            renderItem={({item}) => (
-              <View>
-                <View style={styles.followCard}>
-                  <View style={styles.followContents}>
-                    <Image style={styles.followImage} source={item.imgUrl} />
-                    <Text style={styles.followText}>SuperStar</Text>
-                    <Text
-                      style={[styles.text, {marginVertical: 8, fontSize: 18}]}>
-                      {item.name}
-                    </Text>
-                  </View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setUserData(!userData);
-                      updateObjectInArray(item.id);
-                    }}
-                    style={
-                      item.type === 'Follow'
-                        ? styles.followButton
-                        : styles.unfollowButton
-                    }>
-                    <Text style={styles.followBtnText}>
-                      <Icon
-                        name={
-                          item.type === 'Follow'
-                            ? 'plus-circle'
-                            : 'check-circle'
-                        }
-                        size={18}
-                      />{' '}
-                      {item.type}{' '}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
+            data={followingCat}
+            renderItem={RenderStarsFollowList}
           />
         </>
       </View>
       {/* follow list end  */}
 
-      {/* line row start  */}
-      {/* <View style={{flexDirection: 'row', marginVertical: 12}}>
-        <View style={styles.line} />
-        <View style={styles.lineText}>
-          <Text style={styles.text}>Suggestion</Text>
+
+      {/* sugested list  */}
+      {!buffer &&
+        <View
+          style={{
+            backgroundColor: '#202020',
+            margin: 10,
+            borderRadius: 18,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: 20,
+          }}>
+
+          <Text
+            style={[
+              styles.text,
+              {
+                paddingVertical: 8,
+                fontWeight: 'bold',
+              },
+            ]}>
+            Suggissions
+          </Text>
+
         </View>
-
-        <View style={styles.line} />
-      </View> */}
-      {/* line row end  */}
-
-      <View
-        style={{
-          backgroundColor: '#202020',
-          margin: 10,
-          borderRadius: 18,
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginTop: 20,
-        }}>
-        <Text
-          style={[
-            styles.text,
-            {
-              paddingVertical: 8,
-              fontWeight: 'bold',
-            },
-          ]}>
-          Suggissions
-        </Text>
-      </View>
+      }
 
       <View style={styles.followMainrow}>
         <>
           {/* here i used flat grid package if any problerm in backend please use top commented code  */}
           <FlatGrid
             itemDimension={160}
-            data={data2}
-            renderItem={({item}) => (
-              <View>
-                <View style={styles.followCard}>
-                  <View style={styles.followContents}>
-                    <Image style={styles.followImage} source={item.imgUrl} />
-                    <Text style={styles.followText}>SuperStar</Text>
-                    <Text
-                      style={[styles.text, {marginVertical: 8, fontSize: 18}]}>
-                      {item.name}
-                    </Text>
-                  </View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setUserData2(!userData2);
-                      updateObjectInArray2(item.id);
-                    }}
-                    style={
-                      item.type === 'Follow'
-                        ? styles.followButton
-                        : styles.unfollowButton
-                    }>
-                    {/* <Text style={styles.followBtnText}>{item.type} </Text> */}
-                    <Text style={styles.followBtnText}>
-                      <Icon
-                        name={
-                          item.type === 'Follow'
-                            ? 'plus-circle'
-                            : 'check-circle'
-                        }
-                        size={18}
-                      />{' '}
-                      {item.type}{' '}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
+            data={followingCat}
+            renderItem={RenderStarsSugestedList}
           />
         </>
       </View>

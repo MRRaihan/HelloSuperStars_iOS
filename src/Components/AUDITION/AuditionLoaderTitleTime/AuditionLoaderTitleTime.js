@@ -17,50 +17,52 @@ import imagePath from '../../../Constants/imagePath';
 
 const AuditionLoaderTitleTime = () => {
   return (
-    <ScrollView style={styles.body}>
-      {/* <HeaderComp /> */}
-      <View style={styles.imageBg}>
-        <ImageBackground
-          style={styles.imageBgStyle}
-          source={imagePath.AuditionTitleBanner}
-          resizeMode="cover">
-          <View style={styles.titleView}>
-            <View>
-              <LinearGradient
-                style={styles.timeBgColor}
-                colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}>
-                <Text style={styles.textCenter}>2</Text>
-                <Text style={styles.textCenter}>DAYS</Text>
-              </LinearGradient>
+    <SafeAreaView>
+      <ScrollView style={styles.body}>
+        {/* <HeaderComp /> */}
+        <View style={styles.imageBg}>
+          <ImageBackground
+            style={styles.imageBgStyle}
+            source={imagePath.AuditionTitleBanner}
+            resizeMode="cover">
+            <View style={styles.titleView}>
+              <View>
+                <LinearGradient
+                  style={styles.timeBgColor}
+                  colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}>
+                  <Text style={styles.textCenter}>2</Text>
+                  <Text style={styles.textCenter}>DAYS</Text>
+                </LinearGradient>
+              </View>
+              <View>
+                <LinearGradient
+                  style={styles.timeBgColor}
+                  colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}>
+                  <Text style={styles.textCenter}>2</Text>
+                  <Text style={styles.textCenter}>HOURS</Text>
+                </LinearGradient>
+              </View>
+              <View>
+                <LinearGradient
+                  style={styles.timeBgColor}
+                  colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}>
+                  <Text style={styles.textCenter}>2</Text>
+                  <Text style={styles.textCenter}>SEC</Text>
+                </LinearGradient>
+              </View>
             </View>
             <View>
-              <LinearGradient
-                style={styles.timeBgColor}
-                colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}>
-                <Text style={styles.textCenter}>2</Text>
-                <Text style={styles.textCenter}>HOURS</Text>
-              </LinearGradient>
+              <Text style={styles.textTitle}>AUDITION TITLE NAME</Text>
             </View>
-            <View>
-              <LinearGradient
-                style={styles.timeBgColor}
-                colors={['#F1A817', '#F5E67D', '#FCB706', '#DFC65C']}>
-                <Text style={styles.textCenter}>2</Text>
-                <Text style={styles.textCenter}>SEC</Text>
-              </LinearGradient>
-            </View>
-          </View>
-          <View>
-            <Text style={styles.textTitle}>AUDITION TITLE NAME</Text>
-          </View>
-        </ImageBackground>
-      </View>
+          </ImageBackground>
+        </View>
 
 
-     
 
- 
-    </ScrollView>
+
+
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

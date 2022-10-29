@@ -6,8 +6,7 @@ import showcaseNavigator from './showcaseNavigator';
 import styles from './styles';
 import AppUrl from '../../../RestApi/AppUrl';
 const AuctionProductCard = props => {
-  const {setView} = props;
-  console.log(props);
+  const {setView, setProduct} = props;
   return (
     <>
       <View style={styles.MaiN}>
@@ -53,23 +52,39 @@ const AuctionProductCard = props => {
                 </View>
               </View>
 
-              <TouchableOpacity
-                onPress={() => setView(showcaseNavigator.PARTICIPATE)}>
-                <LinearGradient
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0}}
-                  colors={[
-                    '#FFAD00',
-                    '#FFD273',
-                    '#E19A04',
-                    '#FACF75',
-                    '#E7A725',
-                    '#FFAD00',
-                  ]}
-                  style={{borderRadius: 15}}>
-                  <Text style={styles.Btn}>{props.buttonText}</Text>
-                </LinearGradient>
-              </TouchableOpacity>
+              {new Date(props.productDetails.bid_to).getTime() <
+              new Date().getTime() ? (
+                <TouchableOpacity disabled={true}>
+                  <LinearGradient
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}
+                    colors={['#AD850C', '#AD850C']}
+                    style={{borderRadius: 15}}>
+                    <Text style={styles.Btn}>{props.buttonText}</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    setView(showcaseNavigator.PARTICIPATE);
+                    setProduct(props.productDetails);
+                  }}>
+                  <LinearGradient
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}
+                    colors={[
+                      '#FFAD00',
+                      '#FFD273',
+                      '#E19A04',
+                      '#FACF75',
+                      '#E7A725',
+                      '#FFAD00',
+                    ]}
+                    style={{borderRadius: 15}}>
+                    <Text style={styles.Btn}>{props.buttonText}</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </View>

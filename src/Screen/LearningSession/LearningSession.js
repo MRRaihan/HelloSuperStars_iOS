@@ -19,7 +19,7 @@ const LearningSession = ({route, navigation}) => {
   const [isShowPaymentComp, setIsShowPaymentComp] = useState(false);
   const [parentData, setParentData] = useState({});
   const {data} = route.params;
-  // console.log('data------', data)
+  console.log('data------', data);
   return (
     <SafeAreaView style={styles.container}>
       <HeaderComp />
@@ -27,6 +27,7 @@ const LearningSession = ({route, navigation}) => {
         <Video
           image={`${AppUrl.MediaBaseUrl + data.learning_session.banner}`}
           title={data.learning_session.title}
+          videoSrc={data.learning_session.video}
         />
         <InformationComp data={data.learning_session} />
         <InstructionComp
@@ -44,12 +45,15 @@ const LearningSession = ({route, navigation}) => {
         {/* {isShowPaymentComp ? <PaymentComp eventType="LearningSession" eventId={data.learning_session.id} modelName="learningSession" /> : <></>} */}
         {isShowPaymentComp ? (
           <RegisPaymentModal
-            eventType="LearningSession"
+            eventType="learningSession"
             eventId={data.learning_session.id}
             modelName="learningSession"
             isShowPaymentComp={isShowPaymentComp}
             setIsShowPaymentComp={setIsShowPaymentComp}
             parentData={parentData}
+            fee={data.learning_session.fee}
+            start_time={data.learning_session.start_time}
+            end_time={data.learning_session.end_time}
           />
         ) : (
           <></>

@@ -199,8 +199,9 @@ const MessageStar = ({ route }) => {
    * handel press to menation
   */
   const HandelPressMentaion = (value) => {
-    console.log(value)
-    setText(text + value)
+    let serachString = text.split("@");
+    let stringValue = serachString[0];
+    setText(stringValue + value)
   }
 
 
@@ -357,7 +358,7 @@ const MessageStar = ({ route }) => {
             <ScrollView>
               {starList && starList.map((item) => {
                 return <>
-                  <TouchableOpacity style={{ flexDirection: 'row', margin: 10 }} onPress={() => HandelPressMentaion(`${item.user.first_name + " " + item.user.last_name}`)}>
+                  <TouchableOpacity style={{ flexDirection: 'row', margin: 10 }} onPress={() => HandelPressMentaion(`@${item.user.first_name + " " + item.user.last_name}`)}>
                     <View style={{ height: 30, width: 30, backgroundColor: 'red', borderRadius: 100 }}>
                       <Image source={imagePath.SakibBalHasan} style={{ height: 30, width: 30, }} />
                     </View>

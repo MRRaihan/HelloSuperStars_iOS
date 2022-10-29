@@ -73,10 +73,10 @@ const Message = ({ navigation }) => {
       {!buffer &&
         <FlatList
           data={resData.chatList}
-          renderItem={({ item }) => {
+          renderItem={({ item, index }) => {
             return (
               <>
-                <ChatBox data={item} />
+                <ChatBox data={item} key={index} />
               </>
             );
           }}

@@ -25,6 +25,13 @@ import SouvenirInvoice from '../../Components/STAR_SHOWCASE/Souviner/SouvenirInv
 import OrderStatus from '../../Components/GLOBAL/Reuseable/OrderStatus';
 import SouvenirOrderStatus from '../../Components/GLOBAL/Reuseable/SouvenirOrderStatus';
 import UpCommingPost from '../../Screen/Menu/UpCommingPost';
+import About from '../../Screen/Menu/Privacy/About';
+import Policy from '../../Screen/Menu/Privacy/Policy';
+import ProductPurse from '../../Screen/Menu/Privacy/ProductPurse';
+import Condition from '../../Screen/Menu/Privacy/Condition';
+import Refund from '../../Screen/Menu/Privacy/Refund';
+import FaQ from '../../Screen/Menu/Privacy/FaQ';
+import Greeting from '../../Screen/Greetings/Greeting';
 
 const MenuStack = createNativeStackNavigator();
 const MenuStackScreen = () => {
@@ -67,6 +74,12 @@ const MenuStackScreen = () => {
         name={navigationStrings.APPLYFORCERLEARNINGSESSION}
         component={ApplyForCertificate}
       />
+      {/* Greetings  */}
+
+      <MenuStack.Screen
+        name={navigationStrings.GREETINGS}
+        component={Greeting}
+      />
 
       {/* Audition */}
       <MenuStack.Screen
@@ -96,6 +109,28 @@ const MenuStackScreen = () => {
         name={navigationStrings.POSTSHOWBYTYPE}
         component={UpCommingPost}
       />
+
+      <MenuStack.Screen
+        name={navigationStrings.ABOUTPOLICY}
+        component={About}
+      />
+      <MenuStack.Screen
+        name={navigationStrings.PRIVACYPOLICY}
+        component={Policy}
+      />
+      <MenuStack.Screen
+        name={navigationStrings.PRODUCTPOLICY}
+        component={ProductPurse}
+      />
+      <MenuStack.Screen
+        name={navigationStrings.CONDITIONPOLICY}
+        component={Condition}
+      />
+      <MenuStack.Screen
+        name={navigationStrings.REFUNDPOLICY}
+        component={Refund}
+      />
+      <MenuStack.Screen name={navigationStrings.FAQPOLICY} component={FaQ} />
     </MenuStack.Navigator>
   );
 };

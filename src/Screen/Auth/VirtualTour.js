@@ -1,7 +1,7 @@
 //import liraries
 
-import {useNavigation} from '@react-navigation/native';
-import React, {useCallback, useEffect, useState} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -9,12 +9,13 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import imagePath from '../../Constants/imagePath';
-
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 // create a component
 const VirtualTour = ({route}) => {
   const navigation = useNavigation();
@@ -40,7 +41,7 @@ const VirtualTour = ({route}) => {
       resizeMode="cover"
       style={styles.container}>
       <View style={{alignItems: 'center', marginTop: 50}}>
-        <Image source={imagePath.logo} style={{height: 100, width: 100}} />
+        <Image source={imagePath.logo} style={windowWidth>500?{height: 150, width: 150}:{height: 100, width: 100}} />
       </View>
 
       <View
@@ -53,7 +54,8 @@ const VirtualTour = ({route}) => {
         }}>
         <View style={{padding: 5}}>
           <YoutubePlayer
-            height={250}
+        
+            height={windowWidth>500?500:280}
             play={true}
             videoId={'ZbsYZ1K7xKc'}
             onChangeState={onStateChange}
